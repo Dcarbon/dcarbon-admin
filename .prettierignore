@@ -1,0 +1,7 @@
+.next/*
+public/*
+src/__generated__/*
+out/*
+node_modules
+build
+dist

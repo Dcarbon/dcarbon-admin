@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "env": { "browser": true, "es2020": true },
+  "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react-hooks/recommended",
+  ],
+  "ignorePatterns": ["dist", ".eslintrc"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@tanstack/query","react-refresh","@typescript-eslint"],
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error", "info"] }],
+    "no-unused-vars": "error",
+    "react/react-in-jsx-scope": "off",
+    "no-undef": "off",
+    "object-curly-spacing": "off",
+    "require-jsdoc": "off",
+    "max-len": "off",
+    "indent": "off",
+    "no-useless-catch": "off",
+    "camelcase": "off",
+    "new-cap": "off",
+    "operator-linebreak": "off",
+    "quotes": "off",
+    "comma-spacing": "off",
+    "@typescript-eslint/ban-types":"warn",
+    "@typescript-eslint/no-explicit-any": "off"
+  },
+}
