@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx commitlint --edit
+sh ./.husky/validate_commit.sh -m "$1" && sh ./.husky/validate_branch.sh
