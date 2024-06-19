@@ -9,7 +9,8 @@
         "build": "tsc && vite build --mode production",
         "preview": "vite preview",
         "prettier": "prettier --write .",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "validate_branch": "sh scripts/validate_branch_name.sh"
     },
     "lint-staged": {
         "*.tsx": [

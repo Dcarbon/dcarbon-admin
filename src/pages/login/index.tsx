@@ -66,7 +66,7 @@ const LoginPage = () => {
                 <div style={styles.header}>
                     <Title style={styles.title}>Sign in</Title>
                     <Text style={styles.text}>
-                        Welcome back to AntBlocks UI! Please enter your details
+                        Welcome back! Please enter your details
                         below to sign in.
                     </Text>
                 </div>
