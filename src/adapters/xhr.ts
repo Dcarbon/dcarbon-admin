@@ -1,70 +1,63 @@
-import { REQ_METHODS } from '@/utils/constants';
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import { ACCESS_TOKEN_STORAGE_KEY, AUTH_METHOD } from '@/utils/constants/jwt';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
+import { THROW_EXCEPTION } from './exceptions';
+
+const defaultHeaders: HeadersInit = {
+  'Content-Type': 'application/json',
+};
+
+const DEFAULT_TIMEOUT = 20000;
+const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 
 const axiosInstance = axios.create({
-  timeout: 20000,
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: DEFAULT_TIMEOUT,
+  baseURL: BASE_URL,
 });
-export /**
- * @template T
- * @param {string} url
- * @param {Lowercase<Method>} [method]
- * @param {*} [data]
- * @param {AxiosRequestConfig} [config]
- * @return {*}  {Promise<AxiosResponse<T>>}
- */
-const request = <T>(
-  url: string,
-  method?: Lowercase<Method>,
-  data?: any,
-  config?: AxiosRequestConfig
-): Promise<AxiosResponse<T>> => {
-  const commonConfig: AxiosRequestConfig = {
-    ...config,
-  };
-  axiosInstance.interceptors.request.use(
-    (defaultConfig) => {
-      const token = localStorage.getItem('accessToken');
-      if (token && !defaultConfig.headers.getAuthorization()) {
-        defaultConfig.headers.setAuthorization(`Bearer ${token}`);
-      }
-      if (!defaultConfig.headers.getContentType()) {
-        defaultConfig.headers.setContentType('application/json');
-      }
-      return defaultConfig;
-    },
-    (error) => {
-      delete axios.defaults.headers.common['Authorization'];
-      Promise.reject(error);
-    }
-  );
 
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response.status === 401 && localStorage.getItem('token')) {
-        localStorage.removeItem('token');
-        delete axios.defaults.headers.common['Authorization'];
-        window.location.href = '/login';
-      }
-      return Promise.reject(error);
+const request = async (
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  url: string,
+  data?: any,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse | null | { message: string }> => {
+  const controller = new AbortController();
+
+  if (import.meta.env.NEXT_PUBLIC_AUTH_METHOD === AUTH_METHOD.HEADER) {
+    const accessToken = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    if (accessToken) {
+      defaultHeaders.Authorization = `Bearer ${accessToken}`;
     }
-  );
+  }
+
+  const commonOptions: AxiosRequestConfig = {
+    ...options,
+    signal: controller.signal,
+    headers: Object.assign(defaultHeaders, options?.headers),
+    method,
+    withCredentials: true,
+  };
+
   switch (method) {
-    case REQ_METHODS.POST:
-      return axiosInstance.post(url, data, commonConfig);
-    case REQ_METHODS.PATCH:
-      return axiosInstance.patch(url, data, commonConfig);
-    case REQ_METHODS.PUT:
-      return axiosInstance.put(url, data, commonConfig);
-    case REQ_METHODS.DELETE:
-      return axiosInstance.delete(url, commonConfig);
-    default:
-      return axiosInstance.get(url, {
-        params: data,
-        ...commonConfig,
-      });
+    case 'DELETE':
+    case 'GET':
+      commonOptions.params = data;
+      break;
+    case 'POST':
+    case 'PATCH':
+    case 'PUT':
+      commonOptions.data = JSON.stringify(data);
+      break;
+  }
+
+  try {
+    const result = await axiosInstance(BASE_URL + url, commonOptions);
+    return result;
+  } catch {
+    return { message: THROW_EXCEPTION.UNKNOWN };
+  } finally {
+    //
   }
 };
 
-export default axiosInstance;
+export { request };

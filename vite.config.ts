@@ -1,32 +1,22 @@
-// vite.config.ts
+import { ValidateEnv } from '@julr/vite-plugin-validate-env';
+import MillionLint from '@million/lint';
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
 
-export default defineConfig(({ mode }) => {
-  return {
-    plugins: [react()],
-    resolve: {
-      alias: {
-        '@': new URL('./src', import.meta.url).pathname,
-      },
-    },
-    esbuild: {
-      pure: mode === 'production' ? ['console.log'] : [],
-    },
-    build: {
-      cssMinify: 'esbuild',
-      minify: 'esbuild',
-      cssCodeSplit: true,
-    },
-    server: {
-      port: 3000,
-    },
-    define: {
-      'process.env': process.env,
-      'process.platform': JSON.stringify(process.platform),
-    },
-    optimizeDeps: {
-      include: ['axios', 'react-router-dom', 'antd', 'rc-picker'],
-    },
-  };
+// https://vitejs.dev/config/
+const _plugins = [
+  TanStackRouterVite(),
+  react(),
+  viteTsconfigPaths(),
+  ValidateEnv(),
+  chunkSplitPlugin(),
+  nodePolyfills(),
+];
+_plugins.unshift(MillionLint.vite());
+export default defineConfig({
+  plugins: _plugins,
 });
