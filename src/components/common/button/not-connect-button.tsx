@@ -3,7 +3,16 @@
 import { useState } from 'react';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Avatar, Button, Collapse, CollapseProps, Divider, Modal } from 'antd';
+import {
+  Avatar,
+  Button,
+  Collapse,
+  CollapseProps,
+  Divider,
+  Flex,
+  Modal,
+  Typography,
+} from 'antd';
 
 function NotConnectButton() {
   const { wallets, select, connecting } = useWallet();
@@ -30,13 +39,13 @@ function NotConnectButton() {
       key: '1',
       label: 'Other Wallets',
       children: (
-        <>
+        <Flex gap={10} wrap>
           {wallets
             .filter((wl) => !['Phantom'].includes(wl.adapter.name))
             .map((wl) => {
               return (
                 <button
-                  className="w-full py-2 px-2"
+                  style={{ flex: '1 1' }}
                   key={wl.adapter.name}
                   onClick={async () => {
                     try {
@@ -72,7 +81,7 @@ function NotConnectButton() {
                 </button>
               );
             })}
-        </>
+        </Flex>
       ),
       extra: (
         <>
@@ -103,6 +112,7 @@ function NotConnectButton() {
         open={open}
         onCancel={onClose}
         footer={null}
+        width={350}
         title="Connect to wallet"
         centered
       >
@@ -112,7 +122,7 @@ function NotConnectButton() {
             .map((wl) => {
               return (
                 <button
-                  className="hover:bg-kyu-color-2 py-2 px-2"
+                  style={{ width: '100%' }}
                   key={wl.adapter.name}
                   onClick={async () => {
                     try {
@@ -137,7 +147,9 @@ function NotConnectButton() {
                     </div>
 
                     <div className="flex gap-4">
-                      <div color="success">Recommended</div>
+                      <Typography.Text style={{ color: 'blue' }}>
+                        (Recommended)
+                      </Typography.Text>
 
                       <div className="hidden sm:block">
                         {wl.readyState === WalletReadyState.Installed ? (

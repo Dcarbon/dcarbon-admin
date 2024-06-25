@@ -1,5 +1,4 @@
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
-import MillionLint from '@million/lint';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
@@ -16,7 +15,11 @@ const _plugins = [
   chunkSplitPlugin(),
   nodePolyfills(),
 ];
-_plugins.unshift(MillionLint.vite());
+// _plugins.unshift(MillionLint.vite());
 export default defineConfig({
   plugins: _plugins,
+  build: {
+    cssMinify: 'esbuild',
+    minify: 'esbuild',
+  },
 });
