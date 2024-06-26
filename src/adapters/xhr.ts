@@ -1,70 +1,80 @@
-import { REQ_METHODS } from '@/utils/constants';
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  REFRESH_TOKEN_STORAGE_KEY,
+  REQ_METHODS,
+} from '@/utils/constants';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+
+const DEFAULT_TIMEOUT = 20000;
+const BASE_URL = import.meta.env.VITE_API_ENDPOINT;
 
 const axiosInstance = axios.create({
-  timeout: 20000,
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: DEFAULT_TIMEOUT,
+  baseURL: BASE_URL,
 });
-export /**
- * @template T
- * @param {string} url
- * @param {Lowercase<Method>} [method]
- * @param {*} [data]
- * @param {AxiosRequestConfig} [config]
- * @return {*}  {Promise<AxiosResponse<T>>}
- */
-const request = <T>(
-  url: string,
-  method?: Lowercase<Method>,
-  data?: any,
-  config?: AxiosRequestConfig
-): Promise<AxiosResponse<T>> => {
-  const commonConfig: AxiosRequestConfig = {
-    ...config,
-  };
-  axiosInstance.interceptors.request.use(
-    (defaultConfig) => {
-      const token = localStorage.getItem('accessToken');
-      if (token && !defaultConfig.headers.getAuthorization()) {
-        defaultConfig.headers.setAuthorization(`Bearer ${token}`);
-      }
-      if (!defaultConfig.headers.getContentType()) {
-        defaultConfig.headers.setContentType('application/json');
-      }
-      return defaultConfig;
-    },
-    (error) => {
-      delete axios.defaults.headers.common['Authorization'];
-      Promise.reject(error);
-    }
-  );
 
-  axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response.status === 401 && localStorage.getItem('token')) {
-        localStorage.removeItem('token');
-        delete axios.defaults.headers.common['Authorization'];
-        window.location.href = '/login';
-      }
-      return Promise.reject(error);
+axiosInstance.interceptors.request.use(
+  (defaultConfig) => {
+    const token =
+      typeof window !== 'undefined' &&
+      localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    if (token && !defaultConfig.headers.getAuthorization()) {
+      defaultConfig.headers.setAuthorization(`Bearer ${token}`);
     }
-  );
+    if (!defaultConfig.headers.getContentType()) {
+      defaultConfig.headers.setContentType('application/json');
+    }
+    return defaultConfig;
+  },
+  (error) => {
+    delete axios.defaults.headers.common['Authorization'];
+    Promise.reject(error);
+  },
+);
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response.status === 401 &&
+      localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+    ) {
+      localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
+      delete axios.defaults.headers.common['Authorization'];
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  },
+);
+const request = <T>(
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  url: string,
+  data?: any,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<T>> => {
+  const controller = new AbortController();
+
+  const commonOptions: AxiosRequestConfig = {
+    ...options,
+    signal: controller.signal,
+    method,
+    withCredentials: true,
+  };
   switch (method) {
     case REQ_METHODS.POST:
-      return axiosInstance.post(url, data, commonConfig);
+      return axiosInstance.post(url, data, commonOptions);
     case REQ_METHODS.PATCH:
-      return axiosInstance.patch(url, data, commonConfig);
+      return axiosInstance.patch(url, data, commonOptions);
     case REQ_METHODS.PUT:
-      return axiosInstance.put(url, data, commonConfig);
+      return axiosInstance.put(url, data, commonOptions);
     case REQ_METHODS.DELETE:
-      return axiosInstance.delete(url, commonConfig);
+      return axiosInstance.delete(url, commonOptions);
     default:
       return axiosInstance.get(url, {
         params: data,
-        ...commonConfig,
+        ...commonOptions,
       });
   }
 };
 
-export default axiosInstance;
+export { request };

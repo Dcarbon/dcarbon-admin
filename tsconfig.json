@@ -1,26 +1,11 @@
 {
-    "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
-        "esModuleInterop": true,
-        "useDefineForClassFields": true,
-        "lib": ["dom", "dom.iterable", "esnext"],
-        "strict": true,
-        "moduleResolution": "bundler",
-        "baseUrl": "./",
-        "paths": {
-            "@/*": ["src/*"]
-        },
-        "allowImportingTsExtensions": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "skipLibCheck": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
     },
-    "include": ["src/**/*", "rc-picker-overrides.d.ts"],
-    "references": [{ "path": "./tsconfig.node.json" }]
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
