@@ -29,3 +29,4 @@ dist-ssr
 # Million Lint
 .million
 .env
+yarn.lock

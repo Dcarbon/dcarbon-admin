@@ -15,6 +15,7 @@ import { clusterApiUrl } from '@solana/web3.js';
 function SolanaWalletProvider({ children }: { children: React.ReactNode }) {
   const network = WalletAdapterNetwork.Devnet;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const endpoint = useMemo(() => clusterApiUrl(network), []);
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
