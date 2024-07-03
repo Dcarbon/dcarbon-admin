@@ -71,8 +71,8 @@ const request = async <T>(
   try {
     const result = await axiosInstance(BASE_URL + url, commonOptions);
     return result;
-  } catch {
-    throw new Error(THROW_EXCEPTION.UNKNOWN);
+  } catch (error: any) {
+    throw error.response?.data || THROW_EXCEPTION;
   } finally {
     //
   }

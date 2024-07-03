@@ -67,6 +67,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           algorithm: theme.compactAlgorithm,
           token: {
             colorPrimary: '#7bda08',
+            colorBgMask: 'rgba(0, 0, 0, 0.07)',
+            boxShadow: '3px 3px 5px 1px rgba(0, 0, 0, 0.03)',
             colorPrimaryBgHover: '#5daf01',
             colorBgTextHover: '#B8FD59',
             fontSize: 20,

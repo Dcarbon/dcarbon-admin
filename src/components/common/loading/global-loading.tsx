@@ -6,6 +6,6 @@ const GlobalLoading = () => {
   const isFetching = useIsFetching();
   const isLoading = isFetching > 0;
 
-  return isLoading ? <Spin size="large" spinning className="spin" /> : null;
+  return isLoading ? <Spin size="large" spinning fullscreen /> : null;
 };
 export default GlobalLoading;
