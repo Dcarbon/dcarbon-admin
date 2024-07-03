@@ -1,32 +1,22 @@
+import NavigationBack from '@/components/common/navigation-back';
 import UploadMultiImage from '@/components/common/upload';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Col, Flex, Form, Input, Typography } from 'antd';
+import { createLazyFileRoute } from '@tanstack/react-router';
+import { Button, Col, Flex, Form, Input, Select } from 'antd';
 
-export const Route = createLazyFileRoute('/_auth/project/create-project')({
+export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
 });
 
 const CreateProject = () => {
-  const navigate = useNavigate();
   const [form] = Form.useForm();
+
   return (
     <div>
-      <Typography.Title
-        className="navigate-back"
-        level={3}
-        onClick={() =>
-          navigate({
-            to: '/project',
-          })
-        }
-      >
-        <ArrowLeftOutlined /> Back
-      </Typography.Title>
+      <NavigationBack href="/project" />
       <Form form={form} layout="vertical">
         <Flex>
           <Col span={12}>
-            <Form.Item label="Name" name="name">
+            <Form.Item label="Project name" name="project_name">
               <Input />
             </Form.Item>
             <Form.Item label="Description" name="description">
@@ -47,7 +37,7 @@ const CreateProject = () => {
                   },
                 ]}
               >
-                <Input type="email" />
+                <Select />
               </Form.Item>
             </Form.Item>
           </Col>

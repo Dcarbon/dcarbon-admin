@@ -41,7 +41,7 @@ function NotConnectButton() {
       key: '1',
       label: 'Other Wallets',
       children: (
-        <Flex wrap>
+        <Flex wrap gap={10}>
           {wallets
             .filter((wl) => !['Phantom'].includes(wl.adapter.name))
             .map((wl) => {

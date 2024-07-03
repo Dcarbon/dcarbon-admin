@@ -4,11 +4,11 @@ import { Space, TableColumnsType } from 'antd';
 const columns: TableColumnsType<IProject> = [
   {
     title: 'ID',
-    dataIndex: '_id',
+    dataIndex: 'id',
   },
   {
     title: 'Name',
-    render: (data: IProject) => <Link to={data._id}>{data.name}</Link>,
+    render: (data: IProject) => <Link to={data.id}>{data.name}</Link>,
   },
   {
     title: 'Location',

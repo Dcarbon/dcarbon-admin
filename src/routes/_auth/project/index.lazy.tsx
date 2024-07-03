@@ -1,53 +1,53 @@
+import NavigationBack from '@/components/common/navigation-back';
 import ProjectTableList from '@/components/features/project/table';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Flex, Input, Typography } from 'antd';
+import { Button, Flex, Input } from 'antd';
 
 const dataSample: IProject[] = [
   {
-    _id: '1',
+    id: '1',
     name: 'Project 1',
     location: 'HCM',
     startDate: '2021-09-01',
     status: true,
   },
   {
-    _id: '2',
+    id: '2',
     name: 'Project 2',
     location: 'HCM',
     startDate: '2021-09-01',
     status: false,
   },
   {
-    _id: '3',
+    id: '3',
     name: 'Project 3',
     location: 'HCM',
     startDate: '2021-09-01',
     status: true,
   },
   {
-    _id: '4',
+    id: '4',
     name: 'Project 4',
     location: 'HCM',
     startDate: '2021-09-01',
     status: false,
   },
   {
-    _id: '5',
+    id: '5',
     name: 'Project 5',
     location: 'HCM',
     startDate: '2021-09-01',
     status: true,
   },
   {
-    _id: '6',
+    id: '6',
     name: 'Project 6',
     location: 'HCM',
     startDate: '2021-09-01',
     status: false,
   },
   {
-    _id: '7',
+    id: '7',
     name: 'Project 7',
     location: 'HCM',
     startDate: '2021-09-01',
@@ -63,17 +63,7 @@ const ProjectPage = () => {
 
   return (
     <div>
-      <Typography.Title
-        level={3}
-        className="navigate-back"
-        onClick={() =>
-          navigate({
-            to: '/',
-          })
-        }
-      >
-        <ArrowLeftOutlined /> Back
-      </Typography.Title>
+      <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
         <Input.Search
           placeholder="input search text"
@@ -84,7 +74,7 @@ const ProjectPage = () => {
           type="primary"
           onClick={() =>
             navigate({
-              to: '/project/create-project',
+              to: '/project/create',
             })
           }
         >

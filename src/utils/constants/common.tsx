@@ -16,19 +16,30 @@ const QUERY_KEYS = {
   SIGN_IN: 'SIGN_IN',
   GET_USER: 'GET_USER',
   CREATE_PO: 'CREATE_PO',
+  GET_PO: 'GET_PO',
 };
-
+const ROUTES_URL = {
+  HOME: '/',
+  PO: '/po',
+  PROJECT: '/project',
+};
 const MENU: MenuType = [
   {
-    key: 'Dashboard',
+    key: ROUTES_URL.HOME,
     label: 'Dashboard',
-    path: '/',
+    path: ROUTES_URL.HOME,
     icon: <ApartmentOutlined />,
   },
   {
-    key: 'projects',
-    label: 'projects',
-    path: '/project',
+    key: ROUTES_URL.PO,
+    label: 'PO',
+    path: ROUTES_URL.PO,
+    icon: <ApiOutlined />,
+  },
+  {
+    key: ROUTES_URL.PROJECT,
+    label: 'project',
+    path: ROUTES_URL.PROJECT,
     icon: <ApiOutlined />,
   },
 ];
@@ -50,4 +61,5 @@ export {
   QUERY_KEYS,
   MENU,
   REFRESH_TOKEN_STORAGE_KEY,
+  ROUTES_URL,
 };

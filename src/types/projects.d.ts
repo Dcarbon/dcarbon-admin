@@ -1,5 +1,5 @@
 interface IProject {
-  _id: string;
+  id: string;
   name: string;
   location: string;
   startDate: string;
