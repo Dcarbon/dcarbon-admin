@@ -67,20 +67,33 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           algorithm: theme.compactAlgorithm,
           token: {
             colorPrimary: '#7bda08',
+            fontFamily: 'Lexend',
+            fontFamilyCode: 'Lexend',
             colorBgMask: 'rgba(0, 0, 0, 0.07)',
             boxShadow: '3px 3px 5px 1px rgba(0, 0, 0, 0.03)',
             colorPrimaryBgHover: '#5daf01',
-            colorBgTextHover: '#B8FD59',
+            colorBgTextHover: '#F6F6F6',
             fontSize: 20,
             borderRadius: 4,
             colorBorder: '#F6F6F6',
             lineHeight: 1.5,
+            fontSizeLG: 14,
           },
           components: {
             Layout: {
               siderBg: '#fff',
               headerBg: '#fff',
               triggerBg: '#5daf01',
+            },
+            Form: {
+              labelFontSize: 14,
+              colorTextPlaceholder: '#888888',
+              labelColor: '#21272A',
+            },
+            Menu: {
+              colorPrimary: '#1B1B1B',
+              itemSelectedBg: '#F6F6F6',
+              colorText: '#888888',
             },
           },
         }}

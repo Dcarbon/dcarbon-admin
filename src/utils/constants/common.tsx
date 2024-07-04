@@ -1,5 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-import { ApartmentOutlined, ApiOutlined } from '@ant-design/icons';
+import {
+  AppstoreOutlined,
+  ProjectOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 
 type MenuType = {
   key: string;
@@ -28,19 +32,19 @@ const MENU: MenuType = [
     key: ROUTES_URL.HOME,
     label: 'Dashboard',
     path: ROUTES_URL.HOME,
-    icon: <ApartmentOutlined />,
+    icon: <AppstoreOutlined />,
   },
   {
     key: ROUTES_URL.PO,
     label: 'PO',
     path: ROUTES_URL.PO,
-    icon: <ApiOutlined />,
+    icon: <UserOutlined />,
   },
   {
     key: ROUTES_URL.PROJECT,
     label: 'project',
     path: ROUTES_URL.PROJECT,
-    icon: <ApiOutlined />,
+    icon: <ProjectOutlined />,
   },
 ];
 const REQ_METHODS = {

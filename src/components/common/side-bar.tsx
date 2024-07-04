@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 import { MENU, ROUTES_URL } from '@/utils/constants';
+import { LogoutOutlined } from '@ant-design/icons';
 import { Link, useLocation } from '@tanstack/react-router';
 import { Menu } from 'antd';
 
 const NavBar = () => {
   const location = useLocation();
+  const { logout } = useAuth();
   const [selectedKey, setSelectedKey] = useState<string>(
     MENU.find((route) => location.pathname.startsWith(route.path))?.key ||
       ROUTES_URL.HOME,
@@ -42,6 +45,9 @@ const NavBar = () => {
           </Menu.SubMenu>
         ),
       )}
+      <Menu.Item onClick={logout} key="logout" icon={<LogoutOutlined />}>
+        Logout
+      </Menu.Item>
     </Menu>
   );
 };
