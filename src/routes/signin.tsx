@@ -83,7 +83,7 @@ const LoginPage = () => {
 
             <Flex justify="center">
               <Button
-                className="w-full"
+                className="w-full btn-login"
                 type="primary"
                 htmlType="submit"
                 loading={isLoading}
