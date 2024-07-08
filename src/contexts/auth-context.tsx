@@ -5,7 +5,7 @@ import {
   REFRESH_TOKEN_STORAGE_KEY,
 } from '@/utils/constants';
 import { useMutation } from '@tanstack/react-query';
-import { message, Modal } from 'antd';
+import { message, Modal, notification } from 'antd';
 
 export interface AuthContext {
   isAuthenticated: boolean;
@@ -54,6 +54,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setStoredRefreshToken(data.refresh_token);
       message.success('Login success');
     },
+    onError: (error: any) => {
+      notification.error({
+        message: 'Login failed',
+        description: error.message || 'Something went wrong',
+      });
+    },
   });
   const logout = React.useCallback(async () => {
     if (isAuthenticated) {
@@ -61,6 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         centered: true,
         maskClosable: true,
         destroyOnClose: true,
+        okButtonProps: {
+          danger: true,
+          type: 'default',
+        },
         title: 'Do you want to logout?',
         onOk: () => {
           Modal.destroyAll();

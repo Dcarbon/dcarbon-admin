@@ -10,6 +10,9 @@ export const Route = createFileRoute('/_auth')({
       });
     }
   },
+  onCatch(error, errorInfo) {
+    console.error(error, errorInfo);
+  },
   component: () => (
     <AdminLayout>
       <Outlet />

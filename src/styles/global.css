@@ -49,6 +49,8 @@ button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
+  min-height: 40px !important;
+  color: #000 !important;
   transition: border-color 0.25s;
 }
 
@@ -281,4 +283,20 @@ button {
 
 .copy-successs {
   color: #5daf01;
+}
+
+/* stylelint-disable-next-line media-feature-range-notation */
+@media screen and (max-width: 1024px) {
+  .navbar-box {
+    width: 100%;
+    margin: 0 15px;
+  }
+
+  .login-container .login-side-right {
+    width: 100%;
+  }
+
+  .login-container .login-modal {
+    margin-left: 0;
+  }
 }
