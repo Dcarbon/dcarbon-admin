@@ -42,7 +42,7 @@ const MENU: MenuType = [
   },
   {
     key: ROUTES_URL.PROJECT,
-    label: 'project',
+    label: 'Project',
     path: ROUTES_URL.PROJECT,
     icon: <ProjectOutlined />,
   },

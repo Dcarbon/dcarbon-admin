@@ -22,7 +22,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <span className="helper-img">
                   <img src={helper} alt="helper" width={15} height={15} />
                 </span>
-                <p className="helper-title">need help?</p>
+                <p className="helper-title">Need help?</p>
                 <p className="helper-description">Please check our docs</p>
               </Flex>
               <Flex justify="center">

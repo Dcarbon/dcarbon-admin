@@ -66,7 +66,7 @@ const ProjectPage = () => {
       <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
         <Input.Search
-          placeholder="input search text"
+          placeholder="Input search text"
           allowClear
           className="project-search-bar"
         />

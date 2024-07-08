@@ -113,7 +113,7 @@ function NotConnectButton() {
         title={
           <Space size={'small'} align="center">
             <img
-              src="/public/image/wallet.svg"
+              src="/image/wallet.svg"
               width={40}
               height={40}
               alt="wallet"
