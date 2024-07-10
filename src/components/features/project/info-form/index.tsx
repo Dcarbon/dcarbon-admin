@@ -14,6 +14,7 @@ import {
   Select,
 } from 'antd';
 import { getData } from 'country-list';
+import ReactCountryFlag from 'react-country-flag';
 
 type InfoFormProps = {
   onFinish: (values: any) => void;
@@ -92,10 +93,7 @@ const ProjectInfoForm = memo(
                 >
                   <Select
                     placeholder="Choose project country"
-                    options={getData()?.map((value) => ({
-                      label: value.name,
-                      value: value.code,
-                    }))}
+                    className="project-modal-select"
                     showSearch
                     filterOption={(input, option) =>
                       (option?.label ?? '')
@@ -104,7 +102,20 @@ const ProjectInfoForm = memo(
                         .includes(input.toLowerCase())
                     }
                     allowClear
-                  />
+                  >
+                    {getData()?.map((value) => (
+                      <Select.Option
+                        key={value.code}
+                        value={value.code}
+                        label={value.name}
+                      >
+                        <Flex gap={10} align="center">
+                          <ReactCountryFlag countryCode={value.code} svg />
+                          {value.name}
+                        </Flex>
+                      </Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Flex>
             </Col>

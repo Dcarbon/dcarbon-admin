@@ -25,6 +25,7 @@ import {
   Upload,
 } from 'antd';
 import { getData } from 'country-list';
+import ReactCountryFlag from 'react-country-flag';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
@@ -159,10 +160,7 @@ const CreateProject = () => {
               >
                 <Select
                   placeholder="Choose project country"
-                  options={getData()?.map((value) => ({
-                    label: value.name,
-                    value: value.code,
-                  }))}
+                  className="project-modal-select"
                   showSearch
                   filterOption={(input, option) =>
                     (option?.label ?? '')
@@ -171,7 +169,20 @@ const CreateProject = () => {
                       .includes(input.toLowerCase())
                   }
                   allowClear
-                />
+                >
+                  {getData()?.map((value) => (
+                    <Select.Option
+                      key={value.code}
+                      value={value.code}
+                      label={value.name}
+                    >
+                      <Flex gap={10} align="center">
+                        <ReactCountryFlag countryCode={value.code} svg />
+                        {value.name}
+                      </Flex>
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Flex>
             <Form.Item

@@ -318,6 +318,10 @@ button {
   width: 250px;
 }
 
+.project-modal-select {
+  min-width: 250px;
+}
+
 .ql-container {
   max-height: 400px !important;
   min-height: 150px;
