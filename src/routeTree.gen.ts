@@ -15,13 +15,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as SigninImport } from './routes/signin'
 import { Route as AuthImport } from './routes/_auth'
+import { Route as AuthProjectIndexImport } from './routes/_auth/project/index'
 import { Route as AuthPoIndexImport } from './routes/_auth/po/index'
+import { Route as AuthProjectSlugImport } from './routes/_auth/project/$slug'
 import { Route as AuthPoCreateImport } from './routes/_auth/po/create'
 
 // Create Virtual Routes
 
 const AuthIndexLazyImport = createFileRoute('/_auth/')()
-const AuthProjectIndexLazyImport = createFileRoute('/_auth/project/')()
 const AuthProjectCreateLazyImport = createFileRoute('/_auth/project/create')()
 
 // Create/Update Routes
@@ -41,12 +42,10 @@ const AuthIndexLazyRoute = AuthIndexLazyImport.update({
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import('./routes/_auth/index.lazy').then((d) => d.Route))
 
-const AuthProjectIndexLazyRoute = AuthProjectIndexLazyImport.update({
+const AuthProjectIndexRoute = AuthProjectIndexImport.update({
   path: '/project/',
   getParentRoute: () => AuthRoute,
-} as any).lazy(() =>
-  import('./routes/_auth/project/index.lazy').then((d) => d.Route),
-)
+} as any)
 
 const AuthPoIndexRoute = AuthPoIndexImport.update({
   path: '/po/',
@@ -59,6 +58,11 @@ const AuthProjectCreateLazyRoute = AuthProjectCreateLazyImport.update({
 } as any).lazy(() =>
   import('./routes/_auth/project/create.lazy').then((d) => d.Route),
 )
+
+const AuthProjectSlugRoute = AuthProjectSlugImport.update({
+  path: '/project/$slug',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 const AuthPoCreateRoute = AuthPoCreateImport.update({
   path: '/po/create',
@@ -97,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPoCreateImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/project/$slug': {
+      id: '/_auth/project/$slug'
+      path: '/project/$slug'
+      fullPath: '/project/$slug'
+      preLoaderRoute: typeof AuthProjectSlugImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/project/create': {
       id: '/_auth/project/create'
       path: '/project/create'
@@ -115,7 +126,7 @@ declare module '@tanstack/react-router' {
       id: '/_auth/project/'
       path: '/project'
       fullPath: '/project'
-      preLoaderRoute: typeof AuthProjectIndexLazyImport
+      preLoaderRoute: typeof AuthProjectIndexImport
       parentRoute: typeof AuthImport
     }
   }
@@ -127,9 +138,10 @@ export const routeTree = rootRoute.addChildren({
   AuthRoute: AuthRoute.addChildren({
     AuthIndexLazyRoute,
     AuthPoCreateRoute,
+    AuthProjectSlugRoute,
     AuthProjectCreateLazyRoute,
     AuthPoIndexRoute,
-    AuthProjectIndexLazyRoute,
+    AuthProjectIndexRoute,
   }),
   SigninRoute,
 })
@@ -151,6 +163,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/_auth/",
         "/_auth/po/create",
+        "/_auth/project/$slug",
         "/_auth/project/create",
         "/_auth/po/",
         "/_auth/project/"
@@ -167,6 +180,10 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_auth/po/create.tsx",
       "parent": "/_auth"
     },
+    "/_auth/project/$slug": {
+      "filePath": "_auth/project/$slug.tsx",
+      "parent": "/_auth"
+    },
     "/_auth/project/create": {
       "filePath": "_auth/project/create.lazy.tsx",
       "parent": "/_auth"
@@ -176,7 +193,7 @@ export const routeTree = rootRoute.addChildren({
       "parent": "/_auth"
     },
     "/_auth/project/": {
-      "filePath": "_auth/project/index.lazy.tsx",
+      "filePath": "_auth/project/index.tsx",
       "parent": "/_auth"
     }
   }

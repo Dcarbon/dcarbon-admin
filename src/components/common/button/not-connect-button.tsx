@@ -102,8 +102,8 @@ function NotConnectButton() {
 
   return (
     <>
-      <Button type="primary" onClick={onOpen}>
-        Connect to wallet
+      <Button className="btn-connect-wallet" type="primary" onClick={onOpen}>
+        Connect wallet
       </Button>
       <Modal
         open={open}

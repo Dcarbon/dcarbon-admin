@@ -21,6 +21,7 @@ const router = createRouter({
   routeTree,
   context: {
     auth: undefined!,
+    queryClient: undefined!,
   },
   defaultNotFoundComponent: NotFoundPage,
 });
@@ -44,7 +45,7 @@ export const RouterClient = () => {
   const auth = useAuth();
   return (
     <Suspense fallback={<Spin fullscreen spinning size="large" />}>
-      <RouterProvider router={router} context={auth} />
+      <RouterProvider router={router} context={{ auth, queryClient }} />
     </Suspense>
   );
 };

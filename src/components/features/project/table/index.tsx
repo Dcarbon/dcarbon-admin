@@ -1,14 +1,16 @@
 import { Table } from 'antd';
-import columns from '@components/features/project/table/column';
+import projectColumns from '@components/features/project/table/column';
 
-const ProjectTableList = ({ data }: { data: IProject[] }) => {
+const ProjectTableList = ({ data }: { data: IProjectPage }) => {
+  const columns = projectColumns();
   return (
     <Table
       columns={columns}
       pagination={{
         defaultPageSize: 10,
       }}
-      dataSource={data}
+      rowKey={'id'}
+      dataSource={data.data as ProjectList[]}
     />
   );
 };

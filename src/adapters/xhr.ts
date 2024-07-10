@@ -64,7 +64,7 @@ const request = async <T>(
     case 'POST':
     case 'PATCH':
     case 'PUT':
-      commonOptions.data = JSON.stringify(data);
+      commonOptions.data = data;
       break;
   }
 

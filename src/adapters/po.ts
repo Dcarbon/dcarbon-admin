@@ -25,7 +25,7 @@ const updatePo = async (data: Partial<IPo>) => {
     );
     return response.data.data;
   } catch (error) {
-    console.error('doLogin error', error);
+    console.error('error', error);
     throw error;
   }
 };
@@ -55,4 +55,5 @@ const getPo = async ({
     throw error;
   }
 };
+
 export { createPo, updatePo, getPo };
