@@ -251,7 +251,7 @@ const CreateProject = () => {
             <InfiniteScrollSelect />
 
             <Form.Item
-              label="model"
+              label="Model"
               name="iot_models"
               rules={[
                 {

@@ -122,7 +122,7 @@ const ProjectInfoForm = memo(
             <Col span={11}>
               <InfiniteScrollSelect />
               <Form.Item
-                label="model"
+                label="Model"
                 name="iot_models"
                 rules={[
                   {

@@ -93,6 +93,9 @@ const DeviceTable = memo(
             defaultSelectedRowKeys: selectedDevice.map(
               (device) => device.iot_device_id,
             ),
+            getCheckboxProps: (record: DeviceDataType) => ({
+              disabled: record.status !== 'active',
+            }),
             onChange: (_selectedRowKeys, selectedRows) => {
               const data = selectedRows.map((device) => ({
                 iot_device_id: device.iot_device_id,
