@@ -6,6 +6,8 @@ import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Col, Descriptions, Flex, Image, message, Space } from 'antd';
+import { getCode } from 'country-list';
+import ReactCountryFlag from 'react-country-flag';
 
 import ProjectInfoForm from '../info-form';
 
@@ -104,7 +106,13 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.manager.user_name}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
-              {data.country}
+              <Flex gap={10} align="center">
+                <ReactCountryFlag
+                  countryCode={getCode(data.country)?.toString() || 'VN'}
+                  svg
+                />
+                {data.country}
+              </Flex>
             </Descriptions.Item>
             <Descriptions.Item label="Location">
               {data.location}
