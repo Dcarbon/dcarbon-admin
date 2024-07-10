@@ -2,7 +2,6 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { request } from '@/adapters/xhr';
 import { REQ_METHODS } from '@/utils/constants';
 import Quill from 'quill';
-import BlotFormatter from 'quill-blot-formatter';
 import ImageUploader from 'quill-image-uploader';
 import ReactQuill from 'react-quill';
 
@@ -20,7 +19,6 @@ interface QuillEditorProps {
   style?: React.CSSProperties;
   onChange?: (value: string) => void;
 }
-Quill.register('modules/blotFormatter', BlotFormatter);
 Quill.register('modules/imageUploader', ImageUploader);
 interface IUpload {
   url: string;
@@ -108,7 +106,6 @@ QuillEditor.modules = {
   clipboard: {
     matchVisual: false,
   },
-  blotFormatter: {},
 };
 
 QuillEditor.formats = [
