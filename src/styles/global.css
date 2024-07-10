@@ -102,8 +102,16 @@ button {
   padding-top: 20px;
 }
 
+.btn-connect-wallet {
+  padding: auto 32px !important;
+}
+
 .w-full {
   width: 100%;
+}
+
+.device-modal {
+  padding-bottom: 15px;
 }
 
 .breadcrumbs-container {
@@ -191,7 +199,7 @@ button {
 
 .navigate-back {
   cursor: pointer;
-  margin: 0;
+  margin: 0 !important;
 }
 
 .login-modal .ant-input-outlined {
@@ -273,6 +281,11 @@ button {
   width: 250px;
 }
 
+.project-create-layout {
+  height: 100%;
+  scrollbar-width: thin;
+}
+
 .not-found-layout {
   height: 100vh;
 }
@@ -299,4 +312,61 @@ button {
   .login-container .login-modal {
     margin-left: 0;
   }
+}
+
+.device-modal-select {
+  width: 250px;
+}
+
+.ql-container {
+  max-height: 400px !important;
+  min-height: 150px;
+  width: 100%;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+
+.project-overview-content {
+  height: 73vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 10px;
+}
+
+.project-description {
+  padding: 10px;
+  width: 100%;
+}
+
+.project-description img {
+  width: 100%;
+}
+
+.project-image-view {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  padding: 10px;
+  max-width: 250px !important;
+  width: 100%;
+  height: 100%;
+}
+
+.project-overview-content .ant-image-mask {
+  max-width: 250px !important;
+}
+
+.ant-tabs .ant-tabs-content-holder {
+  max-height: 73vh;
+  overflow: hidden;
+}
+
+.project-dashboard-card {
+  width: 250px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.project-dashboard {
+  padding: 10px;
 }

@@ -1,0 +1,154 @@
+import React, { memo } from 'react';
+import { getModelProject } from '@/adapters/project';
+import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
+import { QUERY_KEYS } from '@/utils/constants';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Button,
+  Col,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Select,
+} from 'antd';
+import { getData } from 'country-list';
+
+type InfoFormProps = {
+  onFinish: (values: any) => void;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  data: IProject;
+};
+const ProjectInfoForm = memo(
+  ({ onFinish, open, setOpen, data }: InfoFormProps) => {
+    const [form] = Form.useForm();
+    const { data: model } = useQuery({
+      queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
+      queryFn: getModelProject,
+    });
+    return (
+      <Modal
+        open={open}
+        onCancel={() => setOpen(false)}
+        destroyOnClose
+        footer={null}
+        width={'50%'}
+        centered
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            ...data,
+            iot_models: data.iot_models[0].id,
+            spec: JSON.stringify(data.spec),
+            po_id: data.manager.id,
+          }}
+          onFinish={(values) => {
+            values.spec = JSON.parse(values.spec);
+            values.iot_models = [values.iot_models];
+            onFinish(values);
+          }}
+        >
+          <Flex gap={20}>
+            <Col span={11}>
+              <Form.Item
+                label="Project name"
+                name="project_name"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Project name" max={500} />
+              </Form.Item>
+
+              <Form.Item
+                name="destination_wallet"
+                label="Destination wallet"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Wallet" />
+              </Form.Item>
+              <Flex flex="auto" gap={10}>
+                <Form.Item label="Location" name="location">
+                  <Input placeholder="Project location" />
+                </Form.Item>
+                <Form.Item
+                  label="Country"
+                  name="country"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Choose project country"
+                    options={getData()?.map((value) => ({
+                      label: value.name,
+                      value: value.code,
+                    }))}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? '')
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    allowClear
+                  />
+                </Form.Item>
+              </Flex>
+            </Col>
+            <Col span={11}>
+              <InfiniteScrollSelect />
+              <Form.Item
+                label="model"
+                name="iot_models"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Select>
+                  {model &&
+                    model.length > 0 &&
+                    model.map((item: any) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.model_name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Power" name="power">
+                <InputNumber min={0} />
+              </Form.Item>
+              <Form.Item label="Spec" name="spec">
+                <Input.TextArea />
+              </Form.Item>
+            </Col>
+          </Flex>
+          <Flex justify="end" gap={10}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+            <Button danger htmlType="reset" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </Flex>
+        </Form>
+      </Modal>
+    );
+  },
+);
+
+export default ProjectInfoForm;

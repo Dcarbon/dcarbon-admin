@@ -1,47 +1,51 @@
 import { Link } from '@tanstack/react-router';
 import { Space, TableColumnsType } from 'antd';
 
-const columns: TableColumnsType<IProject> = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-  },
-  {
-    title: 'Name',
-    render: (data: IProject) => <Link to={data.id}>{data.name}</Link>,
-  },
-  {
-    title: 'Location',
-    dataIndex: 'location',
-  },
-  {
-    title: 'Start Date',
-    dataIndex: 'startDate',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    filters: [
-      {
-        text: 'Active',
-        value: true,
+const PoColumn = () => {
+  const columns: TableColumnsType<ProjectList> = [
+    {
+      title: 'Name',
+      dataIndex: 'project_name',
+    },
+    {
+      title: 'Location',
+      dataIndex: 'location',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      filters: [
+        {
+          text: 'Draft',
+          value: 'draft',
+        },
+        {
+          text: 'Deactive',
+          value: 'deactive',
+        },
+        {
+          text: 'Active',
+          value: 'active',
+        },
+      ],
+      render: (status: boolean) => <span>{status}</span>,
+      onFilter: (value, record) => record.status === value,
+    },
+    {
+      title: 'Action',
+      width: 150,
+      render: (data: ProjectList) => {
+        return (
+          <Space size="middle">
+            <Link to="/project/$slug" params={{ slug: data.slug }}>
+              View
+            </Link>
+          </Space>
+        );
       },
-      {
-        text: 'Inactive',
-        value: false,
-      },
-    ],
-    render: (status: boolean) => <span>{status ? 'Active' : 'Inactive'}</span>,
-    onFilter: (value, record) => record.status === value,
-  },
-  {
-    title: 'Action',
-    render: () => (
-      <Space size="middle">
-        <a>Edit</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
-export default columns;
+    },
+  ];
+  return columns;
+};
+
+export default PoColumn;
