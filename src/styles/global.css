@@ -284,6 +284,7 @@ button {
 .project-create-layout {
   height: 100%;
   scrollbar-width: thin;
+  overflow-y: auto;
 }
 
 .not-found-layout {
@@ -322,8 +323,13 @@ button {
   min-width: 250px;
 }
 
+.ql-tooltip {
+  left: 30% !important;
+  top: 35% !important;
+}
+
 .ql-container {
-  max-height: 400px !important;
+  max-height: 450px !important;
   min-height: 150px;
   width: 100%;
   overflow-y: scroll;
