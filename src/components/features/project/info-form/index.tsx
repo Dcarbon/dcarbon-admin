@@ -6,7 +6,7 @@ import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
-import { getData } from 'country-list';
+import { getData, getName } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 
 type InfoFormProps = {
@@ -16,6 +16,7 @@ type InfoFormProps = {
   data: IProject;
   loading?: boolean;
 };
+
 const ProjectInfoForm = memo(
   ({ onFinish, open, setOpen, data, loading }: InfoFormProps) => {
     const [form] = Form.useForm();
@@ -43,8 +44,25 @@ const ProjectInfoForm = memo(
             po_id: data.manager.id,
           }}
           onFinish={(values) => {
+            Object.keys(values).forEach((key) => {
+              if (data[key as keyof IProject] === values[key]) {
+                delete values[key];
+              }
+            });
             values.spec = JSON.parse(values.spec);
             values.iot_models = [values.iot_models];
+            if (values.po_id === data.manager.id) {
+              delete values.po_id;
+            }
+            if (values.iot_models[0] === data.iot_models[0].id) {
+              delete values.iot_models;
+            }
+            if (JSON.stringify(values.spec) === JSON.stringify(data.spec)) {
+              delete values.spec;
+            }
+            if (values.country && getName(values.country) === data.country) {
+              delete values.country;
+            }
             onFinish(values);
           }}
         >

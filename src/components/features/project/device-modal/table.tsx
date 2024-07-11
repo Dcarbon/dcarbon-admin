@@ -97,7 +97,11 @@ const DeviceTable = memo(
               setSelectDevice(data);
             },
             getCheckboxProps: (record: DeviceDataType) => ({
-              disabled: record.status !== 'active',
+              disabled:
+                record.status !== 'active' &&
+                !selectedDevice.some(
+                  (device) => device.iot_device_id === record.iot_device_id,
+                ),
               name: record.device_name,
             }),
           }}
