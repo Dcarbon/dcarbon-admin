@@ -9,6 +9,7 @@ const useBackAction = () => {
       title: 'Are you sure?',
       centered: true,
       content: 'You will lose all unsaved changes',
+      okButtonProps: { type: 'default', danger: true },
       onOk: () => {
         router.history.go(-1);
       },

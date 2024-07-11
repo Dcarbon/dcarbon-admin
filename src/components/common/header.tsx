@@ -1,7 +1,7 @@
 import ConnectButton from '@/components/common/button/connect-button';
 import { Flex, Layout, Typography } from 'antd';
 
-import logo from '/dcarbon-logo.svg';
+import logo from '/image/dcarbon-logo-black.svg';
 
 const Header = () => {
   const { Header } = Layout;
@@ -9,8 +9,8 @@ const Header = () => {
     <Layout>
       <Header className="header-container">
         <Flex justify="center" align="center" gap={10}>
-          <img src={logo} alt="logo" width={40} height={40} />
-          <Typography.Title className="header-title" level={3}>
+          <img src={logo} alt="logo" width={26} height={26} />
+          <Typography.Title className="header-title" level={5}>
             DCARBON
           </Typography.Title>
         </Flex>

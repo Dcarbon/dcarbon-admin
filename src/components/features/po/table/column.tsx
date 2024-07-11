@@ -1,8 +1,22 @@
 import CopyToClipBroad from '@/components/common/copy';
 import { truncateText } from '@/utils/helpers/common';
 import { useSearch } from '@tanstack/react-router';
-import { Flex, TableColumnsType } from 'antd';
+import { Flex, TableColumnsType, Tag } from 'antd';
 
+const renderTag = (data: string) => {
+  switch (data) {
+    case 'active':
+      return <Tag color="green">{data}</Tag>;
+    case 'un_active':
+      return <Tag color="orange">{data}</Tag>;
+    case 'banned':
+      return <Tag color="gray">{data}</Tag>;
+    case 'deleted':
+      return <Tag color="red">{data}</Tag>;
+    default:
+      return <Tag>{data}</Tag>;
+  }
+};
 const PoColumn = () => {
   const search = useSearch({ from: '/_auth/po/' });
 
@@ -46,6 +60,7 @@ const PoColumn = () => {
       width: 150,
       dataIndex: 'status',
       sorter: true,
+      render: (status) => <span>{renderTag(status)}</span>,
       defaultSortOrder:
         search.sort_field === 'status'
           ? search.sort_type === 'asc'

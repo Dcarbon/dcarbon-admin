@@ -1,5 +1,7 @@
 import { memo, useCallback, useRef, useState } from 'react';
 import { updateProject } from '@/adapters/project';
+import ButtonCancel from '@/components/common/button/button-cancel';
+import ButtonSubmit from '@/components/common/button/button-submit';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import DeviceTable from '@/components/features/project/device-modal/table';
 import { QUERY_KEYS } from '@/utils/constants';
@@ -76,6 +78,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
         open={openForm}
         setOpen={setOpenForm}
         onFinish={handleUpdateInfo}
+        loading={handleUpdate.isPending}
         data={data}
       />
       <DeviceTable
@@ -91,7 +94,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
             bordered
             layout="vertical"
             title={
-              <Flex justify="space-between">
+              <Flex justify="space-between" align="center">
                 Project infomation{' '}
                 <Button onClick={() => setOpenForm(true)}>
                   <EditOutlined />
@@ -155,7 +158,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Flex align="center" gap={20}>
               {' '}
               <h3>Devices</h3>{' '}
-              <Button type="primary" onClick={() => setOpenModal(true)}>
+              <Button onClick={() => setOpenModal(true)}>
                 <EditOutlined />
               </Button>
             </Flex>
@@ -201,10 +204,18 @@ const OverView = memo(({ data }: { data: IProject }) => {
               />
               <br />
               <Flex gap={10} justify="end">
-                <Button onClick={() => setOpenEditor(false)}>Cancel</Button>
-                <Button type="primary" onClick={handleUpdateDescription}>
+                <ButtonSubmit
+                  onClick={handleUpdateDescription}
+                  loading={handleUpdate.isPending}
+                >
                   Save
-                </Button>
+                </ButtonSubmit>
+                <ButtonCancel
+                  onClick={() => setOpenEditor(false)}
+                  disabled={handleUpdate.isPending}
+                >
+                  Cancel
+                </ButtonCancel>
               </Flex>
             </>
           )}

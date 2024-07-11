@@ -49,7 +49,6 @@ button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  min-height: 40px !important;
   color: #000 !important;
   transition: border-color 0.25s;
 }
@@ -98,12 +97,25 @@ button {
 
 .ant-menu {
   border-right: none !important;
-  border-top: 1px solid #f0f0f0;
   padding-top: 20px;
+  padding-right: 10px;
+  padding-left: 10px;
+  position: relative;
 }
 
-.btn-connect-wallet {
-  padding: auto 32px !important;
+.ant-menu::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 83%;
+  height: 1px;
+  background-color: #f0f0f0;
+}
+
+.btn-wallet {
+  padding: 0 32px !important;
+  min-height: 40px;
 }
 
 .w-full {
@@ -129,6 +141,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 30px;
 }
 
 .header-title {
@@ -139,10 +152,12 @@ button {
   width: 100%;
   border: 1px solid #e4e7ec;
   background-color: #fff;
+  min-height: 40px;
 }
 
 .btn-login {
   color: #1b1b1b;
+  min-height: 40px;
 }
 
 .login-container {
@@ -379,4 +394,43 @@ button {
 
 .project-dashboard {
   padding: 10px;
+}
+
+.ant-notification-notice-message,
+.ant-notification-notice-description {
+  margin-left: 50px !important;
+}
+
+.ant-notification-notice-icon-success {
+  content: url('/image/common/success.svg');
+}
+
+.ant-notification-notice-icon {
+  width: 50px;
+  top: 24px;
+  left: 15px;
+}
+
+.ant-notification-notice-icon-warning {
+  content: url('/image/common/warning.svg');
+}
+
+.ant-notification-notice-icon-error {
+  content: url('/image/common/error.svg');
+}
+
+.ant-upload {
+  font-size: 14px;
+  color: #888;
+}
+
+input::placeholder {
+  color: #888;
+  font-size: 14px;
+}
+
+label {
+  font-size: 14px;
+  color: #21272a;
+  font-weight: 400;
 }

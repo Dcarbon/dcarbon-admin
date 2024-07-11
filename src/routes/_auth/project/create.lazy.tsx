@@ -4,14 +4,17 @@ import {
   getModelProject,
   uploadProjectImage,
 } from '@/adapters/project';
+import ButtonCancel from '@/components/common/button/button-cancel';
+import ButtonSubmit from '@/components/common/button/button-submit';
 import NavigationBack from '@/components/common/navigation-back';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import DeviceTable from '@/components/features/project/device-modal/table';
 import { QUERY_KEYS } from '@/utils/constants';
+import useBackAction from '@/utils/helpers/back-action';
 import { PlusOutlined } from '@ant-design/icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   Button,
   Col,
@@ -22,6 +25,7 @@ import {
   message,
   Select,
   Space,
+  Typography,
   Upload,
 } from 'antd';
 import { getData } from 'country-list';
@@ -37,6 +41,8 @@ const CreateProject = () => {
   const [selectedDevice, setSelectDevice] = useState<DeviceType[]>([]);
   const [thumbnail, setThumbnail] = useState([]);
   const [images, setImages] = useState([]);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleThumbnailChange = useCallback(
     ({ fileList }: { fileList: any }) => {
@@ -45,6 +51,7 @@ const CreateProject = () => {
     },
     [form],
   );
+  const goBack = useBackAction();
 
   const handleImagesChange = useCallback(
     ({ fileList }: any) => {
@@ -60,6 +67,12 @@ const CreateProject = () => {
     onSuccess: () => {
       message.success('Create project success');
       form.resetFields();
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_PROJECT],
+      });
+      navigate({
+        to: '/project',
+      });
     },
     onError: (error: any) => {
       message.error(error.message);
@@ -237,6 +250,8 @@ const CreateProject = () => {
               <Upload
                 listType="picture-card"
                 accept="image/*"
+                multiple
+                maxCount={5}
                 fileList={images}
                 onChange={handleImagesChange}
                 beforeUpload={beforeUpload}
@@ -259,7 +274,7 @@ const CreateProject = () => {
                 },
               ]}
             >
-              <Select>
+              <Select placeholder="Select model">
                 {model &&
                   model.length > 0 &&
                   model.map((item: any) => (
@@ -273,23 +288,29 @@ const CreateProject = () => {
               <InputNumber min={0} />
             </Form.Item>
             <Form.Item label="Spec" name="spec">
-              <Input.TextArea />
+              <Input.TextArea placeholder="Ex: {'key':'value'}" />
             </Form.Item>
-            <Flex gap={10}>
+            <Flex gap={10} align="center">
               <Space>Device</Space>
               <Button type="primary" onClick={() => setOpenModal(true)}>
                 Add
               </Button>
+              <Typography.Text type="secondary">{`(selected: ${selectedDevice.length})`}</Typography.Text>
             </Flex>
           </Col>
         </Flex>
         <Flex justify="end" gap={10}>
-          <Button type="primary" htmlType="submit">
+          <ButtonSubmit
+            loading={handleSave.isPending || handleCreateProject.isPending}
+          >
             Submit
-          </Button>
-          <Button danger htmlType="reset">
+          </ButtonSubmit>
+          <ButtonCancel
+            disabled={handleSave.isPending || handleCreateProject.isPending}
+            onClick={goBack}
+          >
             Cancel
-          </Button>
+          </ButtonCancel>
         </Flex>
       </Form>
     </div>

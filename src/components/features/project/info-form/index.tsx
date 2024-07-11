@@ -1,18 +1,11 @@
 import React, { memo } from 'react';
 import { getModelProject } from '@/adapters/project';
+import ButtonCancel from '@/components/common/button/button-cancel';
+import ButtonSubmit from '@/components/common/button/button-submit';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Button,
-  Col,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Select,
-} from 'antd';
+import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 
@@ -21,9 +14,10 @@ type InfoFormProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: IProject;
+  loading?: boolean;
 };
 const ProjectInfoForm = memo(
-  ({ onFinish, open, setOpen, data }: InfoFormProps) => {
+  ({ onFinish, open, setOpen, data, loading }: InfoFormProps) => {
     const [form] = Form.useForm();
     const { data: model } = useQuery({
       queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
@@ -36,6 +30,7 @@ const ProjectInfoForm = memo(
         destroyOnClose
         footer={null}
         width={'50%'}
+        maskClosable={!loading}
         centered
       >
         <Form
@@ -149,12 +144,10 @@ const ProjectInfoForm = memo(
             </Col>
           </Flex>
           <Flex justify="end" gap={10}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-            <Button danger htmlType="reset" onClick={() => setOpen(false)}>
+            <ButtonSubmit loading={loading}>Submit</ButtonSubmit>
+            <ButtonCancel disabled={loading} onClick={() => setOpen(false)}>
               Cancel
-            </Button>
+            </ButtonCancel>
           </Flex>
         </Form>
       </Modal>
