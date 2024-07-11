@@ -8,7 +8,7 @@ type DeviceDataType = {
   iot_device_id: string;
   device_name: string;
   device_type: string;
-  status: TDeviceStatus;
+  status: 'active' | 'de_active' | 'used';
 };
 
 interface IDeviceRequest {

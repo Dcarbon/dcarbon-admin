@@ -1,12 +1,14 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { request } from '@/adapters/xhr';
-import { REQ_METHODS } from '@/utils/constants';
+import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import Quill from 'quill';
 import ImageUploader from 'quill-image-uploader';
 import ReactQuill from 'react-quill';
 
 import 'react-quill/dist/quill.snow.css';
 import 'quill-image-uploader/dist/quill.imageUploader.min.css';
+
+import { message, notification } from 'antd';
 
 declare global {
   interface Window {
@@ -21,7 +23,14 @@ interface QuillEditorProps {
 }
 Quill.register('modules/imageUploader', ImageUploader);
 interface IUpload {
-  url: string;
+  id: string;
+  result: {
+    field: string;
+    result: {
+      path: string;
+      relative_path: string;
+    }[];
+  }[];
 }
 const QuillEditor = ({ value, onChange, style }: QuillEditorProps) => {
   const [editorHtml, setEditorHtml] = useState('');
@@ -78,13 +87,20 @@ QuillEditor.modules = {
   ],
   imageUploader: {
     upload: async (file: File) => {
+      if (file.size / 1024 / 1024 > 1) {
+        notification.error({
+          message: 'Upload failed',
+          description: 'File size must be less than 1MB',
+        });
+        return;
+      }
+      message.loading('Uploading image...', 0);
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('category', 'projects');
-      formData.append('project_id', 'projectImages');
+      formData.append('category', 'project');
       const res = await request<GeneralResponse<IUpload>>(
         REQ_METHODS.PATCH,
-        import.meta.env.VITE_APP_API_ENDPOINT + '/file',
+        API_ROUTES.SINGER_UPLOAD,
         formData,
         {
           headers: {
@@ -92,10 +108,12 @@ QuillEditor.modules = {
           },
         },
       );
-      if (res.data.data.url) {
-        return res.data.data.url;
+      if (res.data.data.result[0].result[0]) {
+        message.destroy();
+        message.success('Upload success');
+        return res.data.data.result[0].result[0].path;
       }
-      return new Error('Upload failed');
+      throw new Error('Upload failed');
     },
   },
   history: {

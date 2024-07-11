@@ -1,23 +1,16 @@
 import { TableColumnsType, Tag } from 'antd';
 
-const renderStatus = (status: TDeviceStatus) => {
-  let color = 'green';
-  let text = 'Active';
-  switch (status) {
+const renderTag = (data: string) => {
+  switch (data) {
+    case 'active':
+      return <Tag color="green">{data}</Tag>;
     case 'de_active':
-      color = 'red';
-      text = 'De Active';
-      break;
+      return <Tag color="red">{data}</Tag>;
     case 'used':
-      color = 'blue';
-      text = 'Used';
-      break;
+      return <Tag color="blue">{data}</Tag>;
+    default:
+      return <Tag>{data}</Tag>;
   }
-  return (
-    <Tag style={{ minWidth: '100px', textAlign: 'center' }} color={color}>
-      {text}
-    </Tag>
-  );
 };
 
 const columns: TableColumnsType<DeviceDataType> = [
@@ -40,7 +33,7 @@ const columns: TableColumnsType<DeviceDataType> = [
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (status: TDeviceStatus) => renderStatus(status),
+    render: (status) => <span>{renderTag(status)}</span>,
   },
 ];
 export default columns;

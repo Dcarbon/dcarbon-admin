@@ -1,9 +1,12 @@
 import { createPo } from '@/adapters/po';
+import ButtonCancel from '@/components/common/button/button-cancel';
+import ButtonSubmit from '@/components/common/button/button-submit';
 import NavigationBack from '@/components/common/navigation-back';
+import { QUERY_KEYS } from '@/utils/constants';
 import useBackAction from '@/utils/helpers/back-action';
-import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { Button, Col, Flex, Form, Input, message, notification } from 'antd';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Col, Flex, Form, Input, message, notification } from 'antd';
 
 export const Route = createFileRoute('/_auth/po/create')({
   component: () => <PoCreate />,
@@ -11,13 +14,19 @@ export const Route = createFileRoute('/_auth/po/create')({
 const PoCreate = () => {
   const [form] = Form.useForm();
   const goBack = useBackAction();
-  const router = useRouter();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const handleCreatePo = useMutation({
     mutationFn: createPo,
     onSuccess: () => {
       message.success('Create po successfully');
       form.resetFields();
-      router.history.push('/po');
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_PO],
+      });
+      navigate({
+        to: '/project',
+      });
     },
     onError: (error: any) => {
       notification.error({
@@ -82,21 +91,10 @@ const PoCreate = () => {
           <Input.TextArea placeholder="Enter PO info" maxLength={5000} />
         </Form.Item>
         <Flex gap={10} justify="end">
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={handleCreatePo.isPending}
-          >
-            Submit
-          </Button>
-          <Button
-            danger
-            htmlType="reset"
-            disabled={handleCreatePo.isPending}
-            onClick={goBack}
-          >
+          <ButtonSubmit loading={handleCreatePo.isPending}>Submit</ButtonSubmit>
+          <ButtonCancel disabled={handleCreatePo.isPending} onClick={goBack}>
             Cancel
-          </Button>
+          </ButtonCancel>
         </Flex>
       </Form>
     </Col>

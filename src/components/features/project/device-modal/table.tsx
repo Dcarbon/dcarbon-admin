@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { getIoTDevice } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
-import { Flex, Input, Modal, Select, Table } from 'antd';
+import { Flex, Input, Modal, Select, Space, Table, Typography } from 'antd';
 
 import columns from './column';
 
@@ -39,7 +39,12 @@ const DeviceTable = memo(
     return (
       <Modal
         open={open}
-        title="Select Device"
+        title={
+          <Space size={10}>
+            Select Device{' '}
+            <Typography.Text type="secondary">{`(selected: ${selectedDevice.length})`}</Typography.Text>
+          </Space>
+        }
         centered
         destroyOnClose
         maskClosable
@@ -62,28 +67,19 @@ const DeviceTable = memo(
           <Select
             placeholder="Status"
             className="device-modal-select"
-            onChange={(value) =>
-              setSearch({
-                ...search,
-                status: value as string,
-              })
-            }
+            onChange={(status) => setSearch({ ...search, status })}
           >
-            <Option value="active">Active</Option>
-            <Option value="de_active">De Active</Option>
+            {data?.common.iot_device_status.map((status) => (
+              <Option value={status}>{status}</Option>
+            ))}
           </Select>
           <Select
             placeholder="Type"
             className="device-modal-select"
-            onChange={(value) =>
-              setSearch({
-                ...search,
-                type: value as string,
-              })
-            }
+            onChange={(type) => setSearch({ ...search, type })}
           >
-            {data?.data.map((device) => (
-              <Option value={device.device_type}>{device.device_type}</Option>
+            {data?.common.iot_device_types.map((type) => (
+              <Option value={type}>{type}</Option>
             ))}
           </Select>
         </Flex>
@@ -93,9 +89,6 @@ const DeviceTable = memo(
             defaultSelectedRowKeys: selectedDevice.map(
               (device) => device.iot_device_id,
             ),
-            getCheckboxProps: (record: DeviceDataType) => ({
-              disabled: record.status !== 'active',
-            }),
             onChange: (_selectedRowKeys, selectedRows) => {
               const data = selectedRows.map((device) => ({
                 iot_device_id: device.iot_device_id,
@@ -103,6 +96,10 @@ const DeviceTable = memo(
               }));
               setSelectDevice(data);
             },
+            getCheckboxProps: (record: DeviceDataType) => ({
+              disabled: record.status !== 'active',
+              name: record.device_name,
+            }),
           }}
           columns={columns}
           key={'iot_device_id'}

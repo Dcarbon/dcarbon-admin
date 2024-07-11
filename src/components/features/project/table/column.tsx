@@ -1,6 +1,18 @@
 import { Link } from '@tanstack/react-router';
-import { Space, TableColumnsType } from 'antd';
+import { Space, TableColumnsType, Tag } from 'antd';
 
+const renderTag = (data: string) => {
+  switch (data) {
+    case 'active':
+      return <Tag color="green">{data}</Tag>;
+    case 'deactive':
+      return <Tag color="red">{data}</Tag>;
+    case 'draft':
+      return <Tag color="gray">{data}</Tag>;
+    default:
+      return <Tag>{data}</Tag>;
+  }
+};
 const PoColumn = () => {
   const columns: TableColumnsType<ProjectList> = [
     {
@@ -28,7 +40,7 @@ const PoColumn = () => {
           value: 'active',
         },
       ],
-      render: (status: boolean) => <span>{status}</span>,
+      render: (status) => <span>{renderTag(status)}</span>,
       onFilter: (value, record) => record.status === value,
     },
     {

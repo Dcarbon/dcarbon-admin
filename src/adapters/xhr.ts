@@ -52,7 +52,7 @@ const request = async <T>(
   const commonOptions: AxiosRequestConfig = {
     ...options,
     signal: controller.signal,
-    headers: Object.assign(defaultHeaders, options?.headers),
+    headers: { ...defaultHeaders, ...options?.headers },
     method,
     withCredentials: true,
   };
