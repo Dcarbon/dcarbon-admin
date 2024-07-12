@@ -28,7 +28,7 @@ const Header = () => {
                 }}
                 icon={<UserOutlined />}
               />
-              <Flex vertical style={{ lineHeight: '20px' }}>
+              <Flex vertical style={{ lineHeight: '15px' }}>
                 <span style={{ fontWeight: '500', fontSize: '.8em' }}>
                   {user.profile_name}
                 </span>
