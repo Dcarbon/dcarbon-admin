@@ -1,7 +1,5 @@
 import { memo, useCallback, useRef, useState } from 'react';
 import { updateProject } from '@/adapters/project';
-import ButtonCancel from '@/components/common/button/button-cancel';
-import ButtonSubmit from '@/components/common/button/button-submit';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import DeviceTable from '@/components/features/project/device-modal/table';
 import { QUERY_KEYS } from '@/utils/constants';
@@ -10,6 +8,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Col, Descriptions, Flex, Image, message, Space } from 'antd';
 import { getCode } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import CancelButtonAction from '@components/common/button/button-cancel.tsx';
+import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 
 import ProjectInfoForm from '../info-form';
 
@@ -204,18 +204,18 @@ const OverView = memo(({ data }: { data: IProject }) => {
               />
               <br />
               <Flex gap={10} justify="end">
-                <ButtonSubmit
+                <SubmitButtonAction
                   onClick={handleUpdateDescription}
                   loading={handleUpdate.isPending}
                 >
                   Save
-                </ButtonSubmit>
-                <ButtonCancel
+                </SubmitButtonAction>
+                <CancelButtonAction
                   onClick={() => setOpenEditor(false)}
                   disabled={handleUpdate.isPending}
                 >
                   Cancel
-                </ButtonCancel>
+                </CancelButtonAction>
               </Flex>
             </>
           )}

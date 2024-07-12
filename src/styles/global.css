@@ -1,9 +1,14 @@
 :root {
+  --font-family: Lexend, sans-serif !important;
+
   font-family: Lexend, sans-serif !important;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --submit-button-bg: #7bda08;
+  --submit-button-bg-hover: #5daf01;
 }
 
 #root {
@@ -30,6 +35,7 @@ body {
   place-items: center;
   width: 100vw;
   height: 100vh;
+  font-family: var(--font-family), serif;
 }
 
 h1 {
@@ -433,4 +439,9 @@ label {
   font-size: 14px;
   color: #21272a;
   font-weight: 400;
+}
+
+.ant-btn,
+.ant-modal {
+  font-family: var(--font-family), serif;
 }

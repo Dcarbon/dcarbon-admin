@@ -6,7 +6,6 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
   Avatar,
-  Button,
   Collapse,
   CollapseProps,
   Divider,
@@ -15,6 +14,7 @@ import {
   Space,
   Tag,
 } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 function NotConnectButton() {
   const { wallets, select, connecting } = useWallet();
@@ -29,11 +29,7 @@ function NotConnectButton() {
   };
 
   if (connecting) {
-    return (
-      <Button type="primary" loading={true}>
-        Connecting
-      </Button>
-    );
+    return <SubmitButton loading={true}>Connecting</SubmitButton>;
   }
 
   const items: CollapseProps['items'] = [
@@ -102,9 +98,9 @@ function NotConnectButton() {
 
   return (
     <>
-      <Button className="btn-wallet" type="primary" onClick={onOpen}>
+      <SubmitButton className="btn-wallet" onClick={onOpen}>
         Connect wallet
-      </Button>
+      </SubmitButton>
       <Modal
         open={open}
         onCancel={onClose}

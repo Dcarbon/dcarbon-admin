@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { getModelProject } from '@/adapters/project';
-import ButtonCancel from '@/components/common/button/button-cancel';
-import ButtonSubmit from '@/components/common/button/button-submit';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import CancelButtonAction from '@components/common/button/button-cancel.tsx';
+import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 
 type InfoFormProps = {
   onFinish: (values: any) => void;
@@ -144,10 +144,13 @@ const ProjectInfoForm = memo(
             </Col>
           </Flex>
           <Flex justify="end" gap={10}>
-            <ButtonSubmit loading={loading}>Submit</ButtonSubmit>
-            <ButtonCancel disabled={loading} onClick={() => setOpen(false)}>
+            <SubmitButtonAction loading={loading}>Submit</SubmitButtonAction>
+            <CancelButtonAction
+              disabled={loading}
+              onClick={() => setOpen(false)}
+            >
               Cancel
-            </ButtonCancel>
+            </CancelButtonAction>
           </Flex>
         </Form>
       </Modal>

@@ -8,7 +8,8 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Button, Empty, Flex, Input } from 'antd';
+import { Empty, Flex, Input } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 type ProductSearchSortOptions = 'asc' | 'desc';
 
@@ -73,8 +74,7 @@ const PoPage = () => {
           defaultValue={search.keyword}
           onSearch={handleSearch}
         />
-        <Button
-          type="primary"
+        <SubmitButton
           onClick={() =>
             navigate({
               to: '/po/create',
@@ -82,7 +82,7 @@ const PoPage = () => {
           }
         >
           +Add PO
-        </Button>
+        </SubmitButton>
       </Flex>
       {data ? <PoTableList data={data} /> : <Empty />}
     </div>

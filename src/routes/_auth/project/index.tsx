@@ -8,7 +8,8 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Button, Empty, Flex, Input } from 'antd';
+import { Empty, Flex, Input } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 type ProductSearchSortOptions = 'asc' | 'desc';
 
@@ -72,8 +73,7 @@ const ProjectPage = () => {
           className="project-search-bar"
           onSearch={handleSearch}
         />
-        <Button
-          type="primary"
+        <SubmitButton
           onClick={() =>
             navigate({
               to: '/project/create',
@@ -81,7 +81,7 @@ const ProjectPage = () => {
           }
         >
           +Add Project
-        </Button>
+        </SubmitButton>
       </Flex>
       {data ? <ProjectTableList data={data} /> : <Empty />}
     </div>

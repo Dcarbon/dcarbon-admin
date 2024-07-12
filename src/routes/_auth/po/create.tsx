@@ -1,12 +1,12 @@
 import { createPo } from '@/adapters/po';
-import ButtonCancel from '@/components/common/button/button-cancel';
-import ButtonSubmit from '@/components/common/button/button-submit';
+import SubmitButtonAction from '@/components/common/button/button-submit';
 import NavigationBack from '@/components/common/navigation-back';
 import { QUERY_KEYS } from '@/utils/constants';
 import useBackAction from '@/utils/helpers/back-action';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Col, Flex, Form, Input, message, notification } from 'antd';
+import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 
 export const Route = createFileRoute('/_auth/po/create')({
   component: () => <PoCreate />,
@@ -91,10 +91,15 @@ const PoCreate = () => {
           <Input.TextArea placeholder="Enter PO info" maxLength={5000} />
         </Form.Item>
         <Flex gap={10} justify="end">
-          <ButtonSubmit loading={handleCreatePo.isPending}>Submit</ButtonSubmit>
-          <ButtonCancel disabled={handleCreatePo.isPending} onClick={goBack}>
+          <SubmitButtonAction loading={handleCreatePo.isPending}>
+            Submit
+          </SubmitButtonAction>
+          <CancelButtonAction
+            disabled={handleCreatePo.isPending}
+            onClick={goBack}
+          >
             Cancel
-          </ButtonCancel>
+          </CancelButtonAction>
         </Flex>
       </Form>
     </Col>

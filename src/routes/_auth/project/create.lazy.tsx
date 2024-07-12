@@ -4,8 +4,6 @@ import {
   getModelProject,
   uploadProjectImage,
 } from '@/adapters/project';
-import ButtonCancel from '@/components/common/button/button-cancel';
-import ButtonSubmit from '@/components/common/button/button-submit';
 import NavigationBack from '@/components/common/navigation-back';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
@@ -16,7 +14,6 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import {
-  Button,
   Col,
   Flex,
   Form,
@@ -30,6 +27,9 @@ import {
 } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import CancelButtonAction from '@components/common/button/button-cancel.tsx';
+import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
@@ -292,25 +292,25 @@ const CreateProject = () => {
             </Form.Item>
             <Flex gap={10} align="center">
               <Space>Device</Space>
-              <Button type="primary" onClick={() => setOpenModal(true)}>
+              <SubmitButton onClick={() => setOpenModal(true)}>
                 Add
-              </Button>
+              </SubmitButton>
               <Typography.Text type="secondary">{`(selected: ${selectedDevice.length})`}</Typography.Text>
             </Flex>
           </Col>
         </Flex>
         <Flex justify="end" gap={10}>
-          <ButtonSubmit
+          <SubmitButtonAction
             loading={handleSave.isPending || handleCreateProject.isPending}
           >
             Submit
-          </ButtonSubmit>
-          <ButtonCancel
+          </SubmitButtonAction>
+          <CancelButtonAction
             disabled={handleSave.isPending || handleCreateProject.isPending}
             onClick={goBack}
           >
             Cancel
-          </ButtonCancel>
+          </CancelButtonAction>
         </Flex>
       </Form>
     </div>

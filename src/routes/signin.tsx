@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { getInfoDevice } from '@/utils/helpers/common';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Button, Col, Flex, Form, Input, Typography } from 'antd';
+import { Col, Flex, Form, Input, Typography } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 import imageLogo from '/image/login/login-image.png';
 
@@ -95,14 +96,13 @@ const LoginPage = () => {
             </Form.Item>
 
             <Flex justify="center">
-              <Button
-                className="w-full btn-login"
-                type="primary"
-                htmlType="submit"
+              <SubmitButton
                 loading={isLoading}
+                htmlType="submit"
+                className="w-full"
               >
                 Sign In
-              </Button>
+              </SubmitButton>
             </Flex>
           </Form>
         </div>

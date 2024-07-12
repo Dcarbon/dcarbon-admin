@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 type ButtonSubmitProps = {
   children: React.ReactNode | string;
@@ -6,12 +6,16 @@ type ButtonSubmitProps = {
   loading?: boolean;
   [key: string]: any;
 };
-const ButtonSubmit = ({ children, onClick, ...props }: ButtonSubmitProps) => {
+const SubmitButtonAction = ({
+  children,
+  onClick,
+  ...props
+}: ButtonSubmitProps) => {
   return (
-    <Button type="primary" htmlType="submit" onClick={onClick} {...props}>
+    <SubmitButton htmlType="submit" onClick={onClick} {...props}>
       {children}
-    </Button>
+    </SubmitButton>
   );
 };
 
-export default ButtonSubmit;
+export default SubmitButtonAction;
