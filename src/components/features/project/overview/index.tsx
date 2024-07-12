@@ -64,6 +64,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
   }, [DescriptionRef.current.description]);
   const handleUpdateInfo = useCallback(
     (values: Partial<IProjectRequest>) => {
+      if (Object.keys(values).length === 0) return setOpenForm(false);
       handleUpdate.mutateAsync({ id: data.id, ...values }).then((res) => {
         if (res.data.status === 'SUCCESS') {
           setOpenForm(false);
@@ -109,13 +110,15 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.manager.user_name}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
-              <Flex gap={10} align="center">
-                <ReactCountryFlag
-                  countryCode={getCode(data.country)?.toString() || 'VN'}
-                  svg
-                />
-                {data.country}
-              </Flex>
+              {data.country ? (
+                <Flex gap={10} align="center">
+                  <ReactCountryFlag
+                    countryCode={getCode(data.country)?.toString() || 'VN'}
+                    svg
+                  />
+                  {data.country}
+                </Flex>
+              ) : null}
             </Descriptions.Item>
             <Descriptions.Item label="Location">
               {data.location}

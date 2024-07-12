@@ -23,7 +23,7 @@ function ConnectedButton() {
   return (
     <Dropdown menu={{ items }}>
       <Button
-        className="btn-wallet"
+        className="btn-wallet btn-wallet-connected"
         loading={disconnecting}
         icon={<Avatar src={wallet.adapter.icon} alt="icon" size={20} />}
       >

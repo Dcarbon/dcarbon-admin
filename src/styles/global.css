@@ -124,6 +124,10 @@ button {
   min-height: 40px;
 }
 
+.btn-wallet-connected {
+  background-color: #7bda08;
+}
+
 .w-full {
   width: 100%;
 }
