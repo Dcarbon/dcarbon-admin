@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react';
 import { getIoTDevice } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
+import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { Flex, Input, Modal, Select, Space, Table, Typography } from 'antd';
 
@@ -25,6 +26,11 @@ const DeviceTable = memo(
     const [search, setSearch] = useState<IDeviceRequest>({
       page: 1,
     } as IDeviceRequest);
+    const cancelModal = useModalAction({
+      danger: true,
+      fn: () => setOpen(false),
+    });
+
     const { data, isLoading } = useQuery({
       queryKey: [QUERY_KEYS.GET_IOT_MODELS, search],
       queryFn: () => getIoTDevice(search),
@@ -48,13 +54,14 @@ const DeviceTable = memo(
         centered
         destroyOnClose
         maskClosable
-        onCancel={() =>
-          Modal.confirm({
-            title: 'Are you sure you want to cancel?',
-            content: 'All changes will be lost!',
-            onOk: () => setOpen(false),
-            centered: true,
-          })
+        onCancel={
+          () => cancelModal()
+          // Modal.confirm({
+          //   title: 'Are you sure you want to cancel?',
+          //   content: 'All changes will be lost!',
+          //   onOk: () => setOpen(false),
+          //   centered: true,
+          // })
         }
         onOk={onOk ? onOk : () => setOpen(false)}
         onClose={() => setOpen(false)}

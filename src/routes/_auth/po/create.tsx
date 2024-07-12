@@ -2,7 +2,7 @@ import { createPo } from '@/adapters/po';
 import SubmitButtonAction from '@/components/common/button/button-submit';
 import NavigationBack from '@/components/common/navigation-back';
 import { QUERY_KEYS } from '@/utils/constants';
-import useBackAction from '@/utils/helpers/back-action';
+import useModalAction from '@/utils/helpers/back-action';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Col, Flex, Form, Input, message, notification } from 'antd';
@@ -13,7 +13,10 @@ export const Route = createFileRoute('/_auth/po/create')({
 });
 const PoCreate = () => {
   const [form] = Form.useForm();
-  const goBack = useBackAction();
+  const goBack = useModalAction({
+    type: 'back',
+    danger: true,
+  });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const handleCreatePo = useMutation({

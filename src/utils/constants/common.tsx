@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
   AppstoreOutlined,
+  ProfileOutlined,
   ProjectOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -30,6 +31,7 @@ const ROUTES_URL = {
   HOME: '/',
   PO: '/po',
   PROJECT: '/project',
+  CONTRACT: '/contract',
 };
 const MENU: MenuType = [
   {
@@ -49,6 +51,12 @@ const MENU: MenuType = [
     label: 'Project',
     path: ROUTES_URL.PROJECT,
     icon: <ProjectOutlined />,
+  },
+  {
+    key: ROUTES_URL.CONTRACT,
+    label: 'Contract',
+    path: ROUTES_URL.CONTRACT,
+    icon: <ProfileOutlined />,
   },
 ];
 const REQ_METHODS = {

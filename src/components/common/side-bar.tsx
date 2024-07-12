@@ -34,7 +34,12 @@ const NavBar = () => {
             <Link to={menu.path}>{menu.label}</Link>
           </Menu.Item>
         ) : (
-          <Menu.SubMenu key={menu.key} icon={menu.icon} title={menu.label}>
+          <Menu.SubMenu
+            style={{ padding: 0 }}
+            key={menu.key}
+            icon={menu.icon}
+            title={menu.label}
+          >
             {menu?.children?.map(
               (item: { label: string; path: string }, index: number) => (
                 <Menu.Item key={'submenu' + index}>

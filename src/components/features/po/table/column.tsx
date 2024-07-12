@@ -4,18 +4,33 @@ import { useSearch } from '@tanstack/react-router';
 import { Flex, TableColumnsType, Tag } from 'antd';
 
 const renderTag = (data: string) => {
+  let color = 'green';
   switch (data) {
     case 'active':
-      return <Tag color="green">{data}</Tag>;
+      color = 'green';
+      break;
     case 'un_active':
-      return <Tag color="orange">{data}</Tag>;
+      color = 'orange';
+      break;
     case 'banned':
-      return <Tag color="gray">{data}</Tag>;
+      color = 'gray';
+      break;
     case 'deleted':
-      return <Tag color="red">{data}</Tag>;
-    default:
-      return <Tag>{data}</Tag>;
+      color = 'red';
+      break;
   }
+  return (
+    <Tag
+      color={color}
+      style={{
+        textTransform: 'capitalize',
+        minWidth: '85px',
+        textAlign: 'center',
+      }}
+    >
+      {data.replace('_', ' ')}
+    </Tag>
+  );
 };
 const PoColumn = () => {
   const search = useSearch({ from: '/_auth/po/' });

@@ -4,14 +4,17 @@ import {
   ACCESS_TOKEN_STORAGE_KEY,
   REFRESH_TOKEN_STORAGE_KEY,
 } from '@/utils/constants';
+import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { message, Modal, notification } from 'antd';
+import jwt from 'jsonwebtoken';
+import { IAuth, IUser } from '@/types/auth';
 
 export interface AuthContext {
   isAuthenticated: boolean;
   login: (data: { username: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
-  user: string | null;
+  user?: IUser;
   isLoading: boolean;
 }
 
@@ -19,13 +22,9 @@ const AuthContext = React.createContext<AuthContext>({
   isAuthenticated: false,
   login: async () => {},
   logout: async () => {},
-  user: null,
+  user: undefined,
   isLoading: false,
 });
-
-function getStoredAccessToken() {
-  return localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-}
 
 function setStoredRefreshToken(token: string | null) {
   if (token) {
@@ -43,13 +42,36 @@ function setStoredAccessToken(token: string | null) {
   }
 }
 
+function userInfo() {
+  let user: IUser | undefined;
+  const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+  if (token) {
+    user = jwt.decode(token) as IUser;
+  }
+  return user;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<string | null>(getStoredAccessToken());
+  const [user, setUser] = React.useState<IUser | undefined>(userInfo());
   const isAuthenticated = !!user;
+  const logoutConfirm = useModalAction({
+    title: 'Do you want to logout?',
+    fn: () => {
+      Modal.destroyAll();
+      setUser(undefined);
+      setStoredAccessToken(null);
+      setStoredRefreshToken(null);
+    },
+    option: {
+      centered: true,
+      maskClosable: true,
+      destroyOnClose: true,
+    },
+  });
   const mutation = useMutation({
     mutationFn: doLogin,
     onSuccess: (data: IAuth) => {
-      setUser(data.user_info.username);
+      setUser(data.user_info);
       setStoredAccessToken(data.access_token);
       setStoredRefreshToken(data.refresh_token);
       message.success('Login success');
@@ -63,22 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
   const logout = React.useCallback(async () => {
     if (isAuthenticated) {
-      Modal.confirm({
-        centered: true,
-        maskClosable: true,
-        destroyOnClose: true,
-        okButtonProps: {
-          danger: true,
-          type: 'default',
-        },
-        title: 'Do you want to logout?',
-        onOk: () => {
-          Modal.destroyAll();
-          setUser(null);
-          setStoredAccessToken(null);
-          setStoredRefreshToken(null);
-        },
-      });
+      logoutConfirm();
     }
   }, [isAuthenticated]);
 
@@ -91,7 +98,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   React.useEffect(() => {
-    setUser(getStoredAccessToken());
+    const user = userInfo();
+    if (user) setUser(user);
   }, []);
 
   return (

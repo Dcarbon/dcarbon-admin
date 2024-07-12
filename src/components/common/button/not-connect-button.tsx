@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { RightOutlined } from '@ant-design/icons';
+import WalletIcon from '@/icons/wallet.icon.tsx';
+import Icon, { RightOutlined } from '@ant-design/icons';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet } from '@solana/wallet-adapter-react';
 import {
@@ -15,6 +16,10 @@ import {
   Tag,
 } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+
+const WalletIc = () => (
+  <Icon size={20} component={() => <WalletIcon size={25} />} />
+);
 
 function NotConnectButton() {
   const { wallets, select, connecting } = useWallet();
@@ -98,8 +103,8 @@ function NotConnectButton() {
 
   return (
     <>
-      <SubmitButton className="btn-wallet" onClick={onOpen}>
-        Connect wallet
+      <SubmitButton className="btn-wallet" icon={<WalletIc />} onClick={onOpen}>
+        Connect
       </SubmitButton>
       <Modal
         open={open}

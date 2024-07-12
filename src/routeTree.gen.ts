@@ -17,6 +17,7 @@ import { Route as SigninImport } from './routes/signin'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthProjectIndexImport } from './routes/_auth/project/index'
 import { Route as AuthPoIndexImport } from './routes/_auth/po/index'
+import { Route as AuthContractIndexImport } from './routes/_auth/contract/index'
 import { Route as AuthProjectSlugImport } from './routes/_auth/project/$slug'
 import { Route as AuthPoCreateImport } from './routes/_auth/po/create'
 
@@ -49,6 +50,11 @@ const AuthProjectIndexRoute = AuthProjectIndexImport.update({
 
 const AuthPoIndexRoute = AuthPoIndexImport.update({
   path: '/po/',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthContractIndexRoute = AuthContractIndexImport.update({
+  path: '/contract/',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -115,6 +121,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProjectCreateLazyImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/contract/': {
+      id: '/_auth/contract/'
+      path: '/contract'
+      fullPath: '/contract'
+      preLoaderRoute: typeof AuthContractIndexImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/po/': {
       id: '/_auth/po/'
       path: '/po'
@@ -140,6 +153,7 @@ export const routeTree = rootRoute.addChildren({
     AuthPoCreateRoute,
     AuthProjectSlugRoute,
     AuthProjectCreateLazyRoute,
+    AuthContractIndexRoute,
     AuthPoIndexRoute,
     AuthProjectIndexRoute,
   }),
@@ -165,6 +179,7 @@ export const routeTree = rootRoute.addChildren({
         "/_auth/po/create",
         "/_auth/project/$slug",
         "/_auth/project/create",
+        "/_auth/contract/",
         "/_auth/po/",
         "/_auth/project/"
       ]
@@ -186,6 +201,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_auth/project/create": {
       "filePath": "_auth/project/create.lazy.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/contract/": {
+      "filePath": "_auth/contract/index.tsx",
       "parent": "/_auth"
     },
     "/_auth/po/": {

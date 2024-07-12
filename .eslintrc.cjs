@@ -25,5 +25,6 @@ module.exports = {
     'no-unused-vars': 'error',
     indent: 'off',
     'new-cap': 'off',
+    'operator-linebreak': 'off',
   },
-};
+}

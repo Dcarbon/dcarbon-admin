@@ -51,8 +51,10 @@ const CreateProject = () => {
     },
     [form],
   );
-  const goBack = useBackAction();
-
+  const goBack = useBackAction({
+    type: 'back',
+    danger: true,
+  });
   const handleImagesChange = useCallback(
     ({ fileList }: any) => {
       setImages(fileList);

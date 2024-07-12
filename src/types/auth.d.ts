@@ -1,13 +1,16 @@
+export interface IUser {
+  user_id: string;
+  username: string;
+  profile_name: string;
+}
+
 interface IAuth {
   access_token: string;
   refresh_token: string;
-  user_info: {
-    username: string;
-    role: 'superadmin' | 'po';
-  };
+  user_info: IUser;
 }
 
 interface IUser {
   username: string;
-  role: 'superadmin' | 'po' | null | undefined;
+  role: 'super_admin' | 'po' | null | undefined;
 }

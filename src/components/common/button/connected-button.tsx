@@ -1,5 +1,6 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Avatar, Button, Dropdown, MenuProps } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 
 function ConnectedButton() {
   const { publicKey, connected, wallet, disconnect, disconnecting } =
@@ -22,15 +23,14 @@ function ConnectedButton() {
 
   return (
     <Dropdown menu={{ items }}>
-      <Button
-        className="btn-wallet btn-wallet-connected"
+      <SubmitButton
         loading={disconnecting}
         icon={<Avatar src={wallet.adapter.icon} alt="icon" size={20} />}
       >
         {(publicKey?.toBase58()?.slice(0, 5) || '') +
           '...' +
           (publicKey?.toBase58()?.slice(-5) || '')}
-      </Button>
+      </SubmitButton>
     </Dropdown>
   );
 }

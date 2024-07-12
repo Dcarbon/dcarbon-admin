@@ -7,8 +7,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --submit-button-bg: #7bda08;
+  --main-color: #7bda08;
+  --submit-button-bg: var(--main-color);
   --submit-button-bg-hover: #5daf01;
+  --button-padding: 16px 32px;
+  --button-radius: 4px;
 }
 
 #root {
@@ -17,6 +20,11 @@
   overflow: hidden;
   height: 100vh;
   background-color: #f9fcff;
+}
+
+main {
+  border-radius: 4px !important;
+  margin: 15px !important;
 }
 
 a {
@@ -448,4 +456,14 @@ label {
 .ant-btn,
 .ant-modal {
   font-family: var(--font-family), serif;
+}
+
+.ant-spin,
+.ant-spin-dot-holder {
+  color: var(--main-color) !important;
+}
+
+.ant-tabs-tab {
+  width: 200px;
+  font-weight: 500;
 }

@@ -1,4 +1,5 @@
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
+import { IAuth, IUser } from '@/types/auth';
 
 import { request } from './xhr';
 
