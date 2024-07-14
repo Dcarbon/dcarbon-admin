@@ -99,7 +99,7 @@ const LoginPage = () => {
               <SubmitButton
                 loading={isLoading}
                 htmlType="submit"
-                className="w-full"
+                className="w-full btn-login"
               >
                 Sign In
               </SubmitButton>

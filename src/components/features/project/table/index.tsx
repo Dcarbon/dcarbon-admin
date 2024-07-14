@@ -1,10 +1,10 @@
-import { Table } from 'antd';
+import MyTable from '@components/common/table/my-table.tsx';
 import projectColumns from '@components/features/project/table/column';
 
 const ProjectTableList = ({ data }: { data: IProjectPage }) => {
   const columns = projectColumns();
   return (
-    <Table
+    <MyTable
       columns={columns}
       pagination={{
         defaultPageSize: 10,

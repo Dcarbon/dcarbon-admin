@@ -13,6 +13,5 @@ const SubmitButton = styled(Button).attrs((props) => ({
 
   padding: 16px 32px;
   font-weight: 500;
-  height: 40px;
 `;
 export default SubmitButton;

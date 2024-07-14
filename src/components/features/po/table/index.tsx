@@ -1,5 +1,5 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { Table } from 'antd';
+import MyTable from '@components/common/table/my-table.tsx';
 import columns from '@components/features/po/table/column';
 
 const PoTableList = ({ data }: { data: IPoPage }) => {
@@ -7,7 +7,7 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
   const search = useSearch({ from: '/_auth/po/' });
   const col = columns();
   return (
-    <Table
+    <MyTable
       columns={col}
       key={'_id'}
       pagination={{
@@ -27,6 +27,9 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
         });
       }}
       dataSource={data.data}
+      // rowClassName={(_record, index) =>
+      //   index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
+      // }
     />
   );
 };

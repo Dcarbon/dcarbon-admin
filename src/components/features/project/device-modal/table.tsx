@@ -3,7 +3,8 @@ import { getIoTDevice } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useQuery } from '@tanstack/react-query';
-import { Flex, Input, Modal, Select, Space, Table, Typography } from 'antd';
+import { Flex, Input, Modal, Select, Space, Typography } from 'antd';
+import MyTable from '@components/common/table/my-table.tsx';
 
 import columns from './column';
 
@@ -90,7 +91,7 @@ const DeviceTable = memo(
             ))}
           </Select>
         </Flex>
-        <Table
+        <MyTable
           rowSelection={{
             type: 'checkbox',
             defaultSelectedRowKeys: selectedDevice.map(

@@ -1,16 +1,31 @@
 import { TableColumnsType, Tag } from 'antd';
 
 const renderTag = (data: string) => {
+  let color = 'green';
   switch (data) {
     case 'active':
-      return <Tag color="green">{data}</Tag>;
+      color = 'green';
+      break;
     case 'de_active':
-      return <Tag color="red">{data}</Tag>;
+      color = 'red';
+      break;
     case 'used':
-      return <Tag color="blue">{data}</Tag>;
-    default:
-      return <Tag>{data}</Tag>;
+      color = 'blue';
+      break;
   }
+  return (
+    <Tag
+      style={{
+        textTransform: 'capitalize',
+        minWidth: '80px',
+        textAlign: 'center',
+        fontSize: '12px',
+      }}
+      color={color}
+    >
+      {data.replace('_', ' ')}
+    </Tag>
+  );
 };
 
 const columns: TableColumnsType<DeviceDataType> = [
