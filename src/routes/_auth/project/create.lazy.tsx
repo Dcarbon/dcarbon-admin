@@ -13,23 +13,16 @@ import useBackAction from '@/utils/helpers/back-action';
 import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  Col,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Select,
-  Space,
-  Typography,
-  Upload,
-} from 'antd';
+import { Col, Flex, Form, message, Select, Upload } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
-import SubmitButton from '@components/common/button/submit-button.tsx';
+import CancelButton from '@components/common/button/cancel-button.tsx';
+import MyInputNumber from '@components/common/input/my-input-number.tsx';
+import MyInput from '@components/common/input/my-input.tsx';
+import MySelect from '@components/common/input/my-select.tsx';
+import MyInputTextArea from '@components/common/input/my-textarea.tsx';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
@@ -146,7 +139,7 @@ const CreateProject = () => {
                 },
               ]}
             >
-              <Input placeholder="Project name" max={500} />
+              <MyInput placeholder="Project name" max={500} />
             </Form.Item>
 
             <Form.Item
@@ -158,46 +151,57 @@ const CreateProject = () => {
                 },
               ]}
             >
-              <Input placeholder="Wallet" />
+              <MyInput placeholder="Wallet" />
             </Form.Item>
-            <Flex flex="auto" gap={10}>
-              <Form.Item label="Location" name="location">
-                <Input placeholder="Project location" />
-              </Form.Item>
-              <Form.Item
-                label="Country"
-                name="country"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="Choose project country"
-                  className="project-modal-select"
-                  showSearch
-                  filterOption={(input, option) =>
-                    (option?.label ?? '')
-                      .toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  allowClear
+            <Flex gap={10}>
+              <Form.Item className={'w-full'}>
+                <Form.Item
+                  label="Location"
+                  name="location"
+                  style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
                 >
-                  {getData()?.map((value) => (
-                    <Select.Option
-                      key={value.code}
-                      value={value.code}
-                      label={value.name}
-                    >
-                      <Flex gap={10} align="center">
-                        <ReactCountryFlag countryCode={value.code} svg />
-                        {value.name}
-                      </Flex>
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <MyInput placeholder="Project location" />
+                </Form.Item>
+                <Form.Item
+                  label="Country"
+                  name="country"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                    margin: '0 8px',
+                  }}
+                >
+                  <MySelect
+                    placeholder="Choose project country"
+                    className="project-modal-select"
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? '')
+                        .toString()
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    allowClear
+                  >
+                    {getData()?.map((value) => (
+                      <Select.Option
+                        key={value.code}
+                        value={value.code}
+                        label={value.name}
+                      >
+                        <Flex gap={10} align="center">
+                          <ReactCountryFlag countryCode={value.code} svg />
+                          {value.name}
+                        </Flex>
+                      </Select.Option>
+                    ))}
+                  </MySelect>
+                </Form.Item>
               </Form.Item>
             </Flex>
             <Form.Item
@@ -211,108 +215,143 @@ const CreateProject = () => {
               ]}
             >
               <TextEditor
+                style={{ backgroundColor: 'var(--main-gray)' }}
                 value={form?.getFieldValue('description')}
                 onChange={(e) => form?.setFieldValue('description', e)}
               />
             </Form.Item>
-          </Col>
-          <Col span={11}>
-            <Form.Item
-              label="Thumbnail"
-              name="thumbnail"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Upload
-                listType="picture-card"
-                fileList={thumbnail}
-                accept="image/*"
-                onChange={handleThumbnailChange}
-                beforeUpload={beforeUpload}
+            <Flex justify="center" style={{ marginTop: '30px' }} gap={10}>
+              <SubmitButtonAction
+                loading={handleSave.isPending || handleCreateProject.isPending}
               >
-                {thumbnail.length < 1 && (
-                  <div>
-                    <PlusOutlined /> Upload
-                  </div>
-                )}
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              label="Images"
-              name="images"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Upload
-                listType="picture-card"
-                accept="image/*"
-                multiple
-                maxCount={5}
-                fileList={images}
-                onChange={handleImagesChange}
-                beforeUpload={beforeUpload}
+                Submit
+              </SubmitButtonAction>
+              <CancelButtonAction
+                disabled={handleSave.isPending || handleCreateProject.isPending}
+                onClick={goBack}
               >
-                {images.length < 5 && (
-                  <div>
-                    <PlusOutlined /> Upload
-                  </div>
-                )}
-              </Upload>
-            </Form.Item>
-            <InfiniteScrollSelect />
-
-            <Form.Item
-              label="Model"
-              name="iot_models"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Select placeholder="Select model">
-                {model &&
-                  model.length > 0 &&
-                  model.map((item: any) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.model_name}
-                    </Select.Option>
-                  ))}
-              </Select>
-            </Form.Item>
-            <Form.Item label="Power" name="power">
-              <InputNumber min={0} />
-            </Form.Item>
-            <Form.Item label="Spec" name="spec">
-              <Input.TextArea placeholder="Ex: {'key':'value'}" />
-            </Form.Item>
-            <Flex gap={10} align="center">
-              <Space>Device</Space>
-              <SubmitButton onClick={() => setOpenModal(true)}>
-                Add
-              </SubmitButton>
-              <Typography.Text type="secondary">{`(selected: ${selectedDevice.length})`}</Typography.Text>
+                Cancel
+              </CancelButtonAction>
             </Flex>
           </Col>
-        </Flex>
-        <Flex justify="end" gap={10}>
-          <SubmitButtonAction
-            loading={handleSave.isPending || handleCreateProject.isPending}
-          >
-            Submit
-          </SubmitButtonAction>
-          <CancelButtonAction
-            disabled={handleSave.isPending || handleCreateProject.isPending}
-            onClick={goBack}
-          >
-            Cancel
-          </CancelButtonAction>
+          <Col span={11}>
+            <Form.Item>
+              <Form.Item
+                label="Thumbnail"
+                name="thumbnail"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+              >
+                <Upload
+                  listType="picture-card"
+                  fileList={thumbnail}
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
+                  beforeUpload={beforeUpload}
+                >
+                  {thumbnail.length < 1 && (
+                    <div>
+                      <PlusOutlined /> Upload
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                label="Images"
+                name="images"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50% - 8px)',
+                  margin: '0 8px',
+                }}
+              >
+                <Upload
+                  listType="picture-card"
+                  accept="image/*"
+                  multiple
+                  maxCount={5}
+                  fileList={images}
+                  onChange={handleImagesChange}
+                  beforeUpload={beforeUpload}
+                >
+                  {images.length < 5 && (
+                    <div>
+                      <PlusOutlined /> Upload
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+            </Form.Item>
+            <Form.Item>
+              <InfiniteScrollSelect />
+              <Form.Item
+                label="Model"
+                name="iot_models"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50% - 8px)',
+                  margin: '0 8px',
+                }}
+              >
+                <MySelect placeholder="Select model">
+                  {model &&
+                    model.length > 0 &&
+                    model.map((item: any) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.model_name}
+                      </Select.Option>
+                    ))}
+                </MySelect>
+              </Form.Item>
+            </Form.Item>
+            <Flex>
+              <Form.Item
+                label="Power"
+                name="power"
+                style={{ display: 'inline-block', width: '100px' }}
+              >
+                <MyInputNumber min={0} />
+              </Form.Item>
+              <Form.Item
+                label="Spec"
+                name="spec"
+                style={{
+                  display: 'inline-block',
+                  margin: '0 8px',
+                  flexGrow: 1,
+                }}
+              >
+                <MyInputTextArea rows={1} placeholder="Ex: {'key':'value'}" />
+              </Form.Item>
+            </Flex>
+            <Flex
+              gap={10}
+              align="center"
+              justify={'center'}
+              style={{ marginTop: '15px' }}
+            >
+              <CancelButton
+                icon={<PlusOutlined />}
+                onClick={() => setOpenModal(true)}
+              >
+                Add Devices {`(selected: ${selectedDevice.length})`}
+              </CancelButton>
+            </Flex>
+          </Col>
         </Flex>
       </Form>
     </div>

@@ -37,7 +37,7 @@ function NotConnectButton() {
     },
     content: {
       boxShadow: '0 0 30px #999',
-      borderRadius: '12px',
+      borderRadius: 'var(--div-radius)',
     },
   };
   const onOpen = () => {

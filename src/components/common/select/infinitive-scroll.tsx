@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import { getPo } from '@/adapters/po';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Form, Select, Spin } from 'antd';
+import MySelect from '@components/common/input/my-select.tsx';
 
 const { Option } = Select;
 
@@ -40,8 +41,9 @@ const InfiniteScrollSelect = memo(() => {
       rules={[{ required: true, message: 'Please select an item' }]}
       name="po_id"
       label="PO"
+      style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
     >
-      <Select
+      <MySelect
         placeholder="Select an item"
         style={{ width: 300 }}
         onPopupScroll={handleScroll}
@@ -60,7 +62,7 @@ const InfiniteScrollSelect = memo(() => {
             <Spin size="small" />
           </Option>
         )}
-      </Select>
+      </MySelect>
     </Form.Item>
   );
 });

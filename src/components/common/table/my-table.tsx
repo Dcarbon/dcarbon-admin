@@ -13,7 +13,7 @@ const MyTable = styled(Table).attrs<IProps>((props: IProps) => ({
   }
 
   tbody > tr:nth-child(even) {
-    background-color: rgba(246, 246, 246, 1);
+    background-color: var(--main-gray);
   }
 
   tbody > tr:nth-child(odd) {
@@ -29,6 +29,7 @@ const MyTable = styled(Table).attrs<IProps>((props: IProps) => ({
     font-size: 14px;
     color: rgba(79, 79, 79, 1);
   }
+
   thead > tr > th::before {
     background-color: unset !important;
   }

@@ -8,8 +8,9 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Empty, Flex, Input } from 'antd';
+import { Empty, Flex } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+import MyInputSearch from '@components/common/input/my-input-search.tsx';
 
 type ProductSearchSortOptions = 'asc' | 'desc';
 
@@ -67,7 +68,7 @@ const PoPage = () => {
     <div>
       <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
-        <Input.Search
+        <MyInputSearch
           placeholder="Input search text"
           allowClear
           className="project-search-bar"

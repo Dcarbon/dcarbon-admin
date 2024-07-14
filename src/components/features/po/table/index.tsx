@@ -9,7 +9,7 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
   return (
     <MyTable
       columns={col}
-      key={'_id'}
+      rowKey={'id'}
       pagination={{
         defaultPageSize: 10,
         current: data.paging.page || 1,
@@ -27,9 +27,6 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
         });
       }}
       dataSource={data.data}
-      // rowClassName={(_record, index) =>
-      //   index % 2 === 0 ? 'table-row-light' : 'table-row-dark'
-      // }
     />
   );
 };

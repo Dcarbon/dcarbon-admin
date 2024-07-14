@@ -2,16 +2,31 @@ import { Link } from '@tanstack/react-router';
 import { Space, TableColumnsType, Tag } from 'antd';
 
 const renderTag = (data: string) => {
+  let color = 'green';
   switch (data) {
     case 'active':
-      return <Tag color="green">{data}</Tag>;
+      color = 'green';
+      break;
     case 'deactive':
-      return <Tag color="red">{data}</Tag>;
+      color = 'red';
+      break;
     case 'draft':
-      return <Tag color="gray">{data}</Tag>;
-    default:
-      return <Tag>{data}</Tag>;
+      color = 'gray';
+      break;
   }
+  return (
+    <Tag
+      color={color}
+      style={{
+        textTransform: 'capitalize',
+        minWidth: '80px',
+        textAlign: 'center',
+        fontSize: '12px',
+      }}
+    >
+      {data.replace('_', ' ')}
+    </Tag>
+  );
 };
 const PoColumn = () => {
   const columns: TableColumnsType<ProjectList> = [

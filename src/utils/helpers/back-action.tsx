@@ -1,5 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import { Modal } from 'antd';
+import { createStyles } from 'antd-style';
 import { ModalProps } from 'antd/es/modal/interface';
 
 interface IOption {
@@ -12,9 +13,32 @@ interface IOption {
   option?: ModalProps;
 }
 
+const useStyle = createStyles(() => ({
+  'my-modal-mask': {
+    boxShadow: `inset 0 0 15px #fff`,
+  },
+  'my-modal-content': {
+    border: '1px solid #333',
+  },
+}));
+
 const useModalAction = (option?: IOption) => {
   const router = useRouter();
+  const { styles } = useStyle();
+  const classNames = {
+    mask: styles['my-modal-mask'],
+    content: styles['my-modal-content'],
+  };
 
+  const modalStyles = {
+    mask: {
+      backdropFilter: 'blur(10px)',
+    },
+    content: {
+      boxShadow: '0 0 30px #999',
+      borderRadius: 'var(--div-radius)',
+    },
+  };
   return () => {
     Modal.confirm({
       title: option?.title || 'Are you sure?',
@@ -44,6 +68,8 @@ const useModalAction = (option?: IOption) => {
             : {};
       },
       onCancel: () => {},
+      classNames: classNames,
+      styles: modalStyles,
     });
   };
 };

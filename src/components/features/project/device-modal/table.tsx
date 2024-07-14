@@ -4,6 +4,7 @@ import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { Flex, Input, Modal, Select, Space, Typography } from 'antd';
+import { createStyles } from 'antd-style';
 import MyTable from '@components/common/table/my-table.tsx';
 
 import columns from './column';
@@ -16,6 +17,14 @@ type DeviceTableProps = {
   onOk?: () => void;
 };
 const { Option } = Select;
+const useStyle = createStyles(() => ({
+  'my-modal-mask': {
+    boxShadow: `inset 0 0 15px #fff`,
+  },
+  'my-modal-content': {
+    border: '1px solid #333',
+  },
+}));
 const DeviceTable = memo(
   ({
     open,
@@ -27,10 +36,25 @@ const DeviceTable = memo(
     const [search, setSearch] = useState<IDeviceRequest>({
       page: 1,
     } as IDeviceRequest);
+    const { styles } = useStyle();
     const cancelModal = useModalAction({
       danger: true,
       fn: () => setOpen(false),
     });
+    const classNames = {
+      mask: styles['my-modal-mask'],
+      content: styles['my-modal-content'],
+    };
+
+    const modalStyles = {
+      mask: {
+        backdropFilter: 'blur(10px)',
+      },
+      content: {
+        boxShadow: '0 0 30px #999',
+        borderRadius: 'var(--div-radius)',
+      },
+    };
 
     const { data, isLoading } = useQuery({
       queryKey: [QUERY_KEYS.GET_IOT_MODELS, search],
@@ -66,6 +90,8 @@ const DeviceTable = memo(
         }
         onOk={onOk ? onOk : () => setOpen(false)}
         onClose={() => setOpen(false)}
+        classNames={classNames}
+        styles={modalStyles}
       >
         <Flex className="device-modal" gap={10}>
           <Input.Search

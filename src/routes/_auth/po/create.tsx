@@ -1,12 +1,14 @@
 import { createPo } from '@/adapters/po';
 import SubmitButtonAction from '@/components/common/button/button-submit';
-import NavigationBack from '@/components/common/navigation-back';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Col, Flex, Form, Input, message, notification } from 'antd';
+import { Flex, Form, message, notification } from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
+import MyInput from '@components/common/input/my-input.tsx';
+import MyInputTextArea from '@components/common/input/my-textarea.tsx';
+import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
 
 export const Route = createFileRoute('/_auth/po/create')({
   component: () => <PoCreate />,
@@ -39,36 +41,48 @@ const PoCreate = () => {
     },
   });
   return (
-    <Col span={12}>
-      <NavigationBack href="/po" />
+    <CenterContentLayout>
       <Form
         form={form}
         layout="vertical"
         onFinish={(values) => handleCreatePo.mutate(values)}
+        style={{ width: '100%' }}
       >
-        <Form.Item
-          label="Name"
-          name="profile_name"
-          rules={[
-            {
-              required: true,
-              max: 255,
-            },
-          ]}
-        >
-          <Input placeholder="Enter PO name" maxLength={255} />
-        </Form.Item>
-        <Form.Item
-          label="Email"
-          name="user_name"
-          rules={[
-            {
-              type: 'email',
-              required: true,
-            },
-          ]}
-        >
-          <Input placeholder="Enter PO email" />
+        <Form.Item style={{ marginBottom: 0 }}>
+          <Form.Item
+            label="Name"
+            name="profile_name"
+            rules={[
+              {
+                required: true,
+                max: 255,
+              },
+            ]}
+            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+          >
+            <MyInput
+              placeholder="Enter PO name"
+              maxLength={255}
+              style={{ backgroundColor: 'var(--main-gray)' }}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="user_name"
+            rules={[
+              {
+                type: 'email',
+                required: true,
+              },
+            ]}
+            style={{
+              display: 'inline-block',
+              width: 'calc(50% - 8px)',
+              margin: '0 8px',
+            }}
+          >
+            <MyInput placeholder="Enter PO email" />
+          </Form.Item>
         </Form.Item>
         <Form.Item
           label="Wallet"
@@ -79,7 +93,7 @@ const PoCreate = () => {
             },
           ]}
         >
-          <Input placeholder="Enter PO wallet" />
+          <MyInput placeholder="Enter PO wallet" />
         </Form.Item>
         <Form.Item
           label="Info"
@@ -91,9 +105,9 @@ const PoCreate = () => {
             },
           ]}
         >
-          <Input.TextArea placeholder="Enter PO info" maxLength={5000} />
+          <MyInputTextArea placeholder="Enter PO info" maxLength={5000} />
         </Form.Item>
-        <Flex gap={10} justify="end">
+        <Flex gap={10} justify="center">
           <SubmitButtonAction loading={handleCreatePo.isPending}>
             Submit
           </SubmitButtonAction>
@@ -105,6 +119,6 @@ const PoCreate = () => {
           </CancelButtonAction>
         </Flex>
       </Form>
-    </Col>
+    </CenterContentLayout>
   );
 };

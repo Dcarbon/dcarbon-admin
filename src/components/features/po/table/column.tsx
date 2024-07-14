@@ -24,8 +24,9 @@ const renderTag = (data: string) => {
       color={color}
       style={{
         textTransform: 'capitalize',
-        minWidth: '85px',
+        minWidth: '80px',
         textAlign: 'center',
+        fontSize: '12px',
       }}
     >
       {data.replace('_', ' ')}
