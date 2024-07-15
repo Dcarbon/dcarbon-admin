@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import {
   createProject,
   getModelProject,
@@ -28,7 +28,7 @@ export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
 });
 
-const CreateProject = () => {
+const CreateProject = memo(() => {
   const [form] = Form.useForm();
   const [openModal, setOpenModal] = useState(false);
   const [selectedDevice, setSelectDevice] = useState<DeviceType[]>([]);
@@ -356,4 +356,4 @@ const CreateProject = () => {
       </Form>
     </div>
   );
-};
+});

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { createPo } from '@/adapters/po';
 import SubmitButtonAction from '@/components/common/button/button-submit';
 import { QUERY_KEYS } from '@/utils/constants';
@@ -13,7 +14,7 @@ import CenterContentLayout from '@components/common/layout/center-content/center
 export const Route = createFileRoute('/_auth/po/create')({
   component: () => <PoCreate />,
 });
-const PoCreate = () => {
+const PoCreate = memo(() => {
   const [form] = Form.useForm();
   const goBack = useModalAction({
     type: 'back',
@@ -121,4 +122,4 @@ const PoCreate = () => {
       </Form>
     </CenterContentLayout>
   );
-};
+});

@@ -4,9 +4,11 @@ import { Flex } from 'antd';
 const CenterContentLayout = ({
   children,
   contentWidth,
+  vertical,
 }: {
   children: React.ReactNode;
   contentWidth?: string;
+  vertical?: boolean;
 }) => {
   return (
     <Flex className={'center-content-layout'} align={'center'}>
@@ -15,7 +17,12 @@ const CenterContentLayout = ({
         vertical={true}
         className={'center-content-layout-child w-full'}
       >
-        <div style={{ width: contentWidth || '50%' }}>{children}</div>
+        <Flex
+          vertical={vertical || true}
+          style={{ width: contentWidth || '50%' }}
+        >
+          {children}
+        </Flex>
       </Flex>
     </Flex>
   );

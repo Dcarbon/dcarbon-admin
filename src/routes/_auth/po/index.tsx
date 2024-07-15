@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { getPo } from '@/adapters/po';
 import NavigationBack from '@/components/common/navigation-back';
 import PoTableList from '@/components/features/po/table';
@@ -35,7 +36,7 @@ export const Route = createFileRoute('/_auth/po/')({
   component: () => <PoPage />,
 });
 
-const PoPage = () => {
+const PoPage = memo(() => {
   const navigate = useNavigate({ from: '/po' });
   const search = useSearch({ from: '/_auth/po/' });
   const { data } = useQuery({
@@ -88,4 +89,4 @@ const PoPage = () => {
       {data ? <PoTableList data={data} /> : <Empty />}
     </div>
   );
-};
+});

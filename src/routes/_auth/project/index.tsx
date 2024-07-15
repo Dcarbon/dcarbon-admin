@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { getProject } from '@/adapters/project';
 import NavigationBack from '@/components/common/navigation-back';
 import ProjectTableList from '@/components/features/project/table';
@@ -35,7 +36,7 @@ export const Route = createFileRoute('/_auth/project/')({
   component: () => <ProjectPage />,
 });
 
-const ProjectPage = () => {
+const ProjectPage = memo(() => {
   const navigate = useNavigate();
   const search = useSearch({ from: '/_auth/project/' });
   const { data } = useQuery({
@@ -87,6 +88,6 @@ const ProjectPage = () => {
       {data ? <ProjectTableList data={data} /> : <Empty />}
     </div>
   );
-};
+});
 
 export default ProjectPage;

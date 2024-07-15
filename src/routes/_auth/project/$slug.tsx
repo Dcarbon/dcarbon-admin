@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { getProjectBySlug } from '@/adapters/project';
 import NavigationBack from '@/components/common/navigation-back';
 import ProjectDashboard from '@/components/features/project/dashboard';
@@ -19,7 +20,7 @@ export const Route = createFileRoute('/_auth/project/$slug')({
   },
   component: () => <ProjectDetail />,
 });
-const ProjectDetail = () => {
+const ProjectDetail = memo(() => {
   const slug = Route.useParams().slug;
   const { data } = useSuspenseQuery(postQueryOptions(slug));
   return (
@@ -42,4 +43,4 @@ const ProjectDetail = () => {
       />
     </div>
   );
-};
+});
