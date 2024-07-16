@@ -35,7 +35,6 @@ const defaultAdmins: IContractUser[] = [
 const AdminScreen = memo(
   forwardRef(
     ({ loading, isMaster, setAdmin, triggerRemoveAdmin }: IProps, ref) => {
-      isMaster = true;
       console.info('AdminScreen');
       const [administrators, addAdministrators] =
         useState<IContractUser[]>(defaultAdmins);

@@ -23,6 +23,10 @@ const ERROR_CONTRACT = {
         message: 'Input invalid',
         description: 'Admin already exists existing',
       },
+      MASTER_IS_CURRENT: {
+        message: 'Input invalid',
+        description: 'This wallet is already in use',
+      },
     },
   },
 };

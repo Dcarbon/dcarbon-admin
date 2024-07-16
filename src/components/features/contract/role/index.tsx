@@ -8,12 +8,18 @@ import { ERROR_CONTRACT } from '@/constants';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
+import {
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+} from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
+import TxModal from '@components/common/modal/tx-modal.tsx';
 import AdminContainer from '@components/features/contract/role/admin/admin.container.tsx';
 import MasterScreen from '@components/features/contract/role/master/master.screen.tsx';
 import { IContractUser } from '@components/features/contract/role/role.interface.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
+import { sendTx } from '@utils/wallet';
 
 interface IMasterRef {
   setMaster: (master: IContractUser) => void;
@@ -27,10 +33,13 @@ const ContractRole = memo(() => {
   console.info('ContractRole');
   const [loading, setLoading] = useState(false);
   const [myNotification] = useNotification();
+  const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const masterRef = useRef<IMasterRef>();
+  const [txModalOpen, setTxModalOpen] = useState(false);
   const adminRef = useRef<IAdminRef>();
+  const [refetch, setRefetch] = useState(0);
   const getMaster = async (): Promise<string | undefined> => {
     try {
       if (!anchorWallet || !connection) {
@@ -59,40 +68,86 @@ const ContractRole = memo(() => {
       return;
     }
   };
+  const triggerTransferMaster = async (master: string): Promise<void> => {
+    let transaction;
+    try {
+      setTxModalOpen(true);
+      if (!anchorWallet || !connection || !publicKey || !wallet) {
+        myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+        return;
+      }
+      const masterAddress = new PublicKey(master);
+      const provider = new AnchorProvider(connection, anchorWallet);
+      const program = new Program<ICarbonContract>(
+        CARBON_IDL as ICarbonContract,
+        provider,
+      );
+
+      const transferMasterIns = await program.methods
+        .transferMasterRights(masterAddress)
+        .accounts({
+          signer: publicKey,
+        })
+        .instruction();
+      const { status, tx } = await sendTx({
+        connection,
+        wallet,
+        payerKey: publicKey,
+        txInstructions: transferMasterIns,
+      });
+      transaction = tx;
+      setTxModalOpen(false);
+      myNotification({
+        description: transaction,
+        type: status,
+        isTx: true,
+      });
+      setRefetch((prevState) => prevState + 1);
+    } catch (e) {
+      setTxModalOpen(false);
+      myNotification(ERROR_CONTRACT.COMMON.TX_ERROR);
+      console.error(e);
+    }
+  };
   useEffect(() => {
     getMaster().then();
-  }, [connection, anchorWallet]);
+  }, [connection, anchorWallet, refetch]);
   return (
-    <CenterContentLayout
-      contentWidth={!connection || !anchorWallet ? '50%' : '480px'}
-      vertical
-    >
-      {!connection || !anchorWallet ? (
-        <span
-          style={{
-            fontSize: '24px',
-            fontWeight: '500',
-            color: 'orange',
-          }}
-        >
-          You need to connect your wallet to continue!
-        </span>
-      ) : (
-        <Flex vertical>
-          <MasterScreen
-            loading={loading}
-            ref={masterRef}
-            currentWallet={anchorWallet?.publicKey.toString()}
-          />
-          <AdminContainer
-            connection={connection}
-            anchorWallet={anchorWallet}
-            ref={adminRef}
-            currentWallet={anchorWallet?.publicKey.toString()}
-          />
-        </Flex>
-      )}
-    </CenterContentLayout>
+    <>
+      {' '}
+      <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
+      <CenterContentLayout
+        contentWidth={!connection || !anchorWallet ? '50%' : '480px'}
+        vertical
+      >
+        {!connection || !anchorWallet ? (
+          <span
+            style={{
+              fontSize: '24px',
+              fontWeight: '500',
+              color: 'orange',
+            }}
+          >
+            You need to connect your wallet to continue!
+          </span>
+        ) : (
+          <Flex vertical>
+            <MasterScreen
+              loading={loading}
+              ref={masterRef}
+              currentWallet={anchorWallet?.publicKey.toString()}
+              triggerTransferMaster={triggerTransferMaster}
+            />
+            <AdminContainer
+              connection={connection}
+              anchorWallet={anchorWallet}
+              ref={adminRef}
+              currentWallet={anchorWallet?.publicKey.toString()}
+            />
+          </Flex>
+        )}
+      </CenterContentLayout>
+    </>
   );
 });
 export default ContractRole;

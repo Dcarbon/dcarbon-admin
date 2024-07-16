@@ -73,7 +73,7 @@ function isFloat(n: number) {
   return Number(n) === n && n % 1 !== 0;
 }
 
-function isSolanaWallet(wallet: string): boolean {
+function isSolanaWallet(wallet?: string): boolean {
   try {
     if (!wallet || wallet === '') return false;
     const address = new PublicKey(wallet);
