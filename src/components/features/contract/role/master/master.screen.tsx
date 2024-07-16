@@ -7,6 +7,7 @@ import { IContractUser } from '@components/features/contract/role/role.interface
 
 interface IProps {
   loading?: boolean;
+  currentWallet?: string;
 }
 
 const defaultMaster: IContractUser = {
@@ -14,7 +15,7 @@ const defaultMaster: IContractUser = {
   status: 'draft',
 };
 const MasterScreen = memo(
-  forwardRef(({ loading }: IProps, ref) => {
+  forwardRef(({ loading, currentWallet }: IProps, ref) => {
     const [master, setMaster] = useState<IContractUser>(defaultMaster);
     console.info(MasterScreen);
     useImperativeHandle(ref, () => ({
@@ -42,9 +43,10 @@ const MasterScreen = memo(
             />
           )}
           <Button
-            disabled={loading}
+            type={'primary'}
+            disabled={loading || master.wallet !== currentWallet}
             icon={<SwapOutlined />}
-            className={'contract-button'}
+            className={'contract-button contract-switch-button'}
           />
         </Flex>
       </>

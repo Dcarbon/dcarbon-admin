@@ -1,3 +1,4 @@
+import { PublicKey } from '@solana/web3.js';
 import { Tooltip } from 'antd';
 import chalk from 'chalk';
 
@@ -10,6 +11,7 @@ function isEmpty(obj: Array<any> | object): boolean {
 
   return !Object.keys(obj).length;
 }
+
 const getInfoDevice = () => {
   const device = /(iPhone|iPad|iPod|iOS|Android)/i.test(navigator.userAgent)
     ? 'MOBILE'
@@ -71,6 +73,17 @@ function isFloat(n: number) {
   return Number(n) === n && n % 1 !== 0;
 }
 
+function isSolanaWallet(wallet: string): boolean {
+  try {
+    if (!wallet || wallet === '') return false;
+    const address = new PublicKey(wallet);
+    return PublicKey.isOnCurve(address);
+  } catch (e: any) {
+    console.error(e.message);
+    return false;
+  }
+}
+
 export {
   formatByEnUsNum,
   truncateText,
@@ -79,4 +92,5 @@ export {
   convertToSlug,
   isFloat,
   getInfoDevice,
+  isSolanaWallet,
 };
