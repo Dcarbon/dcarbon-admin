@@ -78,8 +78,8 @@ const PoCreate = memo(() => {
             ]}
             style={{
               display: 'inline-block',
-              width: 'calc(50% - 8px)',
-              margin: '0 8px',
+              width: 'calc(50%)',
+              margin: '0px 0px 0px 8px',
             }}
           >
             <MyInput placeholder="Enter PO email" />

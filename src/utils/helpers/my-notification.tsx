@@ -7,14 +7,18 @@ import { ArgsProps } from 'antd/es/notification/interface';
 interface IProps extends ArgsProps {
   message?: React.ReactNode | undefined;
   type?: 'error' | 'warning' | 'success';
-  isTx?: boolean;
+  tx_type?: 'tx' | 'address';
 }
 
 const useMyNotification = () => {
   const openNotification = (props: IProps) => {
     let tx;
-    if (props.isTx && props.description) {
-      tx = `${import.meta.env.VITE_SOLANA_EXPLORER}/tx/${props.description}`;
+    const txDescription =
+      props?.tx_type === 'address'
+        ? 'View token detail'
+        : 'View transaction detail';
+    if (props.tx_type && props.description) {
+      tx = `${import.meta.env.VITE_SOLANA_EXPLORER}/${props.tx_type}/${props.description}`;
       if (import.meta.env.VITE_STAGE === 'test') {
         tx += '?cluster=testnet';
       } else if (import.meta.env.VITE_STAGE === 'dev') {
@@ -24,7 +28,7 @@ const useMyNotification = () => {
     const commonConfig: Partial<ArgsProps> = {
       pauseOnHover: true,
     };
-    if (props.isTx) commonConfig.duration = 30;
+    if (props.tx_type) commonConfig.duration = 30;
     if (props.type === 'warning') {
       notification.warning({
         ...commonConfig,
@@ -44,14 +48,14 @@ const useMyNotification = () => {
         ...commonConfig,
         message: (
           <span className={'my-notification-title'}>
-            {props.isTx && !props.message
+            {props.tx_type && !props.message
               ? 'Transaction successfully'
               : props.message || 'Successfully'}
           </span>
         ),
-        description: props.isTx ? (
+        description: props.tx_type ? (
           <a target="_blank" href={tx}>
-            View transaction detail
+            {txDescription}
           </a>
         ) : (
           <span className={'my-notification-description'}>
@@ -62,7 +66,7 @@ const useMyNotification = () => {
     } else {
       const message = (
         <span className={'my-notification-title'}>
-          {props.isTx && !props.message
+          {props.tx_type && !props.message
             ? 'Transaction error'
             : props.message || 'Something error'}
         </span>
@@ -71,9 +75,9 @@ const useMyNotification = () => {
         ...commonConfig,
         message,
         description:
-          props.isTx && tx ? (
+          props.tx_type && tx ? (
             <a target="_blank" href={tx}>
-              View transaction detail
+              {txDescription}
             </a>
           ) : (
             <span className={'my-notification-description'}>

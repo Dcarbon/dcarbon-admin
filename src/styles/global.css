@@ -513,3 +513,7 @@ label {
   font-size: 14px;
   font-family: var(--font-family), serif !important;
 }
+
+.ant-form-item-explain-error, .ant-tooltip-inner {
+  font-size: 14px;
+}

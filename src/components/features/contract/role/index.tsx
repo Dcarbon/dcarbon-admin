@@ -100,7 +100,7 @@ const ContractRole = memo(() => {
       myNotification({
         description: transaction,
         type: status,
-        isTx: true,
+        tx_type: 'tx',
       });
       setRefetch((prevState) => prevState + 1);
     } catch (e) {

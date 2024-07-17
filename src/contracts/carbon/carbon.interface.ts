@@ -46,16 +46,28 @@ export type ICarbonContract = {
       ];
     },
     {
-      name: 'createMint';
-      discriminator: [69, 44, 215, 132, 253, 214, 41, 45];
+      name: 'createFt';
+      discriminator: [56, 245, 99, 230, 162, 6, 220, 85];
       accounts: [
         {
-          name: 'creator';
+          name: 'signer';
           writable: true;
           signer: true;
         },
         {
+          name: 'masterPda';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [109, 97, 115, 116, 101, 114];
+              },
+            ];
+          };
+        },
+        {
           name: 'authority';
+          writable: true;
           pda: {
             seeds: [
               {
@@ -90,8 +102,12 @@ export type ICarbonContract = {
       ];
       args: [
         {
-          name: 'createDataVec';
-          type: 'bytes';
+          name: 'createFtArgs';
+          type: {
+            defined: {
+              name: 'createFtArgs';
+            };
+          };
         },
       ];
     },
@@ -203,6 +219,87 @@ export type ICarbonContract = {
         {
           name: 'address';
           type: 'pubkey';
+        },
+      ];
+    },
+    {
+      name: 'mintToken';
+      discriminator: [172, 137, 183, 14, 207, 110, 234, 56];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'receiver';
+        },
+        {
+          name: 'toAta';
+          writable: true;
+        },
+        {
+          name: 'device';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [100, 101, 118, 105, 99, 101];
+              },
+              {
+                kind: 'arg';
+                path: 'mint_token_args.project_id';
+              },
+              {
+                kind: 'arg';
+                path: 'mint_token_args.device_id';
+              },
+            ];
+          };
+        },
+        {
+          name: 'authority';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [97, 117, 116, 104, 111, 114, 105, 116, 121];
+              },
+            ];
+          };
+        },
+        {
+          name: 'mint';
+          writable: true;
+        },
+        {
+          name: 'metadata';
+        },
+        {
+          name: 'tokenProgram';
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+        {
+          name: 'sysvarProgram';
+        },
+        {
+          name: 'tokenMetadataProgram';
+        },
+        {
+          name: 'ataProgram';
+        },
+      ];
+      args: [
+        {
+          name: 'mintTokenArgs';
+          type: {
+            defined: {
+              name: 'mintTokenArgs';
+            };
+          };
         },
       ];
     },
@@ -593,21 +690,26 @@ export type ICarbonContract = {
   errors: [
     {
       code: 6000;
+      name: 'publicKeyMismatch';
+      msg: 'PublicKey Mismatch';
+    },
+    {
+      code: 6001;
       name: 'invalidProjectIdLength';
       msg: 'The length of the device Id must be equal to 24';
     },
     {
-      code: 6001;
+      code: 6002;
       name: 'masterIsAlreadyInit';
       msg: 'Master account is already init';
     },
     {
-      code: 6002;
+      code: 6003;
       name: 'adminIsAlreadyInit';
       msg: 'Admin account is already init';
     },
     {
-      code: 6003;
+      code: 6004;
       name: 'contractConfigIsAlreadyInit';
       msg: 'Contract config account is already init';
     },
@@ -667,6 +769,32 @@ export type ICarbonContract = {
                 };
               };
             };
+          },
+        ];
+      };
+    },
+    {
+      name: 'createFtArgs';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'totalSupply';
+            type: {
+              option: 'u64';
+            };
+          },
+          {
+            name: 'disableMint';
+            type: 'bool';
+          },
+          {
+            name: 'disableFreeze';
+            type: 'bool';
+          },
+          {
+            name: 'dataVec';
+            type: 'bytes';
           },
         ];
       };
@@ -743,6 +871,26 @@ export type ICarbonContract = {
           {
             name: 'masterKey';
             type: 'pubkey';
+          },
+        ];
+      };
+    },
+    {
+      name: 'mintTokenArgs';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'projectId';
+            type: 'string';
+          },
+          {
+            name: 'deviceId';
+            type: 'string';
+          },
+          {
+            name: 'mintDataVec';
+            type: 'bytes';
           },
         ];
       };
