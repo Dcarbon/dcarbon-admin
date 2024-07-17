@@ -162,4 +162,5 @@ const createMint = async ({
     status,
   };
 };
-export { createMetadata, createMint, ICreateMintResponse };
+export { createMetadata, createMint };
+export type { ICreateMintResponse };
