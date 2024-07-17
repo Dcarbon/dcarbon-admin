@@ -7,5 +7,8 @@ const API_ROUTES = {
   IOT_MODELS: 'devices/iot',
   PROJECT_UPLOAD: 'projects/upload',
   SINGER_UPLOAD: 'common/upload',
+  COMMON: {
+    UPLOAD_METADATA: 'common/upload-metadata',
+  },
 };
 export { API_ROUTES };

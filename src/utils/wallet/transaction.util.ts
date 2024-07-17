@@ -2,6 +2,7 @@ import { Wallet } from '@solana/wallet-adapter-react';
 import {
   ComputeBudgetProgram,
   Connection,
+  Keypair,
   PublicKey,
   TransactionInstruction,
   TransactionMessage,
@@ -14,6 +15,7 @@ interface ISendTxOption {
   wallet: Wallet;
   payerKey: PublicKey;
   txInstructions: TransactionInstruction;
+  otherSigner?: Keypair;
 }
 
 const sendTx = async ({
@@ -21,6 +23,7 @@ const sendTx = async ({
   wallet,
   payerKey,
   txInstructions,
+  otherSigner,
 }: ISendTxOption): Promise<{
   status: 'success' | 'error';
   tx?: string;
@@ -38,7 +41,7 @@ const sendTx = async ({
       instructions: [setComputeUnitPriceIx, txInstructions],
     }).compileToV0Message();
     const transactionV0 = new VersionedTransaction(messageV0);
-
+    if (otherSigner) transactionV0.sign([otherSigner]);
     const signature = await (wallet?.adapter as any)?.signTransaction(
       transactionV0,
     );
@@ -55,7 +58,7 @@ const sendTx = async ({
       new Promise((resolve) => setTimeout(resolve, 2000));
 
     const numTry = 30;
-
+    let isShoError = false;
     for (let i = 0; i < numTry; i++) {
       // check transaction TTL
       const blockHeight = await connection.getBlockHeight('confirmed');
@@ -63,10 +66,18 @@ const sendTx = async ({
         throw new Error('ONCHAIN_TIMEOUT');
       }
 
-      await connection.simulateTransaction(transactionV0, {
+      const data = await connection.simulateTransaction(transactionV0, {
         replaceRecentBlockhash: true,
         commitment: 'confirmed',
       });
+      if (
+        !isShoError &&
+        import.meta.env.VITE_SKIP_PREFLIGHT === '1' &&
+        data?.value?.err
+      ) {
+        isShoError = true;
+        console.error('SimulateTransaction Error', data?.value?.logs);
+      }
 
       await connection?.sendRawTransaction(signature.serialize(), {
         skipPreflight: import.meta.env.VITE_SKIP_PREFLIGHT === '1',
@@ -79,9 +90,11 @@ const sendTx = async ({
       const sigStatus = await connection.getSignatureStatus(signatureEncode);
 
       if (sigStatus.value?.err) {
+        if (import.meta.env.VITE_SKIP_PREFLIGHT === '1') {
+          console.error('GetSignatureStatus Error', data?.value?.logs);
+        }
         throw new Error('UNKNOWN_TRANSACTION');
       }
-
       if (sigStatus.value?.confirmationStatus === 'confirmed') {
         tx = signatureEncode;
         break;

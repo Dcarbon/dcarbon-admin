@@ -1,0 +1,43 @@
+.ft-div {
+  margin-top: 30px;
+}
+
+.ft-main-div {
+  flex-direction: column;
+}
+
+.ft-title {
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.ft-content {
+  margin-top: 15px;
+}
+
+.ft-icon-div {
+  & div.ant-upload, & .ant-upload-list-item-thumbnail, & .ant-upload-list-item {
+    height: 115px !important;
+    width: 115px !important;
+    border-radius: 4px;
+  }
+
+  & .ant-upload-list-item {
+    border: none !important;
+  }
+}
+
+.ft-switch-div {
+  font-size: 14px;
+  width: 95%;
+
+  & span {
+    color: gray;
+  }
+}
+
+.space-config {
+  justify-content: center;
+  margin-top: 30px;
+  width: 100%;
+}
