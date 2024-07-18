@@ -1,11 +1,16 @@
-import { forwardRef, memo, useCallback, useState } from 'react';
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Col, Flex, Form, FormProps, message, Row, Switch, Upload } from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
-import MyInputNumber from '@components/common/input/my-input-number.tsx';
-import MyInput from '@components/common/input/my-input.tsx';
-import MyInputTextArea from '@components/common/input/my-textarea.tsx';
+import SkeletonInput from '@components/common/input/skeleton-input.tsx';
+import SkeletonTextArea from '@components/common/input/skeleton-textarea.tsx';
 import {
   IFTCreateForm,
   TFungibleTokenInfo,
@@ -23,12 +28,18 @@ const FormDefault: Partial<TFungibleTokenInfo> = {
 interface IProps {
   triggerCreateToken: (data: IFTCreateForm) => void;
   data?: Partial<TFungibleTokenInfo>;
-  isLoading?: boolean;
+  getConfigTokenLoading?: boolean;
+  initConfigTokenLoading?: boolean;
 }
 
 const DCarbonScreen = memo(
   forwardRef(
-    ({ data = FormDefault, triggerCreateToken, isLoading }: IProps) => {
+    ({
+      data = FormDefault,
+      triggerCreateToken,
+      getConfigTokenLoading,
+      initConfigTokenLoading,
+    }: IProps) => {
       console.info('DCarbonScreen');
       const [form] = Form.useForm<IFTCreateForm>();
       const [icon, setIcon] = useState([]);
@@ -53,6 +64,29 @@ const DCarbonScreen = memo(
       const onFinish: FormProps<IFTCreateForm>['onFinish'] = (values) => {
         triggerCreateToken(values);
       };
+      useLayoutEffect(() => {
+        if (data) {
+          if (data.icon) {
+            setIcon([
+              {
+                uid: data.symbol,
+                name: data.name,
+                url: data.icon[0],
+              },
+            ] as any);
+          }
+          form.setFieldsValue({
+            name: data.name,
+            symbol: data.symbol,
+            decimals: data.decimals,
+            supply: data.supply,
+            icon: data.icon,
+            revoke_freeze: data.revoke_freeze,
+            revoke_mint: data.revoke_mint,
+            description: data.description,
+          });
+        }
+      }, [data, form]);
       return (
         <Flex className={'ft-main-div'}>
           <span className={'ft-title'}>DCarbon</span>
@@ -62,7 +96,11 @@ const DCarbonScreen = memo(
               layout="vertical"
               onFinish={onFinish}
               className={'w-full'}
-              disabled={isLoading}
+              disabled={
+                !!data?.symbol ||
+                getConfigTokenLoading ||
+                initConfigTokenLoading
+              }
             >
               <Form.Item style={{ marginBottom: 0 }}>
                 <Form.Item
@@ -74,10 +112,13 @@ const DCarbonScreen = memo(
                       max: 20,
                     },
                   ]}
-                  initialValue={data.name}
                   style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
                 >
-                  <MyInput placeholder="Enter token name" maxLength={20} />
+                  <SkeletonInput
+                    loading={getConfigTokenLoading}
+                    placeholder="Enter token name"
+                    maxLength={20}
+                  />
                 </Form.Item>
                 <Form.Item
                   label="Symbol"
@@ -88,14 +129,17 @@ const DCarbonScreen = memo(
                       max: 8,
                     },
                   ]}
-                  initialValue={data.symbol}
                   style={{
                     display: 'inline-block',
                     width: 'calc(50% - 8px)',
                     margin: '0 8px',
                   }}
                 >
-                  <MyInput placeholder="Enter token symbol" maxLength={8} />
+                  <SkeletonInput
+                    loading={getConfigTokenLoading}
+                    placeholder="Enter token symbol"
+                    maxLength={8}
+                  />
                 </Form.Item>
                 <Row>
                   <Col span={12}>
@@ -108,12 +152,13 @@ const DCarbonScreen = memo(
                           required: true,
                         },
                       ]}
-                      initialValue={data.decimals}
                       style={{
                         marginRight: '8px',
                       }}
                     >
-                      <MyInputNumber
+                      <SkeletonInput
+                        loading={getConfigTokenLoading}
+                        isNumber
                         placeholder="Enter decimals"
                         width={'100%'}
                       />
@@ -130,7 +175,11 @@ const DCarbonScreen = memo(
                         marginRight: '8px',
                       }}
                     >
-                      <MyInputNumber width={'100%'} />
+                      <SkeletonInput
+                        loading={getConfigTokenLoading}
+                        isNumber
+                        width={'100%'}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -172,7 +221,8 @@ const DCarbonScreen = memo(
                     },
                   ]}
                 >
-                  <MyInputTextArea
+                  <SkeletonTextArea
+                    loading={getConfigTokenLoading}
                     placeholder="Enter description"
                     maxLength={5000}
                   />
@@ -184,7 +234,6 @@ const DCarbonScreen = memo(
                         <Form.Item
                           name="revoke_freeze"
                           valuePropName="checked"
-                          initialValue={data.revoke_freeze}
                           style={{ marginBottom: '0px' }}
                         >
                           <Switch />
@@ -204,7 +253,6 @@ const DCarbonScreen = memo(
                         <Form.Item
                           name="revoke_mint"
                           valuePropName="checked"
-                          initialValue={data.revoke_mint || false}
                           style={{ marginBottom: '0px' }}
                         >
                           <Switch />
@@ -219,7 +267,7 @@ const DCarbonScreen = memo(
                 </Row>
               </Form.Item>
               <Flex gap={10} justify="start" style={{ marginTop: '15px' }}>
-                <SubmitButtonAction loading={isLoading}>
+                <SubmitButtonAction loading={initConfigTokenLoading}>
                   Create
                 </SubmitButtonAction>
                 <CancelButtonAction onClick={goBack}>Cancel</CancelButtonAction>

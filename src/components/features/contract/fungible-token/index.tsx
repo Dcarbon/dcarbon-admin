@@ -4,9 +4,17 @@ import DcarbonContainer from '@components/features/contract/fungible-token/dcarb
 
 import './ft.css';
 
+import { memo } from 'react';
+import { getConfigTokens } from '@adapters/config.ts';
+import { useQuery } from '@tanstack/react-query';
 import CarbonContainer from '@components/features/contract/fungible-token/carbon/carbon.container.tsx';
+import { QUERY_KEYS } from '@utils/constants';
 
-const FungibleToken = () => {
+const FungibleToken = memo(() => {
+  const { data, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
+    queryFn: getConfigTokens,
+  });
   return (
     <CenterContentLayout
       contentWidth={'100%'}
@@ -15,13 +23,19 @@ const FungibleToken = () => {
     >
       <Row>
         <Col span={12} style={{ paddingRight: '15px' }}>
-          <CarbonContainer />
+          <CarbonContainer
+            data={data?.carbon}
+            getConfigTokenLoading={isLoading}
+          />
         </Col>
         <Col span={12} style={{ paddingLeft: '15px' }}>
-          <DcarbonContainer />
+          <DcarbonContainer
+            getConfigTokenLoading={isLoading}
+            data={data?.dcarbon}
+          />
         </Col>
       </Row>
     </CenterContentLayout>
   );
-};
+});
 export default FungibleToken;

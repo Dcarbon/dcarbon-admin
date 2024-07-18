@@ -10,5 +10,8 @@ const API_ROUTES = {
   COMMON: {
     UPLOAD_METADATA: 'common/upload-metadata',
   },
+  CONFIG: {
+    TOKEN: 'config/token',
+  },
 };
 export { API_ROUTES };

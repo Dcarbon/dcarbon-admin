@@ -19,19 +19,19 @@ const ContractPage = memo(() => {
       <Tabs
         defaultActiveKey="1"
         size={'large'}
-        items={[DollarOutlined, SettingOutlined, SafetyCertificateOutlined].map(
+        items={[SafetyCertificateOutlined, DollarOutlined, SettingOutlined].map(
           (Icon, i) => {
             const id = String(i + 1);
-            let label = 'Fungible Token';
-            let children = <FungibleToken />;
+            let label = 'Role';
+            let children = <ContractRole />;
             switch (i) {
               case 1:
-                label = 'Config';
-                children = <ContractConfig />;
+                label = 'Fungible Token';
+                children = <FungibleToken />;
                 break;
               case 2:
-                label = 'Role';
-                children = <ContractRole />;
+                label = 'Config';
+                children = <ContractConfig />;
                 break;
             }
             return {
