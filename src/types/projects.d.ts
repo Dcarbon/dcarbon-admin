@@ -6,7 +6,11 @@ interface IProject {
   country: string;
   destination_wallet: string;
   images: [];
-  location: string;
+  location_name: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
   iot_models: [
     {
       id: string;

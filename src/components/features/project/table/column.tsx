@@ -36,7 +36,7 @@ const PoColumn = () => {
     },
     {
       title: 'Location',
-      dataIndex: 'location',
+      dataIndex: 'location_name',
     },
     {
       title: 'Status',
@@ -47,8 +47,8 @@ const PoColumn = () => {
           value: 'draft',
         },
         {
-          text: 'Deactive',
-          value: 'deactive',
+          text: 'Inactive',
+          value: 'inactive',
         },
         {
           text: 'Active',
