@@ -15,7 +15,7 @@ import ProjectInfoForm from '../info-form';
 
 const OverView = memo(({ data }: { data: IProject }) => {
   const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
-    data.devices.map((data) => ({
+    data.devices?.map((data) => ({
       iot_device_id: data.iot_device_id,
       iot_device_type: data.device_type,
     })) || [],
@@ -107,7 +107,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.project_name}
             </Descriptions.Item>
             <Descriptions.Item label="Project manager">
-              {data.manager.user_name}
+              {data.manager?.user_name}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
               {data.country ? (
@@ -121,7 +121,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               ) : null}
             </Descriptions.Item>
             <Descriptions.Item label="Location">
-              {data.location}
+              {data.location_name}
             </Descriptions.Item>
             <Descriptions.Item label="Destination wallet">
               {data.destination_wallet}
@@ -130,7 +130,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Status">{data.status}</Descriptions.Item>
             <Descriptions.Item label="IOT Models">
               <Space>
-                {data.iot_models.map((model) => (
+                {data.iot_models?.map((model) => (
                   <Flex key={model.id} gap={10}>
                     <span>{model.model_name}</span>
                   </Flex>
@@ -167,7 +167,11 @@ const OverView = memo(({ data }: { data: IProject }) => {
             </Flex>
             <Flex vertical gap={10}>
               {data.devices?.map((device) => (
-                <Descriptions bordered layout="vertical">
+                <Descriptions
+                  key={`dv_${device.id}`}
+                  bordered
+                  layout="vertical"
+                >
                   <Descriptions.Item label="Device Id">
                     {device.iot_device_id}
                   </Descriptions.Item>

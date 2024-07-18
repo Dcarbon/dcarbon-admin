@@ -51,7 +51,7 @@ const ProjectInfoForm = memo(
             });
             values.spec = JSON.parse(values.spec);
             values.iot_models = [values.iot_models];
-            if (values.po_id === data.manager.id) {
+            if (values.po_id === data.manager?.id) {
               delete values.po_id;
             }
             if (values.iot_models[0] === data.iot_models[0].id) {
