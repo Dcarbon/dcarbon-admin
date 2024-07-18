@@ -2,6 +2,7 @@ import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { IdlTypes } from '@coral-xyz/anchor';
 
 interface TFungibleTokenInfo {
+  mint: string;
   name: string;
   symbol: string;
   description: string;

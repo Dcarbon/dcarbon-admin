@@ -132,6 +132,7 @@ const AdminContainer = memo(
         });
         transaction = tx;
         setTxModalOpen(false);
+        if (status === 'reject') return;
         myNotification({
           description: transaction,
           type: status,
@@ -172,6 +173,7 @@ const AdminContainer = memo(
         });
         transaction = tx;
         setTxModalOpen(false);
+        if (status === 'reject') return;
         myNotification({
           description: transaction,
           type: status,

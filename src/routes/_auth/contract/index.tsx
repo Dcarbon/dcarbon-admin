@@ -17,7 +17,7 @@ const ContractPage = memo(() => {
   return (
     <div>
       <Tabs
-        defaultActiveKey="1"
+        defaultActiveKey="3"
         size={'large'}
         items={[SafetyCertificateOutlined, DollarOutlined, SettingOutlined].map(
           (Icon, i) => {

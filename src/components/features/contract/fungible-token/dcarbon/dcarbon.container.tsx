@@ -52,6 +52,7 @@ const DCarbonContainer = memo(({ getConfigTokenLoading, data }: IProps) => {
         input,
       );
       const { token, status } = await mintToken(input, uri);
+      if (status === 'reject') return;
       myNotification({
         message: 'Create token successful',
         description: status === 'success' ? token : undefined,
@@ -87,11 +88,13 @@ const DCarbonContainer = memo(({ getConfigTokenLoading, data }: IProps) => {
         input,
       });
       setTxModalOpen(false);
-      myNotification({
-        description: createMintResult.tx,
-        type: createMintResult.status,
-        tx_type: 'tx',
-      });
+      if (createMintResult.status !== 'reject') {
+        myNotification({
+          description: createMintResult.tx,
+          type: createMintResult.status,
+          tx_type: 'tx',
+        });
+      }
       return createMintResult;
     } catch (e) {
       setTxModalOpen(false);

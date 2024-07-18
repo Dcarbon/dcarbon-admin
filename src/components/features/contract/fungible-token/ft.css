@@ -16,7 +16,9 @@
 }
 
 .ft-icon-div {
-  & div.ant-upload, & .ant-upload-list-item-thumbnail, & .ant-upload-list-item {
+  & div.ant-upload,
+  & .ant-upload-list-item-thumbnail,
+  & .ant-upload-list-item {
     height: 115px !important;
     width: 115px !important;
     border-radius: 4px;
@@ -40,4 +42,15 @@
   justify-content: center;
   margin-top: 30px;
   width: 100%;
+}
+
+.contract-token-mint-address {
+  display: flex;
+  font-size: 14px;
+  align-items: center;
+  margin-right: 8px;
+
+  & > a {
+    color: inherit;
+  }
 }

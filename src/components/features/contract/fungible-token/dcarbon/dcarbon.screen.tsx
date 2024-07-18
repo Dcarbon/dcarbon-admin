@@ -9,6 +9,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Col, Flex, Form, FormProps, message, Row, Switch, Upload } from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import CopyToClipBroad from '@components/common/copy';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import SkeletonTextArea from '@components/common/input/skeleton-textarea.tsx';
 import {
@@ -16,6 +17,8 @@ import {
   TFungibleTokenInfo,
 } from '@components/features/contract/fungible-token/ft.interface.ts';
 import useModalAction from '@utils/helpers/back-action.tsx';
+import { truncateText } from '@utils/helpers/common.tsx';
+import { getExplorerUrl } from '@utils/wallet';
 
 const FormDefault: Partial<TFungibleTokenInfo> = {
   name: 'DCarbon',
@@ -89,7 +92,17 @@ const DCarbonScreen = memo(
       }, [data, form]);
       return (
         <Flex className={'ft-main-div'}>
-          <span className={'ft-title'}>DCarbon</span>
+          <Flex justify={'space-between'}>
+            <span className={'ft-title'}>DCarbon</span>
+            {data?.mint && (
+              <span className={'contract-token-mint-address'}>
+                <a href={getExplorerUrl(data?.mint, 'address')} target="_blank">
+                  {truncateText(data.mint)}
+                </a>
+                <CopyToClipBroad text={data.mint} type="icon" />
+              </span>
+            )}
+          </Flex>
           <Flex className={'ft-content'}>
             <Form
               form={form}
@@ -97,9 +110,7 @@ const DCarbonScreen = memo(
               onFinish={onFinish}
               className={'w-full'}
               disabled={
-                !!data?.symbol ||
-                getConfigTokenLoading ||
-                initConfigTokenLoading
+                !!data?.mint || getConfigTokenLoading || initConfigTokenLoading
               }
             >
               <Form.Item style={{ marginBottom: 0 }}>
