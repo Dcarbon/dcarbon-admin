@@ -25,7 +25,7 @@ const sendTx = async ({
   txInstructions,
   otherSigner,
 }: ISendTxOption): Promise<{
-  status: 'success' | 'error';
+  status: 'success' | 'error' | 'reject';
   tx?: string;
 }> => {
   let tx: string | undefined;
@@ -106,7 +106,13 @@ const sendTx = async ({
       status: 'success',
       tx,
     };
-  } catch (e) {
+  } catch (e: any) {
+    if (e.message === 'User rejected the request.') {
+      return {
+        status: 'reject',
+        tx,
+      };
+    }
     console.error(e);
     return {
       status: 'error',

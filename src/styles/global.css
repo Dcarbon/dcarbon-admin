@@ -493,10 +493,6 @@ label {
   height: 100%;
 }
 
-.center-content-layout-child {
-  margin-bottom: 115px;
-}
-
 .center-content-title {
   font-size: 20px;
   font-weight: 500;
@@ -514,6 +510,7 @@ label {
   font-family: var(--font-family), serif !important;
 }
 
-.ant-form-item-explain-error, .ant-tooltip-inner {
+.ant-form-item-explain-error,
+.ant-tooltip-inner {
   font-size: 14px;
 }

@@ -11,6 +11,8 @@ import CarbonContainer from '@components/features/contract/fungible-token/carbon
 import { QUERY_KEYS } from '@utils/constants';
 
 const FungibleToken = memo(() => {
+  // const data: any = {};
+  // const isLoading = false;
   const { data, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
     queryFn: getConfigTokens,

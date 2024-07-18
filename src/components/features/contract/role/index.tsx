@@ -97,6 +97,7 @@ const ContractRole = memo(() => {
       });
       transaction = tx;
       setTxModalOpen(false);
+      if (status === 'reject') return;
       myNotification({
         description: transaction,
         type: status,

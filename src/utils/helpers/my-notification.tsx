@@ -6,7 +6,7 @@ import { ArgsProps } from 'antd/es/notification/interface';
 // @ts-expect-error
 interface IProps extends ArgsProps {
   message?: React.ReactNode | undefined;
-  type?: 'error' | 'warning' | 'success';
+  type?: 'error' | 'warning' | 'success' | 'reject';
   tx_type?: 'tx' | 'address';
 }
 

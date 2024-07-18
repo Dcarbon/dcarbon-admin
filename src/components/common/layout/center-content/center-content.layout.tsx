@@ -8,6 +8,7 @@ const CenterContentLayout = ({
   vertical,
   align,
   className,
+  marginBottom,
 }: {
   children: React.ReactNode;
   contentWidth?: string;
@@ -15,6 +16,7 @@ const CenterContentLayout = ({
   vertical?: boolean;
   align?: 'center' | 'start';
   className?: string;
+  marginBottom?: string;
 }) => {
   const style: CSSProperties = {
     width: contentWidth || '50%',
@@ -32,6 +34,7 @@ const CenterContentLayout = ({
       <Flex
         align={'center'}
         vertical={true}
+        style={{ marginBottom: marginBottom ? marginBottom : '115px' }}
         className={'center-content-layout-child w-full'}
       >
         <Flex vertical={vertical || true} style={style}>

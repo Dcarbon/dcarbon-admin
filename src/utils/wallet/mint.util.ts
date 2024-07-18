@@ -39,7 +39,7 @@ interface ICreateMintProps {
 interface ICreateMintResponse {
   token: string;
   tx?: string;
-  status: 'success' | 'error';
+  status: 'success' | 'error' | 'reject';
 }
 
 const createMetadata = async (
