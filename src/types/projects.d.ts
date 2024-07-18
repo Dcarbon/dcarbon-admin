@@ -26,6 +26,7 @@ interface IProject {
   spec: object;
   status: 'draft' | 'active' | 'deactivate';
 }
+
 interface IProjectRequest {
   id: string;
   project_name: string;
@@ -45,6 +46,7 @@ interface IProjectRequest {
   spec: object;
   status: 'draft' | 'active' | 'deactivate';
 }
+
 interface IProjectPage {
   data: IProject[];
   paging: {
@@ -53,10 +55,12 @@ interface IProjectPage {
     limit: number;
   };
 }
+
 type DeviceType = {
   iot_device_id: string;
   iot_device_type: string;
 };
+
 interface IProjectPageRequest {
   page?: number;
   limit?: number;
@@ -64,6 +68,7 @@ interface IProjectPageRequest {
   sort_type?: string;
   keyword?: string;
 }
+
 interface IProjectModel {
   id: string;
   model_name: string;
@@ -78,6 +83,7 @@ interface IProjectImageRequest {
   thumbnail: any[];
   images: any[];
 }
+
 interface IProjectImageResponse {
   id: string;
   result: {
@@ -88,6 +94,32 @@ interface IProjectImageResponse {
     }[];
   }[];
 }
+
+class SplToken {
+  mint: string;
+
+  name: string;
+
+  symbol: string;
+
+  decimals: number;
+
+  supply: number;
+
+  description?: string;
+
+  image: string;
+
+  freeze_authority?: string;
+
+  mint_authority?: string;
+}
+
+interface IConfigTokenResponse {
+  carbon?: SplToken;
+  dcarbon?: SplToken;
+}
+
 type ProjectList = Omit<
   IProject,
   | 'images'

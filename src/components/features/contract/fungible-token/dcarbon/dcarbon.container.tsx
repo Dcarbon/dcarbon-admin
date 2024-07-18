@@ -9,7 +9,10 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import DCarbonScreen from '@components/features/contract/fungible-token/dcarbon/dcarbon.screen.tsx';
-import { IFTCreateForm } from '@components/features/contract/fungible-token/ft.interface.ts';
+import {
+  IFTCreateForm,
+  TFungibleTokenInfo,
+} from '@components/features/contract/fungible-token/ft.interface.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
 import {
   createMetadata,
@@ -17,7 +20,12 @@ import {
   ICreateMintResponse,
 } from '@utils/wallet/mint.util.ts';
 
-const DCarbonContainer = memo(() => {
+interface IProps {
+  getConfigTokenLoading?: boolean;
+  data?: SplToken;
+}
+
+const DCarbonContainer = memo(({ getConfigTokenLoading, data }: IProps) => {
   console.info('DCarbonContainer');
   const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
@@ -92,10 +100,21 @@ const DCarbonContainer = memo(() => {
     }
     return result;
   };
+  const dcarbon: Partial<Partial<TFungibleTokenInfo>> = {
+    ...data,
+    icon: [data?.image || ''],
+    revoke_freeze: !data?.freeze_authority,
+    revoke_mint: !data?.mint_authority,
+  };
   return (
     <>
       <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
-      <DCarbonScreen triggerCreateToken={createToken} isLoading={isLoading} />
+      <DCarbonScreen
+        data={data?.name ? dcarbon : undefined}
+        triggerCreateToken={createToken}
+        getConfigTokenLoading={getConfigTokenLoading}
+        initConfigTokenLoading={isLoading}
+      />
     </>
   );
 });
