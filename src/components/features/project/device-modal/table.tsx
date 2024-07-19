@@ -1,10 +1,17 @@
 import React, { memo, useState } from 'react';
 import { getIoTDevice } from '@/adapters/project';
+import { EIotDeviceStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useQuery } from '@tanstack/react-query';
 import { Flex, Input, Modal, Select, Space, Typography } from 'antd';
 import { createStyles } from 'antd-style';
+import {
+  DeviceDataType,
+  IDeviceRequest,
+  TIotDeviceStatus,
+  TIotDeviceType,
+} from '@/types/device';
 import MyTable from '@components/common/table/my-table.tsx';
 
 import columns from './column';
@@ -103,8 +110,8 @@ const DeviceTable = memo(
             className="device-modal-select"
             onChange={(status) => setSearch({ ...search, status })}
           >
-            {data?.common.iot_device_status.map((status) => (
-              <Option value={status}>{status}</Option>
+            {data?.common.iot_device_status.map((info: TIotDeviceStatus) => (
+              <Option value={info.id}>{info.name}</Option>
             ))}
           </Select>
           <Select
@@ -112,8 +119,8 @@ const DeviceTable = memo(
             className="device-modal-select"
             onChange={(type) => setSearch({ ...search, type })}
           >
-            {data?.common.iot_device_types.map((type) => (
-              <Option value={type}>{type}</Option>
+            {data?.common.iot_device_types.map((info: TIotDeviceType) => (
+              <Option value={info.id}>{info.name}</Option>
             ))}
           </Select>
         </Flex>
@@ -132,7 +139,7 @@ const DeviceTable = memo(
             },
             getCheckboxProps: (record: DeviceDataType) => ({
               disabled:
-                record.status !== 'active' &&
+                record.status?.id === EIotDeviceStatus.REJECT &&
                 !selectedDevice.some(
                   (device) => device.iot_device_id === record.iot_device_id,
                 ),
