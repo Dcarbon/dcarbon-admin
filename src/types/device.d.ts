@@ -1,14 +1,26 @@
+import { EIotDeviceStatus, EIotDeviceType } from '@/enums';
+
 type TDeviceStatus = 'active' | 'de_active' | 'used';
 type CommonType = {
-  iot_device_types: string[];
-  iot_device_status: string[];
+  iot_device_types: TIotDeviceType[];
+  iot_device_status: TIotDeviceStatus[];
+};
+
+type TIotDeviceType = {
+  id: EIotDeviceType;
+  name: string;
+};
+
+type TIotDeviceStatus = {
+  id: EIotDeviceStatus;
+  name: string;
 };
 
 type DeviceDataType = {
   iot_device_id: string;
   device_name: string;
-  device_type: string;
-  status: 'active' | 'de_active' | 'used';
+  device_type: TIotDeviceType;
+  status: TIotDeviceStatus;
 };
 
 interface IDeviceRequest {

@@ -511,6 +511,7 @@ label {
 }
 
 .ant-form-item-explain-error,
-.ant-tooltip-inner {
-  font-size: 14px;
+.ant-tooltip-inner,
+.ant-select-item {
+  font-size: 14px !important;
 }

@@ -28,6 +28,9 @@
       ],
       "@utils/*": [
         "src/utils/*"
+      ],
+      "@enums/*": [
+        "src/enums/*"
       ]
     },
     "composite": true,

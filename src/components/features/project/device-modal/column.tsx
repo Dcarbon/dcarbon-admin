@@ -1,29 +1,37 @@
+import { EIotDeviceStatus } from '@/enums';
 import { TableColumnsType, Tag } from 'antd';
+import {
+  DeviceDataType,
+  TIotDeviceStatus,
+  TIotDeviceType,
+} from '@/types/device';
 
-const renderTag = (data: string) => {
-  let color = 'green';
-  switch (data) {
-    case 'active':
+const renderTag = (data: TIotDeviceStatus) => {
+  let color = 'orange';
+  switch (data.id) {
+    case EIotDeviceStatus.NONE:
+      color = 'orange';
+      break;
+    case EIotDeviceStatus.REGISTER:
+      color = 'geekblue';
+      break;
+    case EIotDeviceStatus.SUCCESS:
       color = 'green';
       break;
-    case 'de_active':
+    case EIotDeviceStatus.REJECT:
       color = 'red';
-      break;
-    case 'used':
-      color = 'blue';
       break;
   }
   return (
     <Tag
       style={{
-        textTransform: 'capitalize',
         minWidth: '80px',
         textAlign: 'center',
         fontSize: '12px',
       }}
       color={color}
     >
-      {data.replace('_', ' ')}
+      {data.name}
     </Tag>
   );
 };
@@ -43,12 +51,24 @@ const columns: TableColumnsType<DeviceDataType> = [
     title: 'Type',
     dataIndex: 'device_type',
     key: 'device_type',
+    render: (type: TIotDeviceType) => (
+      <Tag
+        style={{
+          minWidth: '98px',
+          textAlign: 'center',
+          fontSize: '12px',
+        }}
+        color={'blue'}
+      >
+        {type.name}
+      </Tag>
+    ),
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (status) => <span>{renderTag(status)}</span>,
+    render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
   },
 ];
 export default columns;
