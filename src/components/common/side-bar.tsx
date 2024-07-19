@@ -1,17 +1,33 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { MENU, ROUTES_URL } from '@/utils/constants';
 import { LogoutOutlined } from '@ant-design/icons';
-import { Link, useLocation } from '@tanstack/react-router';
-import { Menu } from 'antd';
+import { useLocation, useNavigate } from '@tanstack/react-router';
+import { Menu, MenuProps } from 'antd';
 
-const NavBar = () => {
+const NavBar = memo(() => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useAuth();
   const [selectedKey, setSelectedKey] = useState<string>(
     MENU.find((route) => location.pathname.startsWith(route.path))?.key ||
       ROUTES_URL.HOME,
   );
+  const items: MenuProps['items'] = [
+    ...MENU.map((menu: any) => ({
+      key: menu.key,
+      icon: menu.icon,
+      label: menu.label,
+      onClick: () => navigate({ to: menu.path }),
+    })),
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: () => logout(),
+    },
+  ];
+
   useEffect(() => {
     const matchedRoute = MENU.find((route) => {
       return route.path === ROUTES_URL.HOME
@@ -27,34 +43,9 @@ const NavBar = () => {
       selectedKeys={[selectedKey]}
       defaultSelectedKeys={[ROUTES_URL.HOME]}
       mode="inline"
-    >
-      {MENU.map((menu: any) =>
-        !menu.children ? (
-          <Menu.Item key={menu.key} icon={menu.icon}>
-            <Link to={menu.path}>{menu.label}</Link>
-          </Menu.Item>
-        ) : (
-          <Menu.SubMenu
-            style={{ padding: 0 }}
-            key={menu.key}
-            icon={menu.icon}
-            title={menu.label}
-          >
-            {menu?.children?.map(
-              (item: { label: string; path: string }, index: number) => (
-                <Menu.Item key={'submenu' + index}>
-                  <Link to={item.path}>{item.label}</Link>
-                </Menu.Item>
-              ),
-            )}
-          </Menu.SubMenu>
-        ),
-      )}
-      <Menu.Item onClick={logout} key="logout" icon={<LogoutOutlined />}>
-        Logout
-      </Menu.Item>
-    </Menu>
+      items={items}
+    />
   );
-};
+});
 
 export default NavBar;
