@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
+import { ERROR_CONTRACT } from '@/constants';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
-import { AnchorProvider, Program } from '@coral-xyz/anchor';
-import { useAnchorWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
+import {
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+} from '@solana/wallet-adapter-react';
+import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IConfig } from '@components/features/contract/config/config.interface.ts';
-import ConfigScreen from '@components/features/contract/config/config.screen.tsx';
+import ConfigScreen, {
+  TConfigUpdate,
+} from '@components/features/contract/config/config.screen.tsx';
+import useNotification from '@utils/helpers/my-notification.tsx';
+import { sendTx } from '@utils/wallet';
 
 interface IRef {
   triggerSetConfig: (config: IConfig) => void;
@@ -16,10 +25,11 @@ interface IRef {
 const ContractConfig = () => {
   console.info('ContractConfig');
   const [loading, setLoading] = useState(false);
-  // const [myNotification] = useNotification();
+  const [refetch, setRefetch] = useState(0);
+  const [myNotification] = useNotification();
   const [txModalOpen, setTxModalOpen] = useState(false);
   const configRef = useRef<IRef>();
-  // const { publicKey, wallet } = useWallet();
+  const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const getConfig = async () => {
@@ -72,9 +82,53 @@ const ContractConfig = () => {
       console.error(e);
     }
   };
+  const updateConfig = async (config: TConfigUpdate) => {
+    let transaction;
+    try {
+      setTxModalOpen(true);
+      if (!anchorWallet || !connection || !publicKey || !wallet) {
+        myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+        return;
+      }
+      const provider = new AnchorProvider(connection, anchorWallet);
+      const program = new Program<ICarbonContract>(
+        CARBON_IDL as ICarbonContract,
+        provider,
+      );
+      let instructions: TransactionInstruction | undefined;
+      if (config.type == 'mint_fee' && config.mint_fee) {
+        instructions = await program.methods
+          .setMintingFee(new BN(Number(config.mint_fee)))
+          .accounts({
+            signer: publicKey,
+          })
+          .instruction();
+      }
+      if (!instructions) throw new Error('instructions is required');
+      const { status, tx } = await sendTx({
+        connection,
+        wallet,
+        payerKey: publicKey,
+        txInstructions: instructions,
+      });
+      transaction = tx;
+      setTxModalOpen(false);
+      if (status === 'reject') return;
+      myNotification({
+        description: transaction,
+        type: status,
+        tx_type: 'tx',
+      });
+      setRefetch((prevState) => prevState + 1);
+    } catch (e) {
+      setTxModalOpen(false);
+      myNotification(ERROR_CONTRACT.COMMON.TX_ERROR);
+      console.error(e);
+    }
+  };
   useEffect(() => {
     getConfig().then();
-  }, [connection, anchorWallet]);
+  }, [connection, anchorWallet, refetch]);
   return (
     <>
       {' '}
@@ -96,7 +150,11 @@ const ContractConfig = () => {
             You need to connect your wallet to continue!
           </span>
         ) : (
-          <ConfigScreen loading={loading} ref={configRef} />
+          <ConfigScreen
+            loading={loading}
+            ref={configRef}
+            triggerUpdateConfig={updateConfig}
+          />
         )}
       </CenterContentLayout>
     </>

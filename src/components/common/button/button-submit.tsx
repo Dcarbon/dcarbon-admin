@@ -4,6 +4,7 @@ type ButtonSubmitProps = {
   children: React.ReactNode | string;
   onClick?: () => void;
   loading?: boolean;
+  disabled?: boolean;
   [key: string]: any;
 };
 const SubmitButtonAction = ({
