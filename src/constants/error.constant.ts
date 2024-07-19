@@ -28,6 +28,32 @@ const ERROR_CONTRACT = {
         description: 'This wallet is already in use',
       },
     },
+    CONFIG: {
+      FEE_EMPTY: {
+        message: 'Input invalid',
+        description: 'Mint Fee can not be empty',
+      },
+      RATE_EMPTY: {
+        message: 'Input invalid',
+        description: 'Rate can not be empty',
+      },
+      WALLET_EMPTY: {
+        message: 'Input invalid',
+        description: 'Collect Fee Wallet can not be empty',
+      },
+      FEE_EXIST: {
+        message: 'Input invalid',
+        description: 'Mint Fee equals current value',
+      },
+      RATE_EXIST: {
+        message: 'Input invalid',
+        description: 'Rate equals current value',
+      },
+      WALLET_EXIST: {
+        message: 'Input invalid',
+        description: 'Collect Fee Wallet equals current value',
+      },
+    },
   },
 };
 export { ERROR_CONTRACT };
