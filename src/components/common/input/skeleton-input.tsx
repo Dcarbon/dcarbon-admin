@@ -7,23 +7,26 @@ import MySkeletonInput from '@components/common/skeleton/my-skeleton-input.tsx';
 
 interface IInputProps extends InputProps {
   loading?: boolean;
-  isNumber?: boolean;
+  isnumber?: boolean;
 }
 
 interface INumberProps extends IInputNumberProps {
   loading?: boolean;
-  isNumber?: boolean;
+  isnumber?: boolean;
 }
 
 const SkeletonInput = (props: INumberProps | IInputProps) => {
+  const newProps = { ...props };
+  delete newProps.loading;
+  delete newProps.isnumber;
   return (
     <>
       {props.loading ? (
         <MySkeletonInput active={true} />
-      ) : props.isNumber ? (
-        <MyInputNumber {...(props as INumberProps)} />
+      ) : props.isnumber ? (
+        <MyInputNumber {...(newProps as INumberProps)} />
       ) : (
-        <MyInput {...(props as IInputProps)} />
+        <MyInput {...(newProps as IInputProps)} />
       )}
     </>
   );

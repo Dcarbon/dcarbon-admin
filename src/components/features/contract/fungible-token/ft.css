@@ -49,6 +49,8 @@
   font-size: 14px;
   align-items: center;
   margin-right: 8px;
+  color: gray;
+  margin-top: 2px;
 
   & > a {
     color: inherit;

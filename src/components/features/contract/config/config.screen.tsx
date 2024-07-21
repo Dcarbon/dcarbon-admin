@@ -6,8 +6,12 @@ import {
   useState,
 } from 'react';
 import { ERROR_CONTRACT } from '@/constants';
-import { InfoCircleOutlined, SwapOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Row, Space } from 'antd';
+import {
+  InfoCircleOutlined,
+  SaveOutlined,
+  SwapOutlined,
+} from '@ant-design/icons';
+import { Avatar, Button, Col, Flex, Form, Row, Space } from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import SubmitButton from '@components/common/button/submit-button.tsx';
@@ -21,19 +25,20 @@ import { getExplorerUrl } from '@utils/wallet';
 
 import './config.css';
 
-const { Meta } = Card;
+import { TIotDeviceType } from '@/types/device';
 
 export interface TConfigUpdate extends IConfig {
-  type: 'mint_fee' | 'rate' | 'collect_fee_wallet';
+  type: 'mint_fee' | 'rate' | 'collect_fee_wallet' | 'device_limit';
 }
 
 interface IProps {
   loading?: boolean;
+  deviceTypes?: TIotDeviceType[];
   triggerUpdateConfig: (config: TConfigUpdate) => void;
 }
 
 const ConfigScreen = memo(
-  forwardRef(({ loading, triggerUpdateConfig }: IProps, ref) => {
+  forwardRef(({ loading, triggerUpdateConfig, deviceTypes }: IProps, ref) => {
     console.info('ConfigScreen');
     const [myNotification] = useNotification();
     const [config, setConfig] = useState<IConfig>();
@@ -51,10 +56,18 @@ const ConfigScreen = memo(
     }));
     const handleEdit = (editFlg: boolean) => {
       if (editFlg) {
+        const deviceValue: any = {};
+        deviceTypes?.forEach((device) => {
+          const match = config?.device_limit?.find(
+            (info) => info.device_type == device.id,
+          );
+          deviceValue[`type_${device.id}_limit`] = match ? match.limit : null;
+        });
         form.setFieldsValue({
           rate: config?.rate,
           mint_fee: config?.mint_fee,
           collect_fee_wallet: config?.collect_fee_wallet,
+          ...deviceValue,
         });
       }
       setEditFlg(!editFlg);
@@ -90,17 +103,28 @@ const ConfigScreen = memo(
           return;
         }
       }
+      if (option.type === 'device_limit') {
+        if (!option.type_limit) {
+          myNotification(ERROR_CONTRACT.CONTRACT.CONFIG.LIMIT_EMPTY);
+          return;
+        }
+      }
       triggerUpdateConfig(option);
     };
     useLayoutEffect(() => {
       if (config) {
+        const deviceValue: any = {};
+        config.device_limit?.forEach((device) => {
+          deviceValue[`type_${device.device_type}_limit`] = device.limit;
+        });
         form.setFieldsValue({
           rate: config.rate,
           mint_fee: config.mint_fee,
           collect_fee_wallet: config.collect_fee_wallet,
+          ...deviceValue,
         });
       }
-    }, [config]);
+    }, [config, deviceTypes]);
     return (
       <>
         <Form
@@ -131,7 +155,7 @@ const ConfigScreen = memo(
                       placeholder="Mint fee"
                       width={'100%'}
                       stringMode
-                      isNumber={true}
+                      isnumber={true}
                       loading={loading}
                       disabled={(loading || !!config?.mint_fee) && !isEdit}
                     />
@@ -175,7 +199,7 @@ const ConfigScreen = memo(
                       placeholder="Rate"
                       width={'100%'}
                       stringMode
-                      isNumber={true}
+                      isnumber={true}
                       loading={loading}
                       disabled={
                         (loading || !!config?.collect_fee_wallet) && !isEdit
@@ -217,7 +241,6 @@ const ConfigScreen = memo(
                 placeholder="Enter wallet"
                 loading={loading}
                 disabled={(loading || !!config?.rate) && !isEdit}
-                value={form.getFieldValue('collect_fee_wallet')}
                 onChange={(e: any) =>
                   form.setFieldsValue({ collect_fee_wallet: e?.target?.value })
                 }
@@ -242,72 +265,119 @@ const ConfigScreen = memo(
           <Row>
             {config?.carbon && (
               <Col span={12} style={{ paddingRight: '8px' }}>
-                <Card
-                  loading={loading}
-                  style={{ width: '100%' }}
-                  cover={
-                    !loading && (
-                      <img
-                        alt={config?.carbon?.name}
-                        src={config?.carbon?.image}
-                      />
-                    )
-                  }
-                >
-                  <Meta
-                    title={`${config?.carbon?.name} (${config.carbon.symbol})`}
-                    description={
-                      <span className={'contract-token-mint-address'}>
-                        <a
-                          href={getExplorerUrl(config?.carbon.mint, 'address')}
-                          target="_blank"
-                        >
-                          {truncateText(config?.carbon?.mint)}
-                        </a>
-                        <CopyToClipBroad
-                          text={config?.carbon?.mint}
-                          type="icon"
-                        />
-                      </span>
-                    }
+                <Flex vertical={false}>
+                  <Avatar
+                    shape="square"
+                    size={70}
+                    src={config?.carbon?.image}
                   />
-                </Card>
+                  <Flex vertical style={{ padding: '0px 8px' }}>
+                    <span>
+                      {`${config?.carbon?.name} (${config.carbon.symbol})`}
+                    </span>
+                    <span className={'contract-token-mint-address'}>
+                      <a
+                        href={getExplorerUrl(config?.carbon.mint, 'address')}
+                        target="_blank"
+                      >
+                        {truncateText(config?.carbon?.mint)}
+                      </a>
+                      <CopyToClipBroad
+                        text={config?.carbon?.mint}
+                        type="icon"
+                      />
+                    </span>
+                  </Flex>
+                </Flex>
               </Col>
             )}
             {config?.dcarbon && (
               <Col span={12} style={{ paddingLeft: '8px' }}>
-                <Card
-                  loading={loading}
-                  style={{ width: '100%' }}
-                  cover={
-                    !loading && (
-                      <img
-                        alt={config?.dcarbon?.name}
-                        src={config?.dcarbon?.image}
-                      />
-                    )
-                  }
-                >
-                  <Meta
-                    title={`${config?.dcarbon?.name} (${config.dcarbon.symbol})`}
-                    description={
-                      <span className={'contract-token-mint-address'}>
-                        <a
-                          href={getExplorerUrl(config?.dcarbon.mint, 'address')}
-                          target="_blank"
-                        >
-                          {truncateText(config?.dcarbon?.mint)}
-                        </a>
-                        <CopyToClipBroad
-                          text={config?.dcarbon?.mint}
-                          type="icon"
-                        />
-                      </span>
-                    }
+                <Flex vertical={false}>
+                  <Avatar
+                    shape="square"
+                    size={70}
+                    src={config?.dcarbon?.image}
                   />
-                </Card>
+                  <Flex vertical style={{ padding: '0px 8px' }}>
+                    <span>
+                      {`${config?.dcarbon?.name} (${config.dcarbon.symbol})`}
+                    </span>
+                    <span className={'contract-token-mint-address'}>
+                      <a
+                        href={getExplorerUrl(config?.dcarbon.mint, 'address')}
+                        target="_blank"
+                      >
+                        {truncateText(config?.dcarbon?.mint)}
+                      </a>
+                      <CopyToClipBroad
+                        text={config?.dcarbon?.mint}
+                        type="icon"
+                      />
+                    </span>
+                  </Flex>
+                </Flex>
               </Col>
             )}
+          </Row>
+          <Row style={{ marginTop: '15px' }}>
+            {deviceTypes?.map((device) => {
+              const isHaveSetting = !!form.getFieldValue(
+                `type_${device.id}_limit`,
+              );
+              return (
+                <Col span={8} key={device.id}>
+                  <Form.Item
+                    label={
+                      <span
+                        style={{
+                          color: isHaveSetting ? 'inherit' : 'red',
+                        }}
+                      >{`${device.id}-${device.name} limit`}</span>
+                    }
+                    style={{ width: '100%', paddingRight: '8px' }}
+                    className={'contract-form-update'}
+                  >
+                    <Form.Item
+                      name={`type_${device.id}_limit`}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                      style={{ flexGrow: 1 }}
+                    >
+                      <SkeletonInput
+                        isnumber={true}
+                        placeholder={`${device.name} limit`}
+                        style={{ width: '100%' }}
+                        loading={loading}
+                        disabled={(loading || !!config?.rate) && !isEdit}
+                      />
+                    </Form.Item>
+                    {isEdit && (
+                      <Button
+                        type={'primary'}
+                        disabled={(loading || !!config?.rate) && !isEdit}
+                        icon={
+                          isHaveSetting ? <SwapOutlined /> : <SaveOutlined />
+                        }
+                        className={`contract-button ${isHaveSetting ? 'contract-switch-button' : ''}`}
+                        onClick={() =>
+                          updateConfig({
+                            type: 'device_limit',
+                            type_limit: form.getFieldValue(
+                              `type_${device.id}_limit`,
+                            ),
+                            d_type: device.id,
+                          })
+                        }
+                      />
+                    )}
+                  </Form.Item>
+                </Col>
+              );
+            })}
           </Row>
           <Space className={'space-config'}>
             {!config?.mint_fee ? (
