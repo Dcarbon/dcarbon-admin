@@ -13,5 +13,8 @@ const API_ROUTES = {
   CONFIG: {
     TOKEN: 'config/token',
   },
+  DEVICE: {
+    TYPES: 'devices/types',
+  },
 };
 export { API_ROUTES };

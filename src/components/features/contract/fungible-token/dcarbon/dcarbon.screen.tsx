@@ -162,7 +162,7 @@ const DCarbonScreen = memo(
                   >
                     <SkeletonInput
                       loading={getConfigTokenLoading}
-                      isNumber
+                      isnumber
                       placeholder="Enter decimals"
                       width={'100%'}
                     />
@@ -181,7 +181,7 @@ const DCarbonScreen = memo(
                   >
                     <SkeletonInput
                       loading={getConfigTokenLoading}
-                      isNumber
+                      isnumber
                       width={'100%'}
                     />
                   </Form.Item>

@@ -9,6 +9,7 @@ type CommonType = {
 type TIotDeviceType = {
   id: EIotDeviceType;
   name: string;
+  limit?: number;
 };
 
 type TIotDeviceStatus = {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ERROR_CONTRACT } from '@/constants';
+import { getDeviceTypes } from '@adapters/config.ts';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
@@ -9,12 +10,14 @@ import {
   useWallet,
 } from '@solana/wallet-adapter-react';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
+import { useQuery } from '@tanstack/react-query';
 import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IConfig } from '@components/features/contract/config/config.interface.ts';
 import ConfigScreen, {
   TConfigUpdate,
 } from '@components/features/contract/config/config.screen.tsx';
+import { QUERY_KEYS } from '@utils/constants';
 import useNotification from '@utils/helpers/my-notification.tsx';
 import { sendTx } from '@utils/wallet';
 
@@ -32,6 +35,10 @@ const ContractConfig = () => {
   const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
+  const { data, isLoading: deviceTypeLoading } = useQuery({
+    queryKey: [QUERY_KEYS.DEVICE.TYPES],
+    queryFn: getDeviceTypes,
+  });
   const getConfig = async () => {
     if (!anchorWallet || !connection) {
       return;
@@ -54,6 +61,12 @@ const ContractConfig = () => {
           rate: data.rate.toNumber(),
           mint_fee: data.mintingFee.toNumber(), // FIXME: mock data
           collect_fee_wallet: 'Fxu7o9k8BKKAJyD94UfESH9sMrEFtoXtRRbQiiUFD1pv',
+          device_limit: data.mintingLimits.map((info) => {
+            return {
+              device_type: info.deviceType,
+              limit: info.limit,
+            };
+          }),
           dcarbon: {
             mint: '4gP1Dg9zaVXQsumuky64CjT4Za6fcY2mGtESfdSqhwXM',
             name: 'DCarbon Beta 1',
@@ -99,6 +112,13 @@ const ContractConfig = () => {
       if (config.type == 'mint_fee' && config.mint_fee) {
         instructions = await program.methods
           .setMintingFee(new BN(Number(config.mint_fee)))
+          .accounts({
+            signer: publicKey,
+          })
+          .instruction();
+      } else if (config.type === 'device_limit') {
+        instructions = await program.methods
+          .setMintingLimit(new BN(config.d_type), new BN(config.type_limit))
           .accounts({
             signer: publicKey,
           })
@@ -151,9 +171,10 @@ const ContractConfig = () => {
           </span>
         ) : (
           <ConfigScreen
-            loading={loading}
+            loading={loading || deviceTypeLoading}
             ref={configRef}
             triggerUpdateConfig={updateConfig}
+            deviceTypes={data}
           />
         )}
       </CenterContentLayout>

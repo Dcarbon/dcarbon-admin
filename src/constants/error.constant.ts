@@ -41,6 +41,10 @@ const ERROR_CONTRACT = {
         message: 'Input invalid',
         description: 'Collect Fee Wallet can not be empty',
       },
+      LIMIT_EMPTY: {
+        message: 'Input invalid',
+        description: 'Device limit can not be empty',
+      },
       FEE_EXIST: {
         message: 'Input invalid',
         description: 'Mint Fee equals current value',

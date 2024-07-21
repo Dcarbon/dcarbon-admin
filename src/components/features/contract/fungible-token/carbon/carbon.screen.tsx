@@ -162,7 +162,7 @@ const CarbonScreen = memo(
                   >
                     <SkeletonInput
                       loading={getConfigTokenLoading}
-                      isNumber
+                      isnumber
                       placeholder="Enter decimals"
                       width={'100%'}
                     />
@@ -176,7 +176,7 @@ const CarbonScreen = memo(
                   >
                     <SkeletonInput
                       loading={getConfigTokenLoading}
-                      isNumber
+                      isnumber
                       width={'100%'}
                       placeholder={'Enter supply'}
                       disabled
