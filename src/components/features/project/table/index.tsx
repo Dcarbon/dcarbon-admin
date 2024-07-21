@@ -1,3 +1,4 @@
+import { IProjectPage, ProjectList } from '@/types/projects';
 import MyTable from '@components/common/table/my-table.tsx';
 import projectColumns from '@components/features/project/table/column';
 

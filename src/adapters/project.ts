@@ -1,6 +1,15 @@
 /* eslint-disable camelcase */
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import { IDevicePage, IDeviceRequest } from '@/types/device';
+import {
+  IProject,
+  IProjectImageRequest,
+  IProjectImageResponse,
+  IProjectModel,
+  IProjectPage,
+  IProjectPageRequest,
+  IProjectRequest,
+} from '@/types/projects';
 
 import { request } from './xhr';
 
