@@ -84,18 +84,11 @@ const DeviceTable = memo(
             <Typography.Text type="secondary">{`(selected: ${selectedDevice.length})`}</Typography.Text>
           </Space>
         }
+        width={700}
         centered
         destroyOnClose
         maskClosable
-        onCancel={
-          () => cancelModal()
-          // Modal.confirm({
-          //   title: 'Are you sure you want to cancel?',
-          //   content: 'All changes will be lost!',
-          //   onOk: () => setOpen(false),
-          //   centered: true,
-          // })
-        }
+        onCancel={() => cancelModal()}
         onOk={onOk ? onOk : () => setOpen(false)}
         onClose={() => setOpen(false)}
         classNames={classNames}
@@ -131,6 +124,7 @@ const DeviceTable = memo(
             defaultSelectedRowKeys: selectedDevice.map(
               (device) => device.iot_device_id,
             ),
+            columnWidth: 50,
             onChange: (_selectedRowKeys, selectedRows) => {
               const data = selectedRows.map((device) => ({
                 iot_device_id: device.iot_device_id,
@@ -148,10 +142,18 @@ const DeviceTable = memo(
             }),
           }}
           columns={columns}
-          key={'iot_device_id'}
+          key={'id'}
           loading={isLoading}
           dataSource={data?.data as DeviceDataType[]}
-          rowKey="iot_device_id"
+          rowKey="id"
+          scroll={{ y: 400 }}
+          virtual
+          pagination={{
+            pageSize: data?.paging.limit || 1,
+            total: data?.paging.total || 1,
+            current: data?.paging.page || 1,
+            onChange: (page) => setSearch({ ...search, page }),
+          }}
         />
       </Modal>
     );
