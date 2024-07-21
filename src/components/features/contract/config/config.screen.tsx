@@ -328,13 +328,7 @@ const ConfigScreen = memo(
               return (
                 <Col span={8} key={device.id}>
                   <Form.Item
-                    label={
-                      <span
-                        style={{
-                          color: isHaveSetting ? 'inherit' : 'red',
-                        }}
-                      >{`${device.id}-${device.name} limit`}</span>
-                    }
+                    label={`${device.id}-${device.name} limit`}
                     style={{ width: '100%', paddingRight: '8px' }}
                     className={'contract-form-update'}
                   >
