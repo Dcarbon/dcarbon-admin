@@ -7,6 +7,7 @@ import {
   useWallet,
 } from '@solana/wallet-adapter-react';
 import { useMutation } from '@tanstack/react-query';
+import { SplToken } from '@/types/projects';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import CarbonScreen from '@components/features/contract/fungible-token/carbon/carbon.screen.tsx';
 import {

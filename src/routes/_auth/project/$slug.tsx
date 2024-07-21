@@ -1,12 +1,12 @@
 import { memo } from 'react';
 import { getProjectBySlug } from '@/adapters/project';
-import NavigationBack from '@/components/common/navigation-back';
 import ProjectDashboard from '@/components/features/project/dashboard';
 import OverView from '@/components/features/project/overview';
 import { QUERY_KEYS } from '@/utils/constants';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { Tabs } from 'antd';
+import Devices from '@components/features/project/devices';
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -25,9 +25,9 @@ const ProjectDetail = memo(() => {
   const { data } = useSuspenseQuery(postQueryOptions(slug));
   return (
     <div>
-      <NavigationBack href="/project" />
+      {/* <NavigationBack href="/project" />*/}
       <Tabs
-        defaultActiveKey="1"
+        defaultActiveKey="2"
         items={[
           {
             key: '1',
@@ -36,6 +36,11 @@ const ProjectDetail = memo(() => {
           },
           {
             key: '2',
+            label: 'Devices',
+            children: <Devices devices={data.devices} />,
+          },
+          {
+            key: '3',
             label: 'Dashboard',
             children: <ProjectDashboard />,
           },

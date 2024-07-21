@@ -1,5 +1,6 @@
 import { request } from '@adapters/xhr.ts';
 import { TIotDeviceType } from '@/types/device';
+import { IConfigTokenResponse } from '@/types/projects';
 import { API_ROUTES, REQ_METHODS } from '@utils/constants';
 
 const getConfigTokens = async () => {

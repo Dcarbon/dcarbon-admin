@@ -1,26 +1,28 @@
 import { memo, useCallback, useRef, useState } from 'react';
 import { updateProject } from '@/adapters/project';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
-import DeviceTable from '@/components/features/project/device-modal/table';
 import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button, Col, Descriptions, Flex, Image, message, Space } from 'antd';
 import { getCode } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import { IProject, IProjectRequest } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+
+import './overview.css';
 
 import ProjectInfoForm from '../info-form';
 
 const OverView = memo(({ data }: { data: IProject }) => {
-  const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
-    data.devices?.map((data) => ({
-      iot_device_id: data.iot_device_id,
-      iot_device_type: data.device_type,
-    })) || [],
-  );
-  const [openModal, setOpenModal] = useState(false);
+  // const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
+  //   data.devices?.map((data) => ({
+  //     iot_device_id: data.iot_device_id,
+  //     iot_device_type: data.device_type,
+  //   })) || [],
+  // );
+  // const [openModal, setOpenModal] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [openEditor, setOpenEditor] = useState(false);
   const DescriptionRef = useRef({
@@ -39,16 +41,16 @@ const OverView = memo(({ data }: { data: IProject }) => {
       message.error(error.message);
     },
   });
-  const handleUpdateDevice = useCallback(async () => {
-    handleUpdate
-      .mutateAsync({ id: data.id, devices: selectedDevice })
-      .then((res) => {
-        if (res.data.status === 'SUCCESS') {
-          setOpenModal(false);
-        }
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDevice]);
+  // const handleUpdateDevice = useCallback(async () => {
+  //   handleUpdate
+  //     .mutateAsync({ id: data.id, devices: selectedDevice })
+  //     .then((res) => {
+  //       if (res.data.status === 'SUCCESS') {
+  //         setOpenModal(false);
+  //       }
+  //     });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedDevice]);
   const handleUpdateDescription = useCallback(() => {
     handleUpdate
       .mutateAsync({
@@ -82,13 +84,13 @@ const OverView = memo(({ data }: { data: IProject }) => {
         loading={handleUpdate.isPending}
         data={data}
       />
-      <DeviceTable
-        onOk={handleUpdateDevice}
-        open={openModal}
-        setOpen={setOpenModal}
-        selectedDevice={selectedDevice}
-        setSelectDevice={setSelectDevice}
-      />
+      {/* <DeviceTable*/}
+      {/*  onOk={handleUpdateDevice}*/}
+      {/*  open={openModal}*/}
+      {/*  setOpen={setOpenModal}*/}
+      {/*  selectedDevice={selectedDevice}*/}
+      {/*  setSelectDevice={setSelectDevice}*/}
+      {/* />*/}
       <Flex className="project-overview" gap={10}>
         <Col span={12} className="project-overview-content">
           <Descriptions
@@ -96,7 +98,9 @@ const OverView = memo(({ data }: { data: IProject }) => {
             layout="vertical"
             title={
               <Flex justify="space-between" align="center">
-                Project infomation{' '}
+                <span className={'project-description'}>
+                  Project information
+                </span>
                 <Button onClick={() => setOpenForm(true)}>
                   <EditOutlined />
                 </Button>
@@ -138,7 +142,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
               </Space>
             </Descriptions.Item>
           </Descriptions>
-
           <Descriptions layout="vertical">
             <Descriptions.Item label="Thumbnail">
               <Image className="project-image-view" src={data.thumbnail} />
@@ -157,37 +160,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
               </Space>
             </Descriptions.Item>
           </Descriptions>
-          <div>
-            <Flex align="center" gap={20}>
-              {' '}
-              <h3>Devices</h3>{' '}
-              <Button onClick={() => setOpenModal(true)}>
-                <EditOutlined />
-              </Button>
-            </Flex>
-            <Flex vertical gap={10}>
-              {data.devices?.map((device) => (
-                <Descriptions
-                  key={`dv_${device.id}`}
-                  bordered
-                  layout="vertical"
-                >
-                  <Descriptions.Item label="Device Id">
-                    {device.iot_device_id}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Device Type">
-                    {device.device_type}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Device Name">
-                    {device.device_name}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Device Status">
-                    {device.status}
-                  </Descriptions.Item>
-                </Descriptions>
-              ))}
-            </Flex>
-          </div>
         </Col>
         <Col span={12} className="project-overview-content">
           {!openEditor ? (
@@ -226,6 +198,33 @@ const OverView = memo(({ data }: { data: IProject }) => {
               </Flex>
             </>
           )}
+          {/* <div>*/}
+          {/*  <Flex align="center" gap={20}>*/}
+          {/*    {' '}*/}
+          {/*    <h4>Devices</h4>{' '}*/}
+          {/*    <Button onClick={() => setOpenModal(true)}>*/}
+          {/*      <EditOutlined />*/}
+          {/*    </Button>*/}
+          {/*  </Flex>*/}
+          {/* </div>*/}
+          {/* <Flex vertical gap={10}>*/}
+          {/*  {data.devices?.map((device) => (*/}
+          {/*    <Descriptions key={`dv_${device.id}`} bordered layout="vertical">*/}
+          {/*      <Descriptions.Item label="Device Id">*/}
+          {/*        {device.iot_device_id}*/}
+          {/*      </Descriptions.Item>*/}
+          {/*      <Descriptions.Item label="Device Type">*/}
+          {/*        {device.device_type.name}*/}
+          {/*      </Descriptions.Item>*/}
+          {/*      <Descriptions.Item label="Device Name">*/}
+          {/*        {device.device_name}*/}
+          {/*      </Descriptions.Item>*/}
+          {/*      <Descriptions.Item label="Device Status">*/}
+          {/*        {device.status.name}*/}
+          {/*      </Descriptions.Item>*/}
+          {/*    </Descriptions>*/}
+          {/*  ))}*/}
+          {/* </Flex>*/}
         </Col>
       </Flex>
     </>

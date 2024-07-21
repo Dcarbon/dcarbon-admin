@@ -1,3 +1,5 @@
+import { DeviceDataType, TIotDeviceType } from '@/types/device';
+
 interface IProject {
   id: string;
   slug: string;
@@ -18,13 +20,7 @@ interface IProject {
     },
   ];
   thumbnail: string;
-  devices: {
-    id?: string;
-    iot_device_id: string;
-    device_name?: string;
-    device_type: string;
-    status: 'active' | 'de_active';
-  }[];
+  devices: DeviceDataType[];
   manager: Pick<IPo, 'profile_name' | 'user_name' | 'id'>;
   power: number;
   spec: object;
@@ -62,7 +58,7 @@ interface IProjectPage {
 
 type DeviceType = {
   iot_device_id: string;
-  iot_device_type: string;
+  iot_device_type: TIotDeviceType;
 };
 
 interface IProjectPageRequest {

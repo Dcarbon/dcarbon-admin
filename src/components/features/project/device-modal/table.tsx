@@ -12,6 +12,7 @@ import {
   TIotDeviceStatus,
   TIotDeviceType,
 } from '@/types/device';
+import { DeviceType } from '@/types/projects';
 import MyTable from '@components/common/table/my-table.tsx';
 
 import columns from './column';

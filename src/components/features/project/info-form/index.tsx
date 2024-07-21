@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
 import { getData, getName } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import { IProject } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 

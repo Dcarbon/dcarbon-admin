@@ -16,6 +16,7 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { Col, Flex, Form, message, Select, Upload } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
+import { DeviceType } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import CancelButton from '@components/common/button/cancel-button.tsx';
@@ -87,11 +88,12 @@ const CreateProject = memo(() => {
       const body = {
         id: data.data.id,
         ...formData,
-        thumbnail: data.data.result.find((item) => item.field === 'thumbnail')
-          ?.result[0].path,
+        thumbnail: data.data.result.find(
+          (item: any) => item.field === 'thumbnail',
+        )?.result[0].path,
         images: data.data.result
-          .find((item) => item.field === 'images')
-          ?.result.map((item) => item.path),
+          .find((item: any) => item.field === 'images')
+          ?.result.map((item: any) => item.path),
         iot_models: [formData.iot_models],
         spec: formData.spec ? JSON.parse(formData.spec) : {},
         devices: selectedDevice,

@@ -1,3 +1,5 @@
+import { SplToken } from '@/types/projects';
+
 interface IConfig {
   rate?: number;
   mint_fee?: number;
