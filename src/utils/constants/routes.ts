@@ -16,5 +16,9 @@ const API_ROUTES = {
   DEVICE: {
     TYPES: 'devices/types',
   },
+  PO: {
+    BAN: 'po/ban',
+    SOFT_DELETE: 'po/soft-delete',
+  },
 };
 export { API_ROUTES };

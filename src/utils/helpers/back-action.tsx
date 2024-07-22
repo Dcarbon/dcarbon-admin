@@ -39,11 +39,18 @@ const useModalAction = (option?: IOption) => {
       borderRadius: 'var(--div-radius)',
     },
   };
-  return () => {
+  return (option2?: {
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    okFn?: Function;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    cancelFn?: Function;
+    content?: string;
+  }) => {
     Modal.confirm({
       title: option?.title || 'Are you sure?',
       centered: true,
       content:
+        option2?.content ||
         option?.content ||
         (option?.danger ? 'You will lose all unsaved changes' : undefined),
       okButtonProps: {
@@ -61,13 +68,17 @@ const useModalAction = (option?: IOption) => {
       },
       ...(option?.option || {}),
       onOk: () => {
-        option?.type === 'back'
-          ? router.history.go(-1)
-          : option?.fn
-            ? option?.fn()
-            : {};
+        option2?.okFn
+          ? option2.okFn()
+          : option?.type === 'back'
+            ? router.history.go(-1)
+            : option?.fn
+              ? option?.fn()
+              : {};
       },
-      onCancel: () => {},
+      onCancel: () => {
+        option2?.cancelFn ? option2.cancelFn() : () => {};
+      },
       classNames: classNames,
       styles: modalStyles,
     });

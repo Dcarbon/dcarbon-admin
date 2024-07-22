@@ -25,14 +25,16 @@ const PoCreate = memo(() => {
   const handleCreatePo = useMutation({
     mutationFn: createPo,
     onSuccess: () => {
-      message.success('Create po successfully');
+      message.success('Create po successfully').then();
       form.resetFields();
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_PO],
-      });
+      queryClient
+        .invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_PO],
+        })
+        .then();
       navigate({
         to: '/project',
-      });
+      }).then();
     },
     onError: (error: any) => {
       notification.error({

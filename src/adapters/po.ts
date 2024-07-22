@@ -30,6 +30,34 @@ const updatePo = async (data: Partial<IPo>) => {
   }
 };
 
+const deletePo = async (id: string) => {
+  try {
+    const response = await request<GeneralResponse<any>>(
+      REQ_METHODS.POST,
+      API_ROUTES.PO.SOFT_DELETE,
+      { id },
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+
+const banPo = async (data: { id: string; isUnban: boolean }) => {
+  try {
+    const response = await request<GeneralResponse<any>>(
+      REQ_METHODS.POST,
+      API_ROUTES.PO.BAN,
+      { id: data.id, is_unban: data.isUnban },
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+
 const getPo = async ({
   page,
   limit,
@@ -56,4 +84,4 @@ const getPo = async ({
   }
 };
 
-export { createPo, updatePo, getPo };
+export { createPo, updatePo, getPo, deletePo, banPo };
