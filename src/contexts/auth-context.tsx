@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { doLogin } from '@/adapters/auth';
+import { SUCCESS_MSG } from '@/constants';
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   REFRESH_TOKEN_STORAGE_KEY,
 } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action.tsx';
 import { useMutation } from '@tanstack/react-query';
-import { message, Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import jwt from 'jsonwebtoken';
 import { IAuth, IUser } from '@/types/auth';
+import useNotification from '@utils/helpers/my-notification.tsx';
 
 export interface AuthContext {
   isAuthenticated: boolean;
@@ -53,6 +55,7 @@ function userInfo() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<IUser | undefined>(userInfo());
+  const [myNotification] = useNotification();
   const isAuthenticated = !!user;
   const logoutConfirm = useModalAction({
     title: 'Do you want to logout?',
@@ -74,11 +77,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.user_info);
       setStoredAccessToken(data.access_token);
       setStoredRefreshToken(data.refresh_token);
-      message.success('Login success');
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.AUTH.SIGN_IN_SUCCESS,
+      });
     },
     onError: (error: any) => {
-      notification.error({
-        message: 'Login failed',
+      myNotification({
+        message: 'Sing In Failed',
         description: error.message || 'Something went wrong',
       });
     },

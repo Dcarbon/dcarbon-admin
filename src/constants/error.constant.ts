@@ -60,4 +60,10 @@ const ERROR_CONTRACT = {
     },
   },
 };
-export { ERROR_CONTRACT };
+const ERROR_MSG = {
+  PO: {
+    BAN_ERROR: 'Ban PO has error',
+    DELETE_ERROR: 'Delete PO has error',
+  },
+};
+export { ERROR_CONTRACT, ERROR_MSG };

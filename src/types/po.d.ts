@@ -5,7 +5,7 @@ interface IPo {
   password: string;
   wallet: string;
   ref_code: string;
-  status: 'active' | 'un_active' | 'banned' | 'deleted';
+  status: 'active' | 'inactive' | 'banned' | 'deleted';
   role?: 'supper_admin' | 'admin' | 'po';
   info: string;
 }
