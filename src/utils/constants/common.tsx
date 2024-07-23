@@ -1,6 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
-  AppstoreOutlined,
   ProfileOutlined,
   ProjectOutlined,
   UserOutlined,
@@ -31,18 +30,11 @@ const QUERY_KEYS = {
   },
 };
 const ROUTES_URL = {
-  HOME: '/',
   PO: '/po',
   PROJECT: '/project',
   CONTRACT: '/contract',
 };
 const MENU: MenuType = [
-  {
-    key: ROUTES_URL.HOME,
-    label: 'Dashboard',
-    path: ROUTES_URL.HOME,
-    icon: <AppstoreOutlined />,
-  },
   {
     key: ROUTES_URL.PO,
     label: 'PO',
