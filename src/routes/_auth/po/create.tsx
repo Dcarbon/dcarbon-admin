@@ -1,21 +1,24 @@
 import { memo } from 'react';
 import { createPo } from '@/adapters/po';
 import SubmitButtonAction from '@/components/common/button/button-submit';
+import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Flex, Form, message, notification } from 'antd';
+import { Flex, Form, Typography } from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MyInputTextArea from '@components/common/input/my-textarea.tsx';
 import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
+import useNotification from '@utils/helpers/my-notification.tsx';
 
 export const Route = createFileRoute('/_auth/po/create')({
   component: () => <PoCreate />,
 });
 const PoCreate = memo(() => {
   const [form] = Form.useForm();
+  const [myNotification] = useNotification();
   const goBack = useModalAction({
     type: 'back',
     danger: true,
@@ -25,7 +28,10 @@ const PoCreate = memo(() => {
   const handleCreatePo = useMutation({
     mutationFn: createPo,
     onSuccess: () => {
-      message.success('Create po successfully').then();
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.PO.CREATE_SUCCESS,
+      });
       form.resetFields();
       queryClient
         .invalidateQueries({
@@ -36,15 +42,16 @@ const PoCreate = memo(() => {
         to: '/project',
       }).then();
     },
-    onError: (error: any) => {
-      notification.error({
-        message: 'Create po failed',
-        description: error.message.toString() || 'Something went wrong',
+    onError: (err: any) => {
+      myNotification({
+        message: ERROR_MSG.PO.CREATE_ERROR,
+        description: err.message || 'Something went wrong',
       });
     },
   });
   return (
     <CenterContentLayout>
+      <Typography.Title level={2}>Create PO</Typography.Title>
       <Form
         form={form}
         layout="vertical"
@@ -87,15 +94,7 @@ const PoCreate = memo(() => {
             <MyInput placeholder="Enter PO email" />
           </Form.Item>
         </Form.Item>
-        <Form.Item
-          label="Wallet"
-          name="wallet"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
+        <Form.Item label="Wallet" name="wallet">
           <MyInput placeholder="Enter PO wallet" />
         </Form.Item>
         <Form.Item
@@ -103,7 +102,6 @@ const PoCreate = memo(() => {
           name="info"
           rules={[
             {
-              required: true,
               max: 5000,
             },
           ]}

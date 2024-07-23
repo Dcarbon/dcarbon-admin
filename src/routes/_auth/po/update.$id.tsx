@@ -4,6 +4,7 @@ import SubmitButtonAction from '@/components/common/button/button-submit';
 import MyInput from '@/components/common/input/my-input';
 import MyInputTextArea from '@/components/common/input/my-textarea';
 import CenterContentLayout from '@/components/common/layout/center-content/center-content.layout';
+import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action';
 import {
@@ -13,7 +14,8 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 import { createFileRoute, useParams } from '@tanstack/react-router';
-import { App, Flex, Form, message, Typography } from 'antd';
+import { Flex, Form, Typography } from 'antd';
+import useNotification from '@utils/helpers/my-notification.tsx';
 
 const poQueryOptions = (id: string) =>
   queryOptions({
@@ -31,6 +33,7 @@ const UpdatePo = () => {
   const id = Route.useParams().id;
   const { data } = useSuspenseQuery(poQueryOptions(id));
   const [form] = Form.useForm();
+  const [myNotification] = useNotification();
   const goBack = useModalAction({
     type: 'back',
     danger: true,
@@ -39,19 +42,23 @@ const UpdatePo = () => {
     from: '/_auth/po/update/$id',
     select: (params) => ({ id: params.id }),
   });
-  const { notification } = App.useApp();
-  const querycClient = useQueryClient();
+  const queryClient = useQueryClient();
   const updateMutation = useMutation({
     mutationFn: (value: { [key: string]: string }) => updatePo(value, param.id),
     onSuccess: () => {
-      querycClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_PO, param.id],
+      queryClient
+        .invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_PO, param.id],
+        })
+        .then();
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.PO.UPDATE_SUCCESS,
       });
-      message.success('Update successfully');
     },
     onError: (err: any) => {
-      notification.error({
-        message: 'Update failed',
+      myNotification({
+        message: ERROR_MSG.PO.UPDATE_ERROR,
         description: err.message || 'Something went wrong',
       });
     },
@@ -79,19 +86,9 @@ const UpdatePo = () => {
           <Form.Item
             label="Name"
             name="profile_name"
-            rules={[
-              {
-                required: true,
-                max: 255,
-              },
-            ]}
             style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
           >
-            <MyInput
-              placeholder="Enter PO name"
-              maxLength={255}
-              style={{ backgroundColor: 'var(--main-gray)' }}
-            />
+            <MyInput placeholder="Enter PO name" maxLength={255} />
           </Form.Item>
           <Form.Item
             label="Email"
@@ -99,7 +96,6 @@ const UpdatePo = () => {
             rules={[
               {
                 type: 'email',
-                required: true,
               },
             ]}
             style={{
@@ -111,15 +107,7 @@ const UpdatePo = () => {
             <MyInput placeholder="Enter PO email" />
           </Form.Item>
         </Form.Item>
-        <Form.Item
-          label="Wallet"
-          name="wallet"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
+        <Form.Item label="Wallet" name="wallet">
           <MyInput placeholder="Enter PO wallet" />
         </Form.Item>
         <Form.Item
@@ -127,7 +115,6 @@ const UpdatePo = () => {
           name="info"
           rules={[
             {
-              required: true,
               max: 5000,
             },
           ]}
