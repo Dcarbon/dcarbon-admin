@@ -64,6 +64,8 @@ const ERROR_MSG = {
   PO: {
     BAN_ERROR: 'Ban PO has error',
     DELETE_ERROR: 'Delete PO has error',
+    CREATE_ERROR: 'Create PO has error',
+    UPDATE_ERROR: 'Update PO has error',
   },
 };
 export { ERROR_CONTRACT, ERROR_MSG };

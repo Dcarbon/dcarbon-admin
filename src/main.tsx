@@ -11,13 +11,13 @@ import {
   StyleProvider,
 } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRouter, Router, RouterProvider } from '@tanstack/react-router';
 import { App, ConfigProvider, Spin, theme } from 'antd';
 import NextTopLoader from 'nextjs-toploader';
 import NotFoundPage from '@components/common/not-found';
 
 // Create a new router instance
-const router = createRouter({
+const router: Router<any, any> = createRouter({
   routeTree,
   context: {
     auth: undefined!,

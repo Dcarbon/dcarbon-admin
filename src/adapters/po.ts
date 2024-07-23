@@ -16,11 +16,11 @@ const createPo = async (data: Omit<IPo, '_id' | 'role' | 'status'>) => {
     throw error;
   }
 };
-const updatePo = async (data: Partial<IPo>) => {
+const updatePo = async (data: { [key: string]: string }, id: string) => {
   try {
     const response = await request<GeneralResponse<IPo>>(
       REQ_METHODS.PUT,
-      API_ROUTES.PO_API,
+      API_ROUTES.PO_API + `/${id}`,
       data,
     );
     return response.data.data;
@@ -29,7 +29,18 @@ const updatePo = async (data: Partial<IPo>) => {
     throw error;
   }
 };
-
+const getDetailPo = async (id: string) => {
+  try {
+    const response = await request<GeneralResponse<IPo>>(
+      REQ_METHODS.GET,
+      API_ROUTES.PO_API + `/${id}`,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 const deletePo = async (id: string) => {
   try {
     const response = await request<GeneralResponse<any>>(
@@ -58,24 +69,12 @@ const banPo = async (data: { id: string; isUnban: boolean }) => {
   }
 };
 
-const getPo = async ({
-  page,
-  limit,
-  sort_field,
-  sort_type,
-  keyword,
-}: IPoRequest) => {
+const getPo = async (data: IPoRequest) => {
   try {
     const response = await request<IPoPage>(
       REQ_METHODS.GET,
       API_ROUTES.PO_API,
-      {
-        page,
-        limit,
-        sort_field,
-        sort_type,
-        keyword,
-      },
+      data,
     );
     return response.data;
   } catch (error) {
@@ -84,4 +83,4 @@ const getPo = async ({
   }
 };
 
-export { createPo, updatePo, getPo, deletePo, banPo };
+export { createPo, updatePo, getPo, deletePo, banPo, getDetailPo };

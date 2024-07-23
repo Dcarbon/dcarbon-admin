@@ -15,15 +15,18 @@ const MyTable = styled(Table).attrs<IProps>((props: IProps) => ({
   tbody > tr:nth-child(even) {
     background-color: var(--main-gray);
   }
-
+  tbody > tr:nth-child(even) > td {
+    background-color: var(--main-gray) !important;
+  }
   tbody > tr:nth-child(odd) {
     background-color: #ffffff;
   }
-
+  tbody > tr:nth-child(odd) > td {
+    background-color: #ffffff !important;
+  }
   thead {
     height: 56px;
   }
-
   thead > tr > th {
     background-color: rgba(255, 255, 255, 1) !important;
     font-size: 14px;

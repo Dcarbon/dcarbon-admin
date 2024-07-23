@@ -1,80 +1,94 @@
-import { memo } from 'react';
-import { createPo } from '@/adapters/po';
+import { getDetailPo, updatePo } from '@/adapters/po';
+import CancelButtonAction from '@/components/common/button/button-cancel';
 import SubmitButtonAction from '@/components/common/button/button-submit';
+import MyInput from '@/components/common/input/my-input';
+import MyInputTextArea from '@/components/common/input/my-textarea';
+import CenterContentLayout from '@/components/common/layout/center-content/center-content.layout';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
+import { createFileRoute, useParams } from '@tanstack/react-router';
 import { Flex, Form, Typography } from 'antd';
-import CancelButtonAction from '@components/common/button/button-cancel.tsx';
-import MyInput from '@components/common/input/my-input.tsx';
-import MyInputTextArea from '@components/common/input/my-textarea.tsx';
-import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
-export const Route = createFileRoute('/_auth/po/create')({
-  component: () => <PoCreate />,
+const poQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: [QUERY_KEYS.GET_PO, id],
+    queryFn: () => getDetailPo(id),
+  });
+export const Route = createFileRoute('/_auth/po/update/$id')({
+  loader: ({ context, params: { id } }) => {
+    const { queryClient } = context as any;
+    return queryClient.ensureQueryData(poQueryOptions(id));
+  },
+  component: () => <UpdatePo />,
 });
-const PoCreate = memo(() => {
+const UpdatePo = () => {
+  const id = Route.useParams().id;
+  const { data } = useSuspenseQuery(poQueryOptions(id));
   const [form] = Form.useForm();
   const [myNotification] = useNotification();
   const goBack = useModalAction({
     type: 'back',
     danger: true,
   });
-  const navigate = useNavigate();
+  const param = useParams({
+    from: '/_auth/po/update/$id',
+    select: (params) => ({ id: params.id }),
+  });
   const queryClient = useQueryClient();
-  const handleCreatePo = useMutation({
-    mutationFn: createPo,
+  const updateMutation = useMutation({
+    mutationFn: (value: { [key: string]: string }) => updatePo(value, param.id),
     onSuccess: () => {
-      myNotification({
-        type: 'success',
-        description: SUCCESS_MSG.PO.CREATE_SUCCESS,
-      });
-      form.resetFields();
       queryClient
         .invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_PO],
+          queryKey: [QUERY_KEYS.GET_PO, param.id],
         })
         .then();
-      navigate({
-        to: '/project',
-      }).then();
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.PO.UPDATE_SUCCESS,
+      });
     },
     onError: (err: any) => {
       myNotification({
-        message: ERROR_MSG.PO.CREATE_ERROR,
+        message: ERROR_MSG.PO.UPDATE_ERROR,
         description: err.message || 'Something went wrong',
       });
     },
   });
   return (
     <CenterContentLayout>
-      <Typography.Title level={2}>Create PO</Typography.Title>
+      <Typography.Title level={2}>Update PO</Typography.Title>
       <Form
         form={form}
         layout="vertical"
-        onFinish={(values) => handleCreatePo.mutate(values)}
+        onFinish={(values) => {
+          Object.keys(values).forEach((key) => {
+            if (data[key as keyof IPo] === values[key]) {
+              delete values[key];
+            }
+          });
+          updateMutation.mutate(values);
+        }}
         style={{ width: '100%' }}
+        initialValues={{
+          ...data,
+        }}
       >
         <Form.Item style={{ marginBottom: 0 }}>
           <Form.Item
             label="Name"
             name="profile_name"
-            rules={[
-              {
-                required: true,
-                max: 255,
-              },
-            ]}
             style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
           >
-            <MyInput
-              placeholder="Enter PO name"
-              maxLength={255}
-              style={{ backgroundColor: 'var(--main-gray)' }}
-            />
+            <MyInput placeholder="Enter PO name" maxLength={255} />
           </Form.Item>
           <Form.Item
             label="Email"
@@ -82,7 +96,6 @@ const PoCreate = memo(() => {
             rules={[
               {
                 type: 'email',
-                required: true,
               },
             ]}
             style={{
@@ -106,14 +119,18 @@ const PoCreate = memo(() => {
             },
           ]}
         >
-          <MyInputTextArea placeholder="Enter PO info" maxLength={5000} />
+          <MyInputTextArea
+            placeholder="Enter PO info"
+            maxLength={5000}
+            rows={10}
+          />
         </Form.Item>
         <Flex gap={10} justify="center">
-          <SubmitButtonAction loading={handleCreatePo.isPending}>
+          <SubmitButtonAction loading={updateMutation.isPending}>
             Submit
           </SubmitButtonAction>
           <CancelButtonAction
-            disabled={handleCreatePo.isPending}
+            disabled={updateMutation.isPending}
             onClick={goBack}
           >
             Cancel
@@ -122,4 +139,4 @@ const PoCreate = memo(() => {
       </Form>
     </CenterContentLayout>
   );
-});
+};

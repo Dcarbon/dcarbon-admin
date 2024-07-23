@@ -9,7 +9,7 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Empty, Flex } from 'antd';
+import { Empty, Flex, Select, Space } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import MyInputSearch from '@components/common/input/my-input-search.tsx';
 
@@ -22,6 +22,7 @@ type ProductSearch = {
   sort_field?: string;
   sort_type?: ProductSearchSortOptions;
   keyword?: string;
+  status?: string;
 };
 export const Route = createFileRoute('/_auth/po/')({
   validateSearch: (search: Record<string, unknown>): ProductSearch => {
@@ -31,6 +32,7 @@ export const Route = createFileRoute('/_auth/po/')({
       limit: Number(search?.limit ?? 10),
       sort_field: (search.sort_field as string) || '',
       sort_type: (search.sort_type as ProductSearchSortOptions) || 'asc',
+      status: (search.status as string) || '',
     };
   },
   component: () => <PoPage />,
@@ -48,13 +50,15 @@ const PoPage = memo(() => {
         sort_field: search.sort_field,
         sort_type: search.sort_type,
         keyword: search.keyword,
+        status: search.status,
       }),
     enabled:
       !!search.page ||
       !!search.limit ||
       !!search.sort_field ||
       !!search.sort_type ||
-      !!search.keyword,
+      !!search.keyword ||
+      !!search.status,
   });
   const handleSearch = (value: string) => {
     return navigate({
@@ -69,13 +73,47 @@ const PoPage = memo(() => {
     <div>
       <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
-        <MyInputSearch
-          placeholder="Input search text"
-          allowClear
-          className="project-search-bar"
-          defaultValue={search.keyword}
-          onSearch={handleSearch}
-        />
+        <Space>
+          <MyInputSearch
+            placeholder="Input search text"
+            allowClear
+            className="project-search-bar"
+            defaultValue={search.keyword}
+            onSearch={handleSearch}
+          />
+          <Select
+            className="po-filter"
+            options={[
+              {
+                label: 'Active',
+                value: 'active',
+              },
+              {
+                label: 'Deleted',
+                value: 'deleted',
+              },
+              {
+                label: 'Inactive',
+                value: 'inactive',
+              },
+              {
+                label: 'Banned',
+                value: 'banned',
+              },
+            ]}
+            value={search.status || undefined}
+            placeholder="Status filter"
+            onChange={(value) => {
+              navigate({
+                to: '/po',
+                search: {
+                  ...search,
+                  status: value,
+                },
+              });
+            }}
+          />
+        </Space>
         <SubmitButton
           onClick={() =>
             navigate({

@@ -5,6 +5,8 @@ const SUCCESS_MSG = {
   PO: {
     BAN_SUCCESS: 'Ban PO successfully',
     DELETE_SUCCESS: 'Delete PO successfully',
+    CREATE_SUCCESS: 'Create PO successfully',
+    UPDATE_SUCCESS: 'Update PO successfully',
   },
 };
 export { SUCCESS_MSG };

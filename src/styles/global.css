@@ -345,6 +345,23 @@ button {
   color: #5daf01;
 }
 
+.ant-table-body {
+  scrollbar-width: thin;
+}
+
+.profile-value {
+  display: inline-block;
+  padding: 5px 20px;
+  width: 350px;
+  background-color: #e4e7ec;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.po-filter {
+  min-width: 100px;
+}
+
 /* stylelint-disable-next-line media-feature-range-notation */
 @media screen and (max-width: 1024px) {
   .navbar-box {

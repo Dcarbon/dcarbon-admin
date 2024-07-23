@@ -6,7 +6,7 @@ import {
   EyeOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button, Flex, Space, TableColumnsType, Tag } from 'antd';
 
 import '../po.css';
@@ -53,10 +53,12 @@ interface IProps {
 
 const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
   const search = useSearch({ from: '/_auth/po/' });
+  const navigate = useNavigate();
   const columns: TableColumnsType<PoList> = [
     {
       title: 'Name',
       dataIndex: 'profile_name',
+      width: 200,
       sorter: true,
       sortDirections: ['ascend', 'descend'],
       defaultSortOrder:
@@ -69,6 +71,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     {
       title: 'Email',
       dataIndex: 'user_name',
+      width: 250,
       sorter: true,
       defaultSortOrder:
         search.sort_field === 'user_name'
@@ -79,7 +82,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     },
     {
       title: 'Wallet',
-      width: 250,
+      width: 150,
       dataIndex: 'wallet',
       render: (wallet: string) => (
         <Flex justify="space-between" align="center" gap={10}>
@@ -90,7 +93,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     },
     {
       title: 'Status',
-      width: 150,
+      width: 70,
       dataIndex: 'status',
       sorter: true,
       render: (status) => <span>{renderTag(status)}</span>,
@@ -114,8 +117,29 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
             loadingHandleAction?.action === 'unban');
         return (
           <Space size={'middle'}>
-            <Button icon={<EyeOutlined />} />
-            <Button disabled={status === 'deleted'} icon={<EditOutlined />} />
+            <Button
+              onClick={() =>
+                navigate({
+                  to: '/po/$id',
+                  params: {
+                    id: id,
+                  },
+                })
+              }
+              icon={<EyeOutlined />}
+            />
+            <Button
+              onClick={() =>
+                navigate({
+                  to: '/po/update/$id',
+                  params: {
+                    id: id,
+                  },
+                })
+              }
+              disabled={status === 'deleted'}
+              icon={<EditOutlined />}
+            />
             <Button
               type={status === 'banned' ? 'default' : 'primary'}
               className={isBaned || status === 'banned' ? '' : 'danger-btn'}

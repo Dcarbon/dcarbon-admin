@@ -15,15 +15,17 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as SigninImport } from './routes/signin'
 import { Route as AuthImport } from './routes/_auth'
+import { Route as AuthIndexImport } from './routes/_auth/index'
 import { Route as AuthProjectIndexImport } from './routes/_auth/project/index'
 import { Route as AuthPoIndexImport } from './routes/_auth/po/index'
 import { Route as AuthContractIndexImport } from './routes/_auth/contract/index'
 import { Route as AuthProjectSlugImport } from './routes/_auth/project/$slug'
 import { Route as AuthPoCreateImport } from './routes/_auth/po/create'
+import { Route as AuthPoIdImport } from './routes/_auth/po/$id'
+import { Route as AuthPoUpdateIdImport } from './routes/_auth/po/update.$id'
 
 // Create Virtual Routes
 
-const AuthIndexLazyImport = createFileRoute('/_auth/')()
 const AuthProjectCreateLazyImport = createFileRoute('/_auth/project/create')()
 
 // Create/Update Routes
@@ -38,10 +40,10 @@ const AuthRoute = AuthImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthIndexLazyRoute = AuthIndexLazyImport.update({
+const AuthIndexRoute = AuthIndexImport.update({
   path: '/',
   getParentRoute: () => AuthRoute,
-} as any).lazy(() => import('./routes/_auth/index.lazy').then((d) => d.Route))
+} as any)
 
 const AuthProjectIndexRoute = AuthProjectIndexImport.update({
   path: '/project/',
@@ -75,6 +77,16 @@ const AuthPoCreateRoute = AuthPoCreateImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AuthPoIdRoute = AuthPoIdImport.update({
+  path: '/po/$id',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthPoUpdateIdRoute = AuthPoUpdateIdImport.update({
+  path: '/po/update/$id',
+  getParentRoute: () => AuthRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -97,7 +109,14 @@ declare module '@tanstack/react-router' {
       id: '/_auth/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AuthIndexLazyImport
+      preLoaderRoute: typeof AuthIndexImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/po/$id': {
+      id: '/_auth/po/$id'
+      path: '/po/$id'
+      fullPath: '/po/$id'
+      preLoaderRoute: typeof AuthPoIdImport
       parentRoute: typeof AuthImport
     }
     '/_auth/po/create': {
@@ -142,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProjectIndexImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/po/update/$id': {
+      id: '/_auth/po/update/$id'
+      path: '/po/update/$id'
+      fullPath: '/po/update/$id'
+      preLoaderRoute: typeof AuthPoUpdateIdImport
+      parentRoute: typeof AuthImport
+    }
   }
 }
 
@@ -149,13 +175,15 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   AuthRoute: AuthRoute.addChildren({
-    AuthIndexLazyRoute,
+    AuthIndexRoute,
+    AuthPoIdRoute,
     AuthPoCreateRoute,
     AuthProjectSlugRoute,
     AuthProjectCreateLazyRoute,
     AuthContractIndexRoute,
     AuthPoIndexRoute,
     AuthProjectIndexRoute,
+    AuthPoUpdateIdRoute,
   }),
   SigninRoute,
 })
@@ -176,19 +204,25 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "_auth.tsx",
       "children": [
         "/_auth/",
+        "/_auth/po/$id",
         "/_auth/po/create",
         "/_auth/project/$slug",
         "/_auth/project/create",
         "/_auth/contract/",
         "/_auth/po/",
-        "/_auth/project/"
+        "/_auth/project/",
+        "/_auth/po/update/$id"
       ]
     },
     "/signin": {
       "filePath": "signin.tsx"
     },
     "/_auth/": {
-      "filePath": "_auth/index.lazy.tsx",
+      "filePath": "_auth/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/po/$id": {
+      "filePath": "_auth/po/$id.tsx",
       "parent": "/_auth"
     },
     "/_auth/po/create": {
@@ -213,6 +247,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_auth/project/": {
       "filePath": "_auth/project/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/po/update/$id": {
+      "filePath": "_auth/po/update.$id.tsx",
       "parent": "/_auth"
     }
   }
