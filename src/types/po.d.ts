@@ -23,5 +23,6 @@ interface IPoRequest {
   sort_field?: string;
   sort_type?: string;
   keyword?: string;
+  status?: string;
 }
 type PoList = Omit<IPo, 'password' | 'ref_code' | 'role' | 'info'>;

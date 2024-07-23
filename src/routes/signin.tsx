@@ -20,7 +20,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       navigate({
-        from: '/',
+        to: '/po',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
