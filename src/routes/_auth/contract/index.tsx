@@ -39,7 +39,6 @@ const ContractPage = memo(() => {
               label,
               children,
               icon: <Icon size={50} />,
-              style: { height: 'calc(100vh - 230px)' },
             };
           },
         )}

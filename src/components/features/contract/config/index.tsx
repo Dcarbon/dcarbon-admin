@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ERROR_CONTRACT } from '@/constants';
-import { getDeviceTypes } from '@adapters/config.ts';
+import { getConfigTokens, getDeviceTypes } from '@adapters/config.ts';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
@@ -39,6 +39,10 @@ const ContractConfig = () => {
     queryKey: [QUERY_KEYS.DEVICE.TYPES],
     queryFn: getDeviceTypes,
   });
+  const { data: config, isLoading: configLoading } = useQuery({
+    queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
+    queryFn: getConfigTokens,
+  });
   const getConfig = async () => {
     if (!anchorWallet || !connection) {
       return;
@@ -67,27 +71,6 @@ const ContractConfig = () => {
               limit: info.limit,
             };
           }),
-          dcarbon: {
-            mint: '4gP1Dg9zaVXQsumuky64CjT4Za6fcY2mGtESfdSqhwXM',
-            name: 'DCarbon Beta 1',
-            symbol: 'DCAR1',
-            description: 'DCarbon Beta 1 Demo',
-            image:
-              'https://dcarbon-dev-bucket.fabbidev.com/public/files/metadata/icon/image-1-1721275800831.jpg',
-            decimals: 9,
-            supply: 1000000,
-          },
-          carbon: {
-            mint: 'GxQ9qHH5ujC2kEHei7yaVfsEvws3uE3jEQShsCrV3KzV',
-            name: 'Carbon Beta 1',
-            symbol: 'CARB1',
-            description: 'Carbon Beta 1 Demo',
-            image:
-              'https://dcarbon-dev-bucket.fabbidev.com/public/files/metadata/icon/image-1-1721216768440.jpg',
-            decimals: 9,
-            mint_authority: 'DBfGEw3bdSm89VGMW4SQ6PvNETCW2rmPQijYpL92GSmX',
-            supply: 0,
-          },
         });
       }
     } catch (e) {
@@ -176,6 +159,8 @@ const ContractConfig = () => {
             ref={configRef}
             triggerUpdateConfig={updateConfig}
             deviceTypes={data}
+            configData={config}
+            configLoading={configLoading}
           />
         )}
       </CenterContentLayout>

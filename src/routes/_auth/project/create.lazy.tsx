@@ -6,7 +6,6 @@ import {
 } from '@/adapters/project';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
-import DeviceTable from '@/components/features/project/device-modal/table';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
@@ -15,16 +14,14 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { Col, Flex, Form, Select, Upload } from 'antd';
-import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
-import { DeviceType } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
-import CancelButton from '@components/common/button/cancel-button.tsx';
 import MyInputNumber from '@components/common/input/my-input-number.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
 import MyInputTextArea from '@components/common/input/my-textarea.tsx';
+import { getAvailableCountries } from '@utils/helpers/common.tsx';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
@@ -33,8 +30,6 @@ export const Route = createLazyFileRoute('/_auth/project/create')({
 
 const CreateProject = memo(() => {
   const [form] = Form.useForm();
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedDevice, setSelectDevice] = useState<DeviceType[]>([]);
   const [thumbnail, setThumbnail] = useState([]);
   const [images, setImages] = useState([]);
   const navigate = useNavigate();
@@ -97,7 +92,6 @@ const CreateProject = memo(() => {
     onSuccess: (data) => {
       const formData = form.getFieldsValue();
       const body = {
-        id: data.data.id,
         ...formData,
         thumbnail: data.data.result.find((item) => item.field === 'thumbnail')
           ?.result[0].relative_path,
@@ -108,10 +102,6 @@ const CreateProject = memo(() => {
         spec:
           formData.spec && Object.keys(formData.spec).length > 0
             ? JSON.parse(formData.spec)
-            : undefined,
-        devices:
-          selectedDevice && selectedDevice.length > 0
-            ? selectedDevice
             : undefined,
       };
       handleCreateProject.mutate(body);
@@ -131,12 +121,6 @@ const CreateProject = memo(() => {
 
   return (
     <div className="project-create-layout">
-      <DeviceTable
-        open={openModal}
-        setOpen={setOpenModal}
-        selectedDevice={selectedDevice}
-        setSelectDevice={setSelectDevice}
-      />
       <Form
         form={form}
         layout="vertical"
@@ -164,15 +148,20 @@ const CreateProject = memo(() => {
             <Flex gap={10}>
               <Form.Item className={'w-full'}>
                 <Form.Item
-                  label="Location"
-                  name="location"
+                  label="Location name"
+                  name="location_name"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
                   style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
                 >
                   <MyInput placeholder="Project location" />
                 </Form.Item>
                 <Form.Item
                   label="Country"
-                  name="country"
+                  name="country_id"
                   rules={[
                     {
                       required: true,
@@ -196,7 +185,7 @@ const CreateProject = memo(() => {
                     }
                     allowClear
                   >
-                    {getData()?.map((value) => (
+                    {getAvailableCountries()?.map((value) => (
                       <Select.Option
                         key={value.code}
                         value={value.code}
@@ -212,6 +201,29 @@ const CreateProject = memo(() => {
                 </Form.Item>
               </Form.Item>
             </Flex>
+
+            <Flex gap={10} justify="">
+              <Form.Item
+                className="w-full"
+                name={['location', 'latitude']}
+                label="Latitude"
+                rules={[{ required: true }]}
+              >
+                <MyInputNumber width="100%" />
+              </Form.Item>
+              <Form.Item
+                className="w-full"
+                name={['location', 'longitude']}
+                label="Longitude"
+                rules={[{ required: true }]}
+              >
+                <MyInputNumber width="100%" />
+              </Form.Item>
+            </Flex>
+            <Form.Item name={['location', 'iframe']} label="Iframe">
+              <MyInput width="100%" />
+            </Form.Item>
+
             <Form.Item
               label="Description"
               name="description"
@@ -319,7 +331,11 @@ const CreateProject = memo(() => {
                   {model &&
                     model.length > 0 &&
                     model.map((item) => (
-                      <Select.Option key={item.code} value={item.code}>
+                      <Select.Option
+                        key={item.code}
+                        value={item.code}
+                        disabled={!item.active}
+                      >
                         {item.name}
                       </Select.Option>
                     ))}
@@ -345,19 +361,6 @@ const CreateProject = memo(() => {
               >
                 <MyInputTextArea rows={1} placeholder="Ex: {'key':'value'}" />
               </Form.Item>
-            </Flex>
-            <Flex
-              gap={10}
-              align="center"
-              justify={'center'}
-              style={{ marginTop: '15px' }}
-            >
-              <CancelButton
-                icon={<PlusOutlined />}
-                onClick={() => setOpenModal(true)}
-              >
-                Add Devices {`(selected: ${selectedDevice.length})`}
-              </CancelButton>
             </Flex>
           </Col>
         </Flex>

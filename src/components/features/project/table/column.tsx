@@ -1,6 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { Space, TableColumnsType, Tag } from 'antd';
+import { getCode } from 'country-list';
+import ReactCountryFlag from 'react-country-flag';
 import { ProjectList } from '@/types/projects';
+import SpanOneLine from '@components/common/span/oneline-span.tsx';
 
 const renderTag = (data: string) => {
   let color = 'green';
@@ -8,7 +11,7 @@ const renderTag = (data: string) => {
     case 'active':
       color = 'green';
       break;
-    case 'deactive':
+    case 'inactive':
       color = 'red';
       break;
     case 'draft':
@@ -37,7 +40,19 @@ const PoColumn = () => {
     },
     {
       title: 'Location',
-      dataIndex: 'location_name',
+      width: 400,
+      render: ({ country, location }: ProjectList) =>
+        country?.code && (
+          <SpanOneLine width={'400px'} style={{ paddingRight: '15px' }}>
+            <ReactCountryFlag
+              style={{ marginRight: '5px' }}
+              countryCode={getCode(country?.code)?.toString() || 'VN'}
+              svg
+            />
+            {country?.name}
+            {location?.name ? `, ${location?.name}` : ''}
+          </SpanOneLine>
+        ),
     },
     {
       title: 'Status',

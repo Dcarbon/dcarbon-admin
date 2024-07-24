@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { getProject } from '@/adapters/project';
-import NavigationBack from '@/components/common/navigation-back';
 import ProjectTableList from '@/components/features/project/table';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
@@ -67,7 +66,6 @@ const ProjectPage = memo(() => {
   };
   return (
     <div>
-      <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
         <MyInputSearch
           placeholder="Input search text"

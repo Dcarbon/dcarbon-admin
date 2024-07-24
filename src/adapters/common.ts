@@ -1,4 +1,10 @@
 import { request } from '@adapters/xhr.ts';
+import {
+  IUploadImageRequest,
+  IUploadImageResponse,
+  IUploadMetadataRequest,
+  IUploadMetadataResponse,
+} from '@/types/common';
 import { API_ROUTES, REQ_METHODS } from '@utils/constants';
 
 const uploadImage = async (data: IUploadImageRequest) => {

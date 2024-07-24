@@ -114,7 +114,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.manager?.user_name}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
-              {data.country ? (
+              {data.country?.code ? (
                 <Flex gap={10} align="center">
                   <ReactCountryFlag
                     countryCode={
