@@ -1,8 +1,13 @@
 import { memo, useState } from 'react';
-import { Modal } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Flex, Modal } from 'antd';
 import { createStyles } from 'antd-style';
 import { DeviceDataType } from '@/types/device';
+import { DeviceType } from '@/types/projects';
+import SubmitButton from '@components/common/button/submit-button.tsx';
+import MyInputSearch from '@components/common/input/my-input-search.tsx';
 import MyTable from '@components/common/table/my-table.tsx';
+import DeviceTable from '@components/features/project/device-modal/table.tsx';
 import ProjectDevicesColumn from '@components/features/project/devices/column.tsx';
 import useModalAction from '@utils/helpers/back-action.tsx';
 
@@ -20,13 +25,15 @@ const useStyle = createStyles(() => ({
 }));
 
 const ProjectDevices = memo(({ devices }: IProps) => {
-  const [deviceSetting, setDeviceSetting] = useState<string>('__');
+  const [openDeviceSetting, setOpenDeviceSetting] = useState<string>('__');
+  const [openModifyDevices, setOpenModifyDevices] = useState(false);
+  const [selectedDevice, setSelectDevice] = useState<DeviceType[]>([]);
   const openSetting = (deviceId: string) => {
-    setDeviceSetting(deviceId);
+    setOpenDeviceSetting(deviceId);
   };
   const cancelModal = useModalAction({
     danger: true,
-    fn: () => setDeviceSetting('__'),
+    fn: () => setOpenDeviceSetting('__'),
   });
   const { styles } = useStyle();
   const classNames = {
@@ -46,20 +53,40 @@ const ProjectDevices = memo(({ devices }: IProps) => {
   const columns = ProjectDevicesColumn({ openSetting });
   return (
     <>
+      <Flex justify="space-between" className="project-action-bar">
+        <MyInputSearch
+          placeholder="Input search text"
+          allowClear
+          className="project-search-bar"
+          // onSearch={handleSearch}
+        />
+        <SubmitButton
+          icon={<PlusOutlined />}
+          onClick={() => setOpenModifyDevices(true)}
+        >
+          Devices
+        </SubmitButton>
+      </Flex>
+      <DeviceTable
+        open={openModifyDevices}
+        setOpen={setOpenModifyDevices}
+        selectedDevice={selectedDevice}
+        setSelectDevice={setSelectDevice}
+      />
       <Modal
-        open={deviceSetting !== '__'}
+        open={openDeviceSetting !== '__'}
         title={'Device register (On Chain)'}
         centered
         destroyOnClose
         maskClosable
         width={'calc(100vw / 2)'}
         onCancel={() => cancelModal()}
-        onOk={() => setDeviceSetting('__')}
-        onClose={() => setDeviceSetting('__')}
+        onOk={() => setOpenDeviceSetting('__')}
+        onClose={() => setOpenDeviceSetting('__')}
         classNames={classNames}
         styles={modalStyles}
       >
-        <h3>{deviceSetting}</h3>
+        <h3>{openDeviceSetting}</h3>
       </Modal>
       <MyTable columns={columns} rowKey={'id'} dataSource={devices} />
     </>

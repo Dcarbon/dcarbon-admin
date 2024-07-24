@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { getPo } from '@/adapters/po';
 import PoTableList from '@/components/features/po/table';
 import { QUERY_KEYS } from '@/utils/constants';
+import { PlusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
   createFileRoute,
@@ -113,13 +114,14 @@ const PoPage = memo(() => {
           />
         </Space>
         <SubmitButton
+          icon={<PlusOutlined />}
           onClick={() =>
             navigate({
               to: '/po/create',
             })
           }
         >
-          +Add PO
+          PO
         </SubmitButton>
       </Flex>
       {data ? <PoTableList data={data} /> : <Empty />}

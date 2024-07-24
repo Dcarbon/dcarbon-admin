@@ -151,7 +151,14 @@ const DeviceTable = memo(
           dataSource={data?.data as DeviceDataType[]}
           rowKey="id"
           scroll={{ y: 400 }}
-          virtual
+          rowClassName={(record: DeviceDataType) =>
+            record.status?.id === EIotDeviceStatus.REJECT &&
+            !selectedDevice.some(
+              (device) => device.iot_device_id === record.iot_device_id,
+            )
+              ? 'disabled-td'
+              : ''
+          }
           pagination={{
             pageSize: data?.paging.limit || 1,
             total: data?.paging.total || 1,

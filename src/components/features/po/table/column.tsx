@@ -127,6 +127,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
                 })
               }
               icon={<EyeOutlined />}
+              size={'middle'}
             />
             <Button
               onClick={() =>
@@ -139,6 +140,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
               }
               disabled={status === 'deleted'}
               icon={<EditOutlined />}
+              size={'middle'}
             />
             <Button
               type={status === 'banned' ? 'default' : 'primary'}
@@ -150,6 +152,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
               onClick={() =>
                 handlePo(status === 'banned' ? 'unban' : 'ban', id)
               }
+              size={'middle'}
             />
             <Button
               type={'primary'}
@@ -159,6 +162,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
               loading={isDelete}
               icon={<DeleteOutlined />}
               onClick={() => handlePo('delete', id)}
+              size={'middle'}
             />
           </Space>
         );
