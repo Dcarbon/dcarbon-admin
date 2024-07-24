@@ -2,6 +2,7 @@ import { memo } from 'react';
 import { getProject } from '@/adapters/project';
 import ProjectTableList from '@/components/features/project/table';
 import { QUERY_KEYS } from '@/utils/constants';
+import { PlusOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
   createFileRoute,
@@ -74,13 +75,14 @@ const ProjectPage = memo(() => {
           onSearch={handleSearch}
         />
         <SubmitButton
+          icon={<PlusOutlined />}
           onClick={() =>
             navigate({
               to: '/project/create',
             })
           }
         >
-          +Add Project
+          Project
         </SubmitButton>
       </Flex>
       {data ? <ProjectTableList data={data} /> : <Empty />}

@@ -36,5 +36,12 @@ const MyTable = styled(Table).attrs<IProps>((props: IProps) => ({
   thead > tr > th::before {
     background-color: unset !important;
   }
+  .disabled-td {
+    color: rgb(172 172 172);
+  }
+  ul.ant-table-pagination,
+  div.ant-select-selector {
+    font-size: 14px;
+  }
 `;
 export default MyTable;

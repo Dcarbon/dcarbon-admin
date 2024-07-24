@@ -41,11 +41,13 @@ const columns: TableColumnsType<DeviceDataType> = [
     title: 'ID',
     dataIndex: 'iot_device_id',
     key: 'iot_device_id',
+    render: (value: string) => <span>{value}</span>,
   },
   {
     title: 'Name',
     dataIndex: 'device_name',
     key: 'device_name',
+    render: (value: string) => <span>{value}</span>,
   },
   {
     title: 'Type',
