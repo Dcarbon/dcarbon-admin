@@ -1,6 +1,8 @@
+import { AVAILABLE_COUNTRIES } from '@constants/common.constant.ts';
 import { PublicKey } from '@solana/web3.js';
 import { Tooltip } from 'antd';
 import chalk from 'chalk';
+import { Country, getData } from 'country-list';
 
 function isEmpty(obj: Array<any> | object): boolean {
   if (!obj || typeof obj !== 'object') return !obj;
@@ -84,6 +86,12 @@ function isSolanaWallet(wallet?: string): boolean {
   }
 }
 
+function getAvailableCountries(): Country[] {
+  return getData().filter((country) =>
+    AVAILABLE_COUNTRIES.includes(country.code),
+  );
+}
+
 export {
   formatByEnUsNum,
   truncateText,
@@ -93,4 +101,5 @@ export {
   isFloat,
   getInfoDevice,
   isSolanaWallet,
+  getAvailableCountries,
 };

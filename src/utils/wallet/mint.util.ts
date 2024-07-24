@@ -22,6 +22,12 @@ import {
 } from '@solana/web3.js';
 import { UseMutationResult } from '@tanstack/react-query';
 import {
+  IUploadImageRequest,
+  IUploadImageResponse,
+  IUploadMetadataRequest,
+  IUploadMetadataResponse,
+} from '@/types/common';
+import {
   CreateFtArgs,
   IFTCreateForm,
 } from '@components/features/contract/fungible-token/ft.interface.ts';

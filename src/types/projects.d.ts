@@ -1,23 +1,28 @@
 import { EProjectType } from '@/enums';
 import { DeviceDataType, TIotDeviceType } from '@/types/device';
 
+type TLocation = {
+  latitude: number;
+  longitude: number;
+  iframe: string;
+  name: string;
+};
+
+type TCountry = {
+  code: string;
+  name: string;
+};
+
 interface IProject {
   id: string;
   slug: string;
   project_name: string;
   description: string;
-  country: {
-    code: string;
-    name: string;
-  };
+  country: TCountry;
   destination_wallet: string;
   images: [];
   location_name: string;
-  location: {
-    latitude: number;
-    longitude: number;
-    iframe: string;
-  };
+  location: TLocation;
   type: {
     id: number;
     code: string;

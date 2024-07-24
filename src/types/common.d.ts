@@ -1,3 +1,5 @@
+import { Country } from 'country-list';
+
 interface IUploadImageRequest {
   id?: string;
   type?: TUploadType;
@@ -29,4 +31,8 @@ interface IUploadImageResponse {
 interface IUploadMetadataResponse {
   metadata: IUploadMetadataRequest;
   metadata_path: string;
+}
+
+interface IMyCountry extends Country {
+  id: string;
 }
