@@ -127,6 +127,7 @@ class SplToken {
 interface IConfigTokenResponse {
   carbon?: SplToken;
   dcarbon?: SplToken;
+  signer?: string;
 }
 
 type ProjectList = Omit<

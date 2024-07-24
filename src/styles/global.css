@@ -429,8 +429,8 @@ button {
 }
 
 .ant-tabs .ant-tabs-content-holder {
-  max-height: 73vh;
-  overflow: hidden;
+  overflow: auto;
+  height: calc(100vh - 250px);
 }
 
 .project-dashboard-card {
@@ -529,4 +529,13 @@ label {
 .ant-tooltip-inner,
 .ant-select-item {
   font-size: 14px !important;
+}
+
+.ant-tabs .ant-tabs-content {
+  height: 100%;
+}
+
+.ant-tabs .ant-tabs-tabpane {
+  height: 100%;
+  padding-top: 30px;
 }
