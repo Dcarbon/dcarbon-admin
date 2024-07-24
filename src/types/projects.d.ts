@@ -16,6 +16,7 @@ interface IProject {
   location: {
     latitude: number;
     longitude: number;
+    iframe: string;
   };
   type: {
     id: number;
@@ -37,7 +38,12 @@ interface IProjectRequest {
   country: string;
   destination_wallet: string;
   images: [];
-  location: string;
+  location_name: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    iframe: string;
+  };
   type: EProjectType;
   thumbnail: string;
   devices: {
