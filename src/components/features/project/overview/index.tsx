@@ -117,10 +117,12 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.country ? (
                 <Flex gap={10} align="center">
                   <ReactCountryFlag
-                    countryCode={getCode(data.country)?.toString() || 'VN'}
+                    countryCode={
+                      getCode(data.country?.code)?.toString() || 'VN'
+                    }
                     svg
                   />
-                  {data.country}
+                  {data.country?.name}
                 </Flex>
               ) : null}
             </Descriptions.Item>
@@ -134,11 +136,9 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Status">{data.status}</Descriptions.Item>
             <Descriptions.Item label="IOT Models">
               <Space>
-                {data.iot_models?.map((model) => (
-                  <Flex key={model.id} gap={10}>
-                    <span>{model.model_name}</span>
-                  </Flex>
-                ))}
+                <Flex key={data.type.code} gap={10}>
+                  <span>{data.type.name}</span>
+                </Flex>
               </Space>
             </Descriptions.Item>
           </Descriptions>

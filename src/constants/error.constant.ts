@@ -67,5 +67,10 @@ const ERROR_MSG = {
     CREATE_ERROR: 'Create PO has error',
     UPDATE_ERROR: 'Update PO has error',
   },
+  PROJECT: {
+    CREATE_ERROR: 'Create Project has error',
+    UPDATE_ERROR: 'Update Project has error',
+    UPLOAD_IMAGE_LIMIT: 'Image must smaller than 1MB!',
+  },
 };
 export { ERROR_CONTRACT, ERROR_MSG };

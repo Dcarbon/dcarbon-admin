@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { getPo } from '@/adapters/po';
-import NavigationBack from '@/components/common/navigation-back';
 import PoTableList from '@/components/features/po/table';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
@@ -71,7 +70,6 @@ const PoPage = memo(() => {
   };
   return (
     <div>
-      <NavigationBack />
       <Flex justify="space-between" className="project-action-bar">
         <Space>
           <MyInputSearch

@@ -4,16 +4,17 @@ import {
   getModelProject,
   uploadProjectImage,
 } from '@/adapters/project';
-import NavigationBack from '@/components/common/navigation-back';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import DeviceTable from '@/components/features/project/device-modal/table';
+import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
+import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import useBackAction from '@/utils/helpers/back-action';
 import { PlusOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import { Col, Flex, Form, message, Select, Upload } from 'antd';
+import { Col, Flex, Form, Select, Upload } from 'antd';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 import { DeviceType } from '@/types/projects';
@@ -24,6 +25,7 @@ import MyInputNumber from '@components/common/input/my-input-number.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
 import MyInputTextArea from '@components/common/input/my-textarea.tsx';
+import useNotification from '@utils/helpers/my-notification.tsx';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
   component: () => <CreateProject />,
@@ -45,6 +47,7 @@ const CreateProject = memo(() => {
     },
     [form],
   );
+  const [myNotification] = useNotification();
   const goBack = useBackAction({
     type: 'back',
     danger: true,
@@ -61,7 +64,10 @@ const CreateProject = memo(() => {
   const handleCreateProject = useMutation({
     mutationFn: createProject,
     onSuccess: () => {
-      message.success('Create project success');
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.PROJECT.CREATE_SUCCESS,
+      });
       form.resetFields();
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_PROJECT],
@@ -71,13 +77,18 @@ const CreateProject = memo(() => {
       });
     },
     onError: (error: any) => {
-      message.error(error.message);
+      myNotification({
+        message: ERROR_MSG.PROJECT.CREATE_ERROR,
+        description: error.message || 'Something went wrong',
+      });
     },
   });
   const beforeUpload = (file: any) => {
     const isLt1M = file.size / 1024 / 1024 < 1;
     if (!isLt1M) {
-      message.error('Image must smaller than 1MB!');
+      myNotification({
+        description: ERROR_MSG.PROJECT.UPLOAD_IMAGE_LIMIT,
+      });
     }
     return false;
   };
@@ -88,20 +99,28 @@ const CreateProject = memo(() => {
       const body = {
         id: data.data.id,
         ...formData,
-        thumbnail: data.data.result.find(
-          (item: any) => item.field === 'thumbnail',
-        )?.result[0].path,
+        thumbnail: data.data.result.find((item) => item.field === 'thumbnail')
+          ?.result[0].relative_path,
         images: data.data.result
           .find((item: any) => item.field === 'images')
-          ?.result.map((item: any) => item.path),
-        iot_models: [formData.iot_models],
-        spec: formData.spec ? JSON.parse(formData.spec) : {},
-        devices: selectedDevice,
+          ?.result.map((item) => item.relative_path),
+        type: formData.type,
+        spec:
+          formData.spec && Object.keys(formData.spec).length > 0
+            ? JSON.parse(formData.spec)
+            : undefined,
+        devices:
+          selectedDevice && selectedDevice.length > 0
+            ? selectedDevice
+            : undefined,
       };
       handleCreateProject.mutate(body);
     },
     onError: (error: any) => {
-      message.error(error.message);
+      myNotification({
+        message: ERROR_MSG.PROJECT.CREATE_ERROR,
+        description: error.message || 'Something went wrong',
+      });
     },
   });
 
@@ -112,7 +131,6 @@ const CreateProject = memo(() => {
 
   return (
     <div className="project-create-layout">
-      <NavigationBack href="/project" />
       <DeviceTable
         open={openModal}
         setOpen={setOpenModal}
@@ -142,18 +160,6 @@ const CreateProject = memo(() => {
               ]}
             >
               <MyInput placeholder="Project name" max={500} />
-            </Form.Item>
-
-            <Form.Item
-              name="destination_wallet"
-              label="Destination wallet"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <MyInput placeholder="Wallet" />
             </Form.Item>
             <Flex gap={10}>
               <Form.Item className={'w-full'}>
@@ -294,10 +300,10 @@ const CreateProject = memo(() => {
               </Form.Item>
             </Form.Item>
             <Form.Item>
-              <InfiniteScrollSelect />
+              <InfiniteScrollSelect status={EUserStatus.ACTIVE} />
               <Form.Item
                 label="Model"
-                name="iot_models"
+                name="type"
                 rules={[
                   {
                     required: true,
@@ -312,9 +318,9 @@ const CreateProject = memo(() => {
                 <MySelect placeholder="Select model">
                   {model &&
                     model.length > 0 &&
-                    model.map((item: any) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.model_name}
+                    model.map((item) => (
+                      <Select.Option key={item.code} value={item.code}>
+                        {item.name}
                       </Select.Option>
                     ))}
                 </MySelect>

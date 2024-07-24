@@ -21,7 +21,7 @@ type InfoFormProps = {
 const ProjectInfoForm = memo(
   ({ onFinish, open, setOpen, data, loading }: InfoFormProps) => {
     const [form] = Form.useForm();
-    const { data: model } = useQuery({
+    const { data: types } = useQuery({
       queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
       queryFn: getModelProject,
     });
@@ -40,7 +40,7 @@ const ProjectInfoForm = memo(
           layout="vertical"
           initialValues={{
             ...data,
-            iot_models: data.iot_models[0].id,
+            type: data.type.code,
             spec: JSON.stringify(data.spec),
             po_id: data.manager.id,
           }}
@@ -51,17 +51,20 @@ const ProjectInfoForm = memo(
               }
             });
             values.spec = JSON.parse(values.spec);
-            values.iot_models = [values.iot_models];
+            values.type = [values.type];
             if (values.po_id === data.manager?.id) {
               delete values.po_id;
             }
-            if (values.iot_models[0] === data.iot_models[0].id) {
-              delete values.iot_models;
+            if (values.type === data.type.code) {
+              delete values.type;
             }
             if (JSON.stringify(values.spec) === JSON.stringify(data.spec)) {
               delete values.spec;
             }
-            if (values.country && getName(values.country) === data.country) {
+            if (
+              values.country &&
+              getName(values.country?.code) === data.country?.code
+            ) {
               delete values.country;
             }
             onFinish(values);
@@ -136,8 +139,8 @@ const ProjectInfoForm = memo(
             <Col span={11}>
               <InfiniteScrollSelect />
               <Form.Item
-                label="Model"
-                name="iot_models"
+                label="Type"
+                name="type"
                 rules={[
                   {
                     required: true,
@@ -145,11 +148,11 @@ const ProjectInfoForm = memo(
                 ]}
               >
                 <Select>
-                  {model &&
-                    model.length > 0 &&
-                    model.map((item: any) => (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.model_name}
+                  {types &&
+                    types.length > 0 &&
+                    types.map((item: any) => (
+                      <Select.Option key={item.code} value={item.code}>
+                        {item.name}
                       </Select.Option>
                     ))}
                 </Select>

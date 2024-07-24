@@ -127,6 +127,7 @@ const ContractRole = memo(() => {
               fontSize: '24px',
               fontWeight: '500',
               color: 'orange',
+              textAlign: 'center',
             }}
           >
             You need to connect your wallet to continue!

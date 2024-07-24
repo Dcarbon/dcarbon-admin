@@ -105,7 +105,9 @@ const DeviceTable = memo(
             onChange={(status) => setSearch({ ...search, status })}
           >
             {data?.common.iot_device_status.map((info: TIotDeviceStatus) => (
-              <Option value={info.id}>{info.name}</Option>
+              <Option key={info.id} value={info.id}>
+                {info.name}
+              </Option>
             ))}
           </Select>
           <Select
@@ -114,7 +116,9 @@ const DeviceTable = memo(
             onChange={(type) => setSearch({ ...search, type })}
           >
             {data?.common.iot_device_types.map((info: TIotDeviceType) => (
-              <Option value={info.id}>{info.name}</Option>
+              <Option key={info.id} value={info.id}>
+                {info.name}
+              </Option>
             ))}
           </Select>
         </Flex>
