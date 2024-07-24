@@ -164,8 +164,8 @@ const CreateProject = memo(() => {
             <Flex gap={10}>
               <Form.Item className={'w-full'}>
                 <Form.Item
-                  label="Location"
-                  name="location"
+                  label="Location name"
+                  name="location_name"
                   style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
                 >
                   <MyInput placeholder="Project location" />
@@ -212,6 +212,29 @@ const CreateProject = memo(() => {
                 </Form.Item>
               </Form.Item>
             </Flex>
+
+            <Flex gap={10} justify="">
+              <Form.Item
+                className="w-full"
+                name={['location', 'latitude']}
+                label="Latitude"
+                rules={[{ required: true }]}
+              >
+                <MyInputNumber width="100%" />
+              </Form.Item>
+              <Form.Item
+                className="w-full"
+                name={['location', 'longitude']}
+                label="Longitude"
+                rules={[{ required: true }]}
+              >
+                <MyInputNumber width="100%" />
+              </Form.Item>
+            </Flex>
+            <Form.Item name={['location', 'iframe']} label="Iframe">
+              <MyInput width="100%" />
+            </Form.Item>
+
             <Form.Item
               label="Description"
               name="description"
@@ -319,7 +342,11 @@ const CreateProject = memo(() => {
                   {model &&
                     model.length > 0 &&
                     model.map((item) => (
-                      <Select.Option key={item.code} value={item.code}>
+                      <Select.Option
+                        key={item.code}
+                        value={item.code}
+                        disabled={!item.active}
+                      >
                         {item.name}
                       </Select.Option>
                     ))}
