@@ -1,16 +1,22 @@
 import { memo, useCallback } from 'react';
 import { getPo } from '@/adapters/po';
+import { EUserStatus } from '@/enums';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Form, Select, Spin } from 'antd';
 import MySelect from '@components/common/input/my-select.tsx';
 
 const { Option } = Select;
 
-const InfiniteScrollSelect = memo(() => {
+interface IProps {
+  status?: EUserStatus;
+}
+
+const InfiniteScrollSelect = memo((props: IProps) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: ['items'],
-      queryFn: ({ pageParam = 1 }) => getPo({ page: pageParam }),
+      queryKey: ['items', props?.status],
+      queryFn: ({ pageParam = 1 }) =>
+        getPo({ page: pageParam, status: props?.status }),
       initialPageParam: 1,
 
       getNextPageParam: (lastPage) => {

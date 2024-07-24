@@ -1,3 +1,4 @@
+import { EProjectType } from '@/enums';
 import { DeviceDataType, TIotDeviceType } from '@/types/device';
 
 interface IProject {
@@ -5,7 +6,10 @@ interface IProject {
   slug: string;
   project_name: string;
   description: string;
-  country: string;
+  country: {
+    code: string;
+    name: string;
+  };
   destination_wallet: string;
   images: [];
   location_name: string;
@@ -13,12 +17,11 @@ interface IProject {
     latitude: number;
     longitude: number;
   };
-  iot_models: [
-    {
-      id: string;
-      model_name: string;
-    },
-  ];
+  type: {
+    id: number;
+    code: string;
+    name: string;
+  };
   thumbnail: string;
   devices: DeviceDataType[];
   manager: Pick<IPo, 'profile_name' | 'user_name' | 'id'>;
@@ -35,7 +38,7 @@ interface IProjectRequest {
   destination_wallet: string;
   images: [];
   location: string;
-  iot_models: string[] | string;
+  type: EProjectType;
   thumbnail: string;
   devices: {
     iot_device_id: string;
@@ -70,10 +73,10 @@ interface IProjectPageRequest {
 }
 
 interface IProjectModel {
-  id: string;
-  model_name: string;
-  created_at: string;
-  updated_at: string;
+  id: number;
+  code: EProjectType;
+  name: string;
+  active?: boolean;
 }
 
 interface IProjectImageRequest {

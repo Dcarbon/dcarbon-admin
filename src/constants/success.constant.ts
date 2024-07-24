@@ -8,5 +8,9 @@ const SUCCESS_MSG = {
     CREATE_SUCCESS: 'Create PO successfully',
     UPDATE_SUCCESS: 'Update PO successfully',
   },
+  PROJECT: {
+    CREATE_SUCCESS: 'Create Project successfully',
+    UPDATE_SUCCESS: 'Update Project successfully',
+  },
 };
 export { SUCCESS_MSG };
