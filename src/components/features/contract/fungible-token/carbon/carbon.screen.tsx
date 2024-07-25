@@ -36,7 +36,6 @@ const CarbonScreen = memo(
     getConfigTokenLoading,
     initConfigTokenLoading,
   }: IProps) => {
-    console.info('DCarbonScreen');
     const [form] = Form.useForm<IFTCreateForm>();
     const [icon, setIcon] = useState([]);
     const goBack = useModalAction({

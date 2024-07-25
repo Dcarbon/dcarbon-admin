@@ -57,8 +57,8 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
   const columns: TableColumnsType<PoList> = [
     {
       title: 'Name',
+      width: 300,
       dataIndex: 'profile_name',
-      width: 200,
       sorter: true,
       sortDirections: ['ascend', 'descend'],
       defaultSortOrder:
@@ -71,7 +71,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     {
       title: 'Email',
       dataIndex: 'user_name',
-      width: 250,
+      width: 300,
       sorter: true,
       defaultSortOrder:
         search.sort_field === 'user_name'
@@ -93,7 +93,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     },
     {
       title: 'Status',
-      width: 70,
+      width: 100,
       dataIndex: 'status',
       sorter: true,
       render: (status) => <span>{renderTag(status)}</span>,
@@ -106,7 +106,8 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
     },
     {
       title: 'Action',
-      width: 150,
+      width: 80,
+      align: 'center',
       render: ({ id, status }: IPo) => {
         const isDelete =
           loadingHandleAction?.id === id &&
@@ -121,6 +122,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
               onClick={() =>
                 navigate({
                   to: '/po/$id',
+                  from: '/po',
                   params: {
                     id: id,
                   },
@@ -133,6 +135,7 @@ const PoColumn = ({ handlePo, loadingHandleAction }: IProps) => {
               onClick={() =>
                 navigate({
                   to: '/po/update/$id',
+                  from: '/po',
                   params: {
                     id: id,
                   },

@@ -26,11 +26,8 @@ type ProductSearch = {
 export const Route = createFileRoute('/_auth/project/')({
   validateSearch: (search: Record<string, unknown>): ProductSearch => {
     return {
+      ...search,
       page: Number(search?.page ?? 1),
-      keyword: (search.keyword as string) || '',
-      limit: Number(search?.limit ?? 10),
-      sort_field: (search.sort_field as string) || '',
-      sort_type: (search.sort_type as ProductSearchSortOptions) || 'asc',
     };
   },
   component: () => <ProjectPage />,
@@ -79,6 +76,7 @@ const ProjectPage = memo(() => {
           onClick={() =>
             navigate({
               to: '/project/create',
+              from: '/project',
             })
           }
         >

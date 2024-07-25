@@ -7,8 +7,11 @@ const ProjectTableList = ({ data }: { data: IProjectPage }) => {
   return (
     <MyTable
       columns={columns}
+      scroll={{ y: '56vh' }}
       pagination={{
-        defaultPageSize: 10,
+        defaultPageSize: data.paging.limit,
+        total: data.paging.total,
+        current: data.paging.page,
       }}
       rowKey={'id'}
       dataSource={data.data as ProjectList[]}

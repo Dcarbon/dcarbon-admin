@@ -31,7 +31,6 @@ interface IProps {
 
 const AdminContainer = memo(
   forwardRef(({ connection, anchorWallet, currentWallet }: IProps, ref) => {
-    console.info('AdminContainer');
     const { publicKey, wallet } = useWallet();
     const administratorRef = useRef<IRef>();
     const [myNotification] = useNotification();

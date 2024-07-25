@@ -27,7 +27,6 @@ interface IProps {
 }
 
 const DCarbonContainer = memo(({ getConfigTokenLoading, data }: IProps) => {
-  console.info('DCarbonContainer');
   const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();

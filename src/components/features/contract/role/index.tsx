@@ -30,7 +30,6 @@ interface IAdminRef {
 }
 
 const ContractRole = memo(() => {
-  console.info('ContractRole');
   const [loading, setLoading] = useState(false);
   const [myNotification] = useNotification();
   const { publicKey, wallet } = useWallet();

@@ -27,12 +27,8 @@ type ProductSearch = {
 export const Route = createFileRoute('/_auth/po/')({
   validateSearch: (search: Record<string, unknown>): ProductSearch => {
     return {
-      page: Number(search?.page ?? 1),
-      keyword: (search.keyword as string) || '',
-      limit: Number(search?.limit ?? 10),
-      sort_field: (search.sort_field as string) || '',
-      sort_type: (search.sort_type as ProductSearchSortOptions) || 'asc',
-      status: (search.status as string) || '',
+      ...search,
+      page: Number(search?.page) || 1,
     };
   },
   component: () => <PoPage />,
@@ -82,7 +78,12 @@ const PoPage = memo(() => {
           />
           <Select
             className="po-filter"
+            defaultActiveFirstOption
             options={[
+              {
+                label: 'All',
+                value: '',
+              },
               {
                 label: 'Active',
                 value: 'active',
@@ -118,6 +119,7 @@ const PoPage = memo(() => {
           onClick={() =>
             navigate({
               to: '/po/create',
+              from: '/po',
             })
           }
         >

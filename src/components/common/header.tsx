@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import ConnectButton from '@/components/common/button/connect-button';
 import { useAuth } from '@/contexts/auth-context.tsx';
 import { UserOutlined } from '@ant-design/icons';
@@ -5,7 +6,7 @@ import { Avatar, Flex, Layout, Typography } from 'antd';
 
 import logo from '/image/dcarbon-logo-black.svg';
 
-const Header = () => {
+const Header = memo(() => {
   const { isAuthenticated, user } = useAuth();
   const { Header } = Layout;
   return (
@@ -45,6 +46,6 @@ const Header = () => {
       </Header>
     </Layout>
   );
-};
+});
 
 export default Header;

@@ -86,14 +86,14 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
     <MyTable
       columns={col}
       rowKey={'id'}
-      scroll={{ y: '55vh', x: 1000 }}
+      scroll={{ y: '56vh', x: 800 }}
       tableLayout="auto"
       pagination={{
         defaultPageSize: data.paging.limit,
         defaultCurrent: 1,
         showSizeChanger: false,
         current: data.paging.page,
-        total: data.paging.total * data.paging.limit,
+        total: data.paging.total,
       }}
       onChange={(page: any, _filters: any, sorter: any) => {
         return navigate({
