@@ -33,14 +33,12 @@ const PoCreate = memo(() => {
         description: SUCCESS_MSG.PO.CREATE_SUCCESS,
       });
       form.resetFields();
-      queryClient
-        .invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_PO],
-        })
-        .then();
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_PO, { page: 1 }],
+      });
       navigate({
-        to: '/project',
-      }).then();
+        to: '/po',
+      });
     },
     onError: (err: any) => {
       myNotification({

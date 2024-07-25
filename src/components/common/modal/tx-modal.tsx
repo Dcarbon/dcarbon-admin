@@ -19,7 +19,6 @@ interface IProps {
 }
 
 const TxModal = ({ open, title, setOpen }: IProps) => {
-  console.info('open', open);
   const { styles } = useStyle();
   const classNames = {
     mask: styles['my-modal-mask'],

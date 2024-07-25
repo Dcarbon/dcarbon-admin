@@ -80,7 +80,11 @@ const PoColumn = () => {
       render: (data: ProjectList) => {
         return (
           <Space size="middle">
-            <Link to="/project/$slug" params={{ slug: data.slug }}>
+            <Link
+              to="/project/$slug"
+              from={'/project'}
+              params={{ slug: data.slug }}
+            >
               View
             </Link>
           </Space>

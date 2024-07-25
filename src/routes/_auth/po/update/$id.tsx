@@ -4,6 +4,7 @@ import SubmitButtonAction from '@/components/common/button/button-submit';
 import MyInput from '@/components/common/input/my-input';
 import MyInputTextArea from '@/components/common/input/my-textarea';
 import CenterContentLayout from '@/components/common/layout/center-content/center-content.layout';
+import NavigationBack from '@/components/common/navigation-back';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { QUERY_KEYS } from '@/utils/constants';
 import useModalAction from '@/utils/helpers/back-action';
@@ -64,79 +65,82 @@ const UpdatePo = () => {
     },
   });
   return (
-    <CenterContentLayout>
-      <Typography.Title level={2}>Update PO</Typography.Title>
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={(values) => {
-          Object.keys(values).forEach((key) => {
-            if (data[key as keyof IPo] === values[key]) {
-              delete values[key];
-            }
-          });
-          updateMutation.mutate(values);
-        }}
-        style={{ width: '100%' }}
-        initialValues={{
-          ...data,
-        }}
-      >
-        <Form.Item style={{ marginBottom: 0 }}>
-          <Form.Item
-            label="Name"
-            name="profile_name"
-            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-          >
-            <MyInput placeholder="Enter PO name" maxLength={255} />
+    <>
+      <NavigationBack />
+      <CenterContentLayout>
+        <Typography.Title level={2}>Update PO</Typography.Title>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={(values) => {
+            Object.keys(values).forEach((key) => {
+              if (data[key as keyof IPo] === values[key]) {
+                delete values[key];
+              }
+            });
+            updateMutation.mutate(values);
+          }}
+          style={{ width: '100%' }}
+          initialValues={{
+            ...data,
+          }}
+        >
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Form.Item
+              label="Name"
+              name="profile_name"
+              style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+            >
+              <MyInput placeholder="Enter PO name" maxLength={255} />
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="user_name"
+              rules={[
+                {
+                  type: 'email',
+                },
+              ]}
+              style={{
+                display: 'inline-block',
+                width: 'calc(50%)',
+                margin: '0px 0px 0px 8px',
+              }}
+            >
+              <MyInput placeholder="Enter PO email" />
+            </Form.Item>
+          </Form.Item>
+          <Form.Item label="Wallet" name="wallet">
+            <MyInput placeholder="Enter PO wallet" />
           </Form.Item>
           <Form.Item
-            label="Email"
-            name="user_name"
+            label="Info"
+            name="info"
             rules={[
               {
-                type: 'email',
+                max: 5000,
               },
             ]}
-            style={{
-              display: 'inline-block',
-              width: 'calc(50%)',
-              margin: '0px 0px 0px 8px',
-            }}
           >
-            <MyInput placeholder="Enter PO email" />
+            <MyInputTextArea
+              placeholder="Enter PO info"
+              maxLength={5000}
+              rows={10}
+            />
           </Form.Item>
-        </Form.Item>
-        <Form.Item label="Wallet" name="wallet">
-          <MyInput placeholder="Enter PO wallet" />
-        </Form.Item>
-        <Form.Item
-          label="Info"
-          name="info"
-          rules={[
-            {
-              max: 5000,
-            },
-          ]}
-        >
-          <MyInputTextArea
-            placeholder="Enter PO info"
-            maxLength={5000}
-            rows={10}
-          />
-        </Form.Item>
-        <Flex gap={10} justify="center">
-          <SubmitButtonAction loading={updateMutation.isPending}>
-            Submit
-          </SubmitButtonAction>
-          <CancelButtonAction
-            disabled={updateMutation.isPending}
-            onClick={goBack}
-          >
-            Cancel
-          </CancelButtonAction>
-        </Flex>
-      </Form>
-    </CenterContentLayout>
+          <Flex gap={10} justify="center">
+            <SubmitButtonAction loading={updateMutation.isPending}>
+              Submit
+            </SubmitButtonAction>
+            <CancelButtonAction
+              disabled={updateMutation.isPending}
+              onClick={goBack}
+            >
+              Cancel
+            </CancelButtonAction>
+          </Flex>
+        </Form>
+      </CenterContentLayout>
+    </>
   );
 };

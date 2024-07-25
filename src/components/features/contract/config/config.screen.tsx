@@ -30,11 +30,11 @@ import { IConfigTokenResponse } from '@/types/projects';
 
 export interface TConfigUpdate extends IConfig {
   type:
-    | 'mint_fee'
-    | 'rate'
-    | 'collect_fee_wallet'
-    | 'device_limit'
-    | 'signer_wallet';
+  | 'mint_fee'
+  | 'rate'
+  | 'collect_fee_wallet'
+  | 'device_limit'
+  | 'signer_wallet';
 }
 
 interface IProps {

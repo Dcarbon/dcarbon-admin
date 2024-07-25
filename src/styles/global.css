@@ -362,6 +362,10 @@ button {
   min-width: 100px;
 }
 
+textarea {
+  max-height: 30vh;
+}
+
 /* stylelint-disable-next-line media-feature-range-notation */
 @media screen and (max-width: 1024px) {
   .navbar-box {

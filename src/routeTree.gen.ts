@@ -20,9 +20,10 @@ import { Route as AuthProjectIndexImport } from './routes/_auth/project/index'
 import { Route as AuthPoIndexImport } from './routes/_auth/po/index'
 import { Route as AuthContractIndexImport } from './routes/_auth/contract/index'
 import { Route as AuthProjectSlugImport } from './routes/_auth/project/$slug'
+import { Route as AuthPoUpdateImport } from './routes/_auth/po/update'
 import { Route as AuthPoCreateImport } from './routes/_auth/po/create'
 import { Route as AuthPoIdImport } from './routes/_auth/po/$id'
-import { Route as AuthPoUpdateIdImport } from './routes/_auth/po/update.$id'
+import { Route as AuthPoUpdateIdImport } from './routes/_auth/po/update/$id'
 
 // Create Virtual Routes
 
@@ -72,6 +73,11 @@ const AuthProjectSlugRoute = AuthProjectSlugImport.update({
   getParentRoute: () => AuthRoute,
 } as any)
 
+const AuthPoUpdateRoute = AuthPoUpdateImport.update({
+  path: '/po/update',
+  getParentRoute: () => AuthRoute,
+} as any)
+
 const AuthPoCreateRoute = AuthPoCreateImport.update({
   path: '/po/create',
   getParentRoute: () => AuthRoute,
@@ -83,8 +89,8 @@ const AuthPoIdRoute = AuthPoIdImport.update({
 } as any)
 
 const AuthPoUpdateIdRoute = AuthPoUpdateIdImport.update({
-  path: '/po/update/$id',
-  getParentRoute: () => AuthRoute,
+  path: '/$id',
+  getParentRoute: () => AuthPoUpdateRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -126,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPoCreateImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/po/update': {
+      id: '/_auth/po/update'
+      path: '/po/update'
+      fullPath: '/po/update'
+      preLoaderRoute: typeof AuthPoUpdateImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/project/$slug': {
       id: '/_auth/project/$slug'
       path: '/project/$slug'
@@ -163,10 +176,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/po/update/$id': {
       id: '/_auth/po/update/$id'
-      path: '/po/update/$id'
+      path: '/$id'
       fullPath: '/po/update/$id'
       preLoaderRoute: typeof AuthPoUpdateIdImport
-      parentRoute: typeof AuthImport
+      parentRoute: typeof AuthPoUpdateImport
     }
   }
 }
@@ -178,12 +191,12 @@ export const routeTree = rootRoute.addChildren({
     AuthIndexRoute,
     AuthPoIdRoute,
     AuthPoCreateRoute,
+    AuthPoUpdateRoute: AuthPoUpdateRoute.addChildren({ AuthPoUpdateIdRoute }),
     AuthProjectSlugRoute,
     AuthProjectCreateLazyRoute,
     AuthContractIndexRoute,
     AuthPoIndexRoute,
     AuthProjectIndexRoute,
-    AuthPoUpdateIdRoute,
   }),
   SigninRoute,
 })
@@ -206,12 +219,12 @@ export const routeTree = rootRoute.addChildren({
         "/_auth/",
         "/_auth/po/$id",
         "/_auth/po/create",
+        "/_auth/po/update",
         "/_auth/project/$slug",
         "/_auth/project/create",
         "/_auth/contract/",
         "/_auth/po/",
-        "/_auth/project/",
-        "/_auth/po/update/$id"
+        "/_auth/project/"
       ]
     },
     "/signin": {
@@ -228,6 +241,13 @@ export const routeTree = rootRoute.addChildren({
     "/_auth/po/create": {
       "filePath": "_auth/po/create.tsx",
       "parent": "/_auth"
+    },
+    "/_auth/po/update": {
+      "filePath": "_auth/po/update.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/po/update/$id"
+      ]
     },
     "/_auth/project/$slug": {
       "filePath": "_auth/project/$slug.tsx",
@@ -250,8 +270,8 @@ export const routeTree = rootRoute.addChildren({
       "parent": "/_auth"
     },
     "/_auth/po/update/$id": {
-      "filePath": "_auth/po/update.$id.tsx",
-      "parent": "/_auth"
+      "filePath": "_auth/po/update/$id.tsx",
+      "parent": "/_auth/po/update"
     }
   }
 }

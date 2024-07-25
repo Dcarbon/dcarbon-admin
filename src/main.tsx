@@ -23,6 +23,7 @@ const router: Router<any, any> = createRouter({
     auth: undefined!,
     queryClient: undefined!,
   },
+
   defaultNotFoundComponent: NotFoundPage,
 });
 const queryClient = new QueryClient({
