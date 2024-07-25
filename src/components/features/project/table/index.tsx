@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { Table } from 'antd';
 import { IProjectPage, ProjectList } from '@/types/projects';
+import MyTable from '@components/common/table/my-table.tsx';
 import projectColumns from '@components/features/project/table/column';
 
 const ProjectTableList = ({ data }: { data: IProjectPage }) => {
@@ -9,7 +9,7 @@ const ProjectTableList = ({ data }: { data: IProjectPage }) => {
   const navigate = useNavigate();
 
   return (
-    <Table
+    <MyTable
       columns={columns}
       scroll={{ y: '56vh' }}
       id="id"

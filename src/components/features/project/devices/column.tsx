@@ -80,12 +80,6 @@ const ProjectDevicesColumn = ({ openSetting }: IProps) => {
       render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
     },
     {
-      title: 'Token',
-      // dataIndex: 'status',
-      // key: 'status',
-      // render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
-    },
-    {
       title: 'Active',
       // dataIndex: 'status',
       // key: 'status',

@@ -33,7 +33,7 @@ const ProjectDetail = memo(() => {
     <div>
       {/* <NavigationBack href="/project" />*/}
       <Tabs
-        defaultActiveKey={search.key || '1'}
+        defaultActiveKey={search.key?.toString() || '1'}
         items={[
           {
             key: '1',
@@ -43,7 +43,7 @@ const ProjectDetail = memo(() => {
           {
             key: '2',
             label: 'Devices',
-            children: <Devices devices={data.devices} />,
+            children: <Devices projectSlug={slug} />,
           },
           {
             key: '3',

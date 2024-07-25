@@ -11,6 +11,7 @@ const SUCCESS_MSG = {
   PROJECT: {
     CREATE_SUCCESS: 'Create Project successfully',
     UPDATE_SUCCESS: 'Update Project successfully',
+    ADD_DEVICES_SUCCESS: 'Add devices successfully',
   },
 };
 export { SUCCESS_MSG };
