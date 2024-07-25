@@ -2,6 +2,7 @@
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import { IDevicePage, IDeviceRequest } from '@/types/device';
 import {
+  IAddDevicesInput,
   IProject,
   IProjectImageRequest,
   IProjectImageResponse,
@@ -59,11 +60,12 @@ const getIoTDevice = async ({
   id,
   status,
   type,
+  project_id,
 }: IDeviceRequest) => {
   try {
     const response = await request<IDevicePage>(
       REQ_METHODS.GET,
-      API_ROUTES.IOT_MODELS,
+      API_ROUTES.DEVICE.ROOT,
       {
         page,
         limit,
@@ -72,6 +74,7 @@ const getIoTDevice = async ({
         id,
         status,
         type,
+        project_id,
       },
     );
     return response.data;
@@ -147,6 +150,19 @@ const updateProject = async (data: Partial<IProjectRequest>) => {
     throw error;
   }
 };
+const addDevices = async (data: Partial<IAddDevicesInput>) => {
+  try {
+    const response = await request<GeneralResponse<{ status: string }>>(
+      REQ_METHODS.PUT,
+      API_ROUTES.PROJECT.ADD_DEVICES,
+      data,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -155,4 +171,5 @@ export {
   uploadProjectImage,
   createProject,
   updateProject,
+  addDevices,
 };

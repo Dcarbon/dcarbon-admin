@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router';
 import { Space, TableColumnsType, Tag } from 'antd';
-import { getCode } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 import { ProjectList } from '@/types/projects';
 import SpanOneLine from '@components/common/span/oneline-span.tsx';
@@ -46,7 +45,7 @@ const PoColumn = () => {
           <SpanOneLine width={'400px'} style={{ paddingRight: '15px' }}>
             <ReactCountryFlag
               style={{ marginRight: '5px' }}
-              countryCode={getCode(country?.code)?.toString() || 'VN'}
+              countryCode={country?.code || 'VN'}
               svg
             />
             {country?.name}

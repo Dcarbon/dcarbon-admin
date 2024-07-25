@@ -19,9 +19,11 @@ type TIotDeviceStatus = {
 
 type DeviceDataType = {
   iot_device_id: string;
+  project_id?: string;
   device_name: string;
   device_type: TIotDeviceType;
   status: TIotDeviceStatus;
+  in_use?: boolean;
 };
 
 interface IDeviceRequest {
@@ -32,6 +34,7 @@ interface IDeviceRequest {
   id?: string;
   type?: string;
   status?: string;
+  project_id?: string;
 }
 
 interface IDevicePage {

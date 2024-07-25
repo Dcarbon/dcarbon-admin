@@ -12,17 +12,17 @@ import {
   TIotDeviceStatus,
   TIotDeviceType,
 } from '@/types/device';
-import { DeviceType } from '@/types/projects';
 import MyTable from '@components/common/table/my-table.tsx';
 
 import columns from './column';
 
 type DeviceTableProps = {
-  setSelectDevice: React.Dispatch<React.SetStateAction<DeviceType[]>>;
-  selectedDevice: DeviceType[];
+  setSelectDevice: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedDevice: string[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onOk?: () => void;
+  handleAddDevices: () => Promise<void>;
 };
 const { Option } = Select;
 const useStyle = createStyles(() => ({
@@ -39,11 +39,14 @@ const DeviceTable = memo(
     setOpen,
     setSelectDevice,
     selectedDevice,
-    onOk,
+    handleAddDevices,
   }: DeviceTableProps) => {
     const [search, setSearch] = useState<IDeviceRequest>({
       page: 1,
     } as IDeviceRequest);
+    const [isLoadingAdd, setLoadingAdd] = useState<boolean>(false);
+    useState<string[]>(selectedDevice);
+
     const { styles } = useStyle();
     const cancelModal = useModalAction({
       danger: true,
@@ -53,7 +56,6 @@ const DeviceTable = memo(
       mask: styles['my-modal-mask'],
       content: styles['my-modal-content'],
     };
-
     const modalStyles = {
       mask: {
         backdropFilter: 'blur(10px)',
@@ -61,6 +63,7 @@ const DeviceTable = memo(
       content: {
         boxShadow: '0 0 30px #999',
         borderRadius: 'var(--div-radius)',
+        height: '90vh',
       },
     };
 
@@ -69,11 +72,12 @@ const DeviceTable = memo(
       queryFn: () => getIoTDevice(search),
       staleTime: 0,
       enabled:
-        !!search.id ||
-        !!search.status ||
-        !!search.type ||
-        !!search.page ||
-        true,
+        open &&
+        (!!search.id ||
+          !!search.status ||
+          !!search.type ||
+          !!search.page ||
+          true),
     });
     return (
       <Modal
@@ -89,20 +93,33 @@ const DeviceTable = memo(
         destroyOnClose
         maskClosable
         onCancel={() => cancelModal()}
-        onOk={onOk ? onOk : () => setOpen(false)}
+        onOk={async () => {
+          setLoadingAdd(true);
+          await handleAddDevices();
+          setLoadingAdd(false);
+          setOpen(false);
+        }}
         onClose={() => setOpen(false)}
         classNames={classNames}
         styles={modalStyles}
+        okButtonProps={{
+          disabled:
+            isLoadingAdd || !selectedDevice || selectedDevice.length === 0,
+          loading: isLoadingAdd,
+        }}
+        cancelButtonProps={{ disabled: isLoadingAdd }}
       >
         <Flex className="device-modal" gap={10}>
           <Input.Search
             placeholder="Search"
             onSearch={(e) => setSearch({ ...search, id: e })}
+            disabled={isLoadingAdd}
           />
           <Select
             placeholder="Status"
             className="device-modal-select"
             onChange={(status) => setSearch({ ...search, status })}
+            disabled={isLoadingAdd}
           >
             {data?.common.iot_device_status.map((info: TIotDeviceStatus) => (
               <Option key={info.id} value={info.id}>
@@ -114,6 +131,7 @@ const DeviceTable = memo(
             placeholder="Type"
             className="device-modal-select"
             onChange={(type) => setSearch({ ...search, type })}
+            disabled={isLoadingAdd}
           >
             {data?.common.iot_device_types.map((info: TIotDeviceType) => (
               <Option key={info.id} value={info.id}>
@@ -125,23 +143,34 @@ const DeviceTable = memo(
         <MyTable
           rowSelection={{
             type: 'checkbox',
-            defaultSelectedRowKeys: selectedDevice.map(
-              (device) => device.iot_device_id,
-            ),
+            preserveSelectedRowKeys: true,
+            defaultSelectedRowKeys: selectedDevice.map((device) => {
+              return device;
+            }),
             columnWidth: 50,
             onChange: (_selectedRowKeys, selectedRows) => {
-              const data = selectedRows.map((device) => ({
-                iot_device_id: device.iot_device_id,
-                iot_device_type: device.device_type,
-              }));
-              setSelectDevice(data);
+              const selectedCurrentPage = selectedRows
+                .filter((dv) => !!dv?.iot_device_id)
+                .map((device) => device.iot_device_id);
+              const currentSelected = selectedDevice;
+              const current = (data?.data || []).map((dv) => dv.iot_device_id);
+
+              const uncheckedAll = currentSelected.filter(
+                (x) => !selectedCurrentPage.includes(x),
+              );
+              const uncheckedReal = current.filter((x) =>
+                uncheckedAll.includes(x),
+              );
+              const newSelected = currentSelected.filter(
+                (x) => !uncheckedReal.includes(x),
+              );
+              setSelectDevice(
+                Array.from(new Set([...newSelected, ...selectedCurrentPage])),
+              );
             },
             getCheckboxProps: (record: DeviceDataType) => ({
               disabled:
-                record.status?.id === EIotDeviceStatus.REJECT &&
-                !selectedDevice.some(
-                  (device) => device.iot_device_id === record.iot_device_id,
-                ),
+                isLoadingAdd || record.status?.id === EIotDeviceStatus.REJECT,
               name: record.device_name,
             }),
           }}
@@ -150,16 +179,14 @@ const DeviceTable = memo(
           loading={isLoading}
           dataSource={data?.data as DeviceDataType[]}
           rowKey="id"
-          scroll={{ y: 400 }}
+          scroll={{ y: '60vh' }}
           rowClassName={(record: DeviceDataType) =>
-            record.status?.id === EIotDeviceStatus.REJECT &&
-            !selectedDevice.some(
-              (device) => device.iot_device_id === record.iot_device_id,
-            )
+            isLoadingAdd || record.status?.id === EIotDeviceStatus.REJECT
               ? 'disabled-td'
               : ''
           }
           pagination={{
+            disabled: isLoadingAdd,
             pageSize: data?.paging.limit || 1,
             total: data?.paging.total || 1,
             current: data?.paging.page || 1,

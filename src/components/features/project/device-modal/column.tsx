@@ -1,11 +1,16 @@
 import { EIotDeviceStatus } from '@/enums';
-import { TableColumnsType, Tag } from 'antd';
+import DotIcon from '@/icons/dot.icon.tsx';
+import Icon from '@ant-design/icons';
+import { TableColumnsType, Tag, Tooltip } from 'antd';
 import {
   DeviceDataType,
   TIotDeviceStatus,
   TIotDeviceType,
 } from '@/types/device';
 
+const DotIc = () => (
+  <Icon component={() => <DotIcon size={20} color={'var(--main-color)'} />} />
+);
 const renderTag = (data: TIotDeviceStatus) => {
   let color = 'orange';
   switch (data.id) {
@@ -71,6 +76,18 @@ const columns: TableColumnsType<DeviceDataType> = [
     dataIndex: 'status',
     key: 'status',
     render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
+  },
+  {
+    title: 'In Use',
+    width: 80,
+    render: (device: DeviceDataType) =>
+      device.in_use && (
+        <Tooltip title={`Project: ${device.project_id}`}>
+          <div style={{ width: '100%', textAlign: 'center' }}>
+            <DotIc />
+          </div>
+        </Tooltip>
+      ),
   },
 ];
 export default columns;

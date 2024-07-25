@@ -61,6 +61,9 @@ const ERROR_CONTRACT = {
   },
 };
 const ERROR_MSG = {
+  COMMON: {
+    DEFAULT_ERROR: 'Something went wrong',
+  },
   PO: {
     BAN_ERROR: 'Ban PO has error',
     DELETE_ERROR: 'Delete PO has error',
@@ -71,6 +74,7 @@ const ERROR_MSG = {
     CREATE_ERROR: 'Create Project has error',
     UPDATE_ERROR: 'Update Project has error',
     UPLOAD_IMAGE_LIMIT: 'Image must smaller than 1MB!',
+    ADD_DEVICES_ERROR: 'Add devices error',
   },
 };
 export { ERROR_CONTRACT, ERROR_MSG };

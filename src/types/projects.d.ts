@@ -135,6 +135,11 @@ interface IConfigTokenResponse {
   signer?: string;
 }
 
+interface IAddDevicesInput {
+  project_id: string;
+  device_ids: string[];
+}
+
 type ProjectList = Omit<
   IProject,
   | 'images'
