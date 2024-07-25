@@ -6,6 +6,7 @@ import {
 } from '@/adapters/project';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
+import MapOverView from '@/components/features/project/map-overview';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
@@ -32,6 +33,7 @@ const CreateProject = memo(() => {
   const [form] = Form.useForm();
   const [thumbnail, setThumbnail] = useState([]);
   const [images, setImages] = useState([]);
+  const [iframe, setIframe] = useState('');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -58,18 +60,27 @@ const CreateProject = memo(() => {
   );
   const handleCreateProject = useMutation({
     mutationFn: createProject,
-    onSuccess: () => {
+    onSuccess: (data) => {
       myNotification({
         type: 'success',
         description: SUCCESS_MSG.PROJECT.CREATE_SUCCESS,
       });
       form.resetFields();
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_PROJECT],
-      });
-      navigate({
-        to: '/project',
-      });
+      setImages([]);
+      setThumbnail([]);
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_PROJECT],
+        }),
+      ]).then(() =>
+        navigate({
+          to: '/project/$slug',
+          params: { slug: data.data.slug },
+          search: {
+            key: 2,
+          },
+        }),
+      );
     },
     onError: (error: any) => {
       myNotification({
@@ -118,7 +129,7 @@ const CreateProject = memo(() => {
     queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
     queryFn: getModelProject,
   });
-
+  console.info(iframe);
   return (
     <div className="project-create-layout">
       <Form
@@ -144,6 +155,160 @@ const CreateProject = memo(() => {
               ]}
             >
               <MyInput placeholder="Project name" max={500} />
+            </Form.Item>
+            <Form.Item>
+              <Form.Item
+                label="Thumbnail"
+                name="thumbnail"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{ display: 'inline-block' }}
+              >
+                <Upload
+                  listType="picture-card"
+                  fileList={thumbnail}
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
+                  beforeUpload={beforeUpload}
+                >
+                  {thumbnail.length < 1 && (
+                    <div>
+                      <PlusOutlined /> Upload
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                label="Images"
+                name="images"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  margin: '0 8px',
+                }}
+              >
+                <Upload
+                  listType="picture-card"
+                  accept="image/*"
+                  multiple
+                  onPreview={() => null}
+                  maxCount={5}
+                  fileList={images}
+                  onChange={handleImagesChange}
+                  beforeUpload={beforeUpload}
+                >
+                  {images.length < 5 && (
+                    <div>
+                      <PlusOutlined /> Upload
+                    </div>
+                  )}
+                </Upload>
+              </Form.Item>
+            </Form.Item>
+
+            <Flex>
+              <Form.Item
+                label="Power"
+                name="power"
+                style={{ display: 'inline-block', width: '100px' }}
+              >
+                <MyInputNumber min={0} />
+              </Form.Item>
+              <Form.Item
+                label="Spec"
+                name="spec"
+                rules={[
+                  {
+                    validator(_, value) {
+                      if (!value) return Promise.resolve();
+                      try {
+                        if (Object.keys(JSON.parse(value)).length < 1) {
+                          throw new Error();
+                        }
+                      } catch (e) {
+                        // eslint-disable-next-line prefer-promise-reject-errors
+                        return Promise.reject('Spec must be json data');
+                      }
+                    },
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  margin: '0 8px',
+                  flexGrow: 1,
+                }}
+              >
+                <MyInputTextArea rows={5} placeholder="Ex: {'key':'value'}" />
+              </Form.Item>
+            </Flex>
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  max: 5000,
+                },
+              ]}
+            >
+              <TextEditor
+                style={{ backgroundColor: 'var(--main-gray)' }}
+                value={form?.getFieldValue('description')}
+                onChange={(e) => form?.setFieldValue('description', e)}
+              />
+            </Form.Item>
+            <Flex justify="center" style={{ marginTop: '30px' }} gap={10}>
+              <SubmitButtonAction
+                loading={handleSave.isPending || handleCreateProject.isPending}
+              >
+                Submit
+              </SubmitButtonAction>
+              <CancelButtonAction
+                disabled={handleSave.isPending || handleCreateProject.isPending}
+                onClick={goBack}
+              >
+                Cancel
+              </CancelButtonAction>
+            </Flex>
+          </Col>
+          <Col span={11}>
+            <Form.Item>
+              <InfiniteScrollSelect status={EUserStatus.ACTIVE} />
+              <Form.Item
+                label="Model"
+                name="type"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50% - 8px)',
+                  margin: '0 8px',
+                }}
+              >
+                <MySelect placeholder="Select model">
+                  {model &&
+                    model.length > 0 &&
+                    model.map((item) => (
+                      <Select.Option
+                        key={item.code}
+                        value={item.code}
+                        disabled={!item.active}
+                      >
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                </MySelect>
+              </Form.Item>
             </Form.Item>
             <Flex gap={10}>
               <Form.Item className={'w-full'}>
@@ -221,162 +386,12 @@ const CreateProject = memo(() => {
               </Form.Item>
             </Flex>
             <Form.Item name={['location', 'iframe']} label="Iframe">
-              <MyInput width="100%" />
-            </Form.Item>
-
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                {
-                  required: true,
-                  max: 5000,
-                },
-              ]}
-            >
-              <TextEditor
-                style={{ backgroundColor: 'var(--main-gray)' }}
-                value={form?.getFieldValue('description')}
-                onChange={(e) => form?.setFieldValue('description', e)}
+              <MyInput
+                width="100%"
+                onChange={(e) => setIframe(e.target.value)}
               />
             </Form.Item>
-            <Flex justify="center" style={{ marginTop: '30px' }} gap={10}>
-              <SubmitButtonAction
-                loading={handleSave.isPending || handleCreateProject.isPending}
-              >
-                Submit
-              </SubmitButtonAction>
-              <CancelButtonAction
-                disabled={handleSave.isPending || handleCreateProject.isPending}
-                onClick={goBack}
-              >
-                Cancel
-              </CancelButtonAction>
-            </Flex>
-          </Col>
-          <Col span={11}>
-            <Form.Item>
-              <Form.Item
-                label="Thumbnail"
-                name="thumbnail"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-              >
-                <Upload
-                  listType="picture-card"
-                  fileList={thumbnail}
-                  accept="image/*"
-                  onChange={handleThumbnailChange}
-                  beforeUpload={beforeUpload}
-                >
-                  {thumbnail.length < 1 && (
-                    <div>
-                      <PlusOutlined /> Upload
-                    </div>
-                  )}
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                label="Images"
-                name="images"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{
-                  display: 'inline-block',
-                  width: 'calc(50% - 8px)',
-                  margin: '0 8px',
-                }}
-              >
-                <Upload
-                  listType="picture-card"
-                  accept="image/*"
-                  multiple
-                  maxCount={5}
-                  fileList={images}
-                  onChange={handleImagesChange}
-                  beforeUpload={beforeUpload}
-                >
-                  {images.length < 5 && (
-                    <div>
-                      <PlusOutlined /> Upload
-                    </div>
-                  )}
-                </Upload>
-              </Form.Item>
-            </Form.Item>
-            <Form.Item>
-              <InfiniteScrollSelect status={EUserStatus.ACTIVE} />
-              <Form.Item
-                label="Model"
-                name="type"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{
-                  display: 'inline-block',
-                  width: 'calc(50% - 8px)',
-                  margin: '0 8px',
-                }}
-              >
-                <MySelect placeholder="Select model">
-                  {model &&
-                    model.length > 0 &&
-                    model.map((item) => (
-                      <Select.Option
-                        key={item.code}
-                        value={item.code}
-                        disabled={!item.active}
-                      >
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </MySelect>
-              </Form.Item>
-            </Form.Item>
-            <Flex>
-              <Form.Item
-                label="Power"
-                name="power"
-                style={{ display: 'inline-block', width: '100px' }}
-              >
-                <MyInputNumber min={0} />
-              </Form.Item>
-              <Form.Item
-                label="Spec"
-                name="spec"
-                rules={[
-                  {
-                    validator(_, value) {
-                      if (!value) return Promise.resolve();
-                      try {
-                        if (Object.keys(JSON.parse(value)).length < 1) {
-                          throw new Error();
-                        }
-                      } catch (e) {
-                        // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('Spec must be json data');
-                      }
-                    },
-                  },
-                ]}
-                style={{
-                  display: 'inline-block',
-                  margin: '0 8px',
-                  flexGrow: 1,
-                }}
-              >
-                <MyInputTextArea rows={5} placeholder="Ex: {'key':'value'}" />
-              </Form.Item>
-            </Flex>
+            {iframe ? <MapOverView src={iframe} /> : null}
           </Col>
         </Flex>
       </Form>
