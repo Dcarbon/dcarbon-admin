@@ -82,7 +82,7 @@ const getIoTDevice = async ({
 };
 const createProject = async (data: IProjectRequest) => {
   try {
-    const response = await request<GeneralResponse<{ status: string }>>(
+    const response = await request<GeneralResponse<{ slug: string }>>(
       REQ_METHODS.POST,
       API_ROUTES.PROJECT_API,
       data,

@@ -14,6 +14,7 @@ import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import './overview.css';
 
 import ProjectInfoForm from '../info-form';
+import MapOverView from '../map-overview';
 
 const OverView = memo(({ data }: { data: IProject }) => {
   // const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
@@ -127,7 +128,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               ) : null}
             </Descriptions.Item>
             <Descriptions.Item label="Location">
-              {data.location_name}
+              {data.location.name}
             </Descriptions.Item>
             <Descriptions.Item label="Destination wallet">
               {data.destination_wallet}
@@ -142,6 +143,13 @@ const OverView = memo(({ data }: { data: IProject }) => {
               </Space>
             </Descriptions.Item>
           </Descriptions>
+          {data.location.iframe ? (
+            <Descriptions>
+              <Descriptions.Item label="Location">
+                <MapOverView src={data.location.iframe} />
+              </Descriptions.Item>
+            </Descriptions>
+          ) : null}
           <Descriptions layout="vertical">
             <Descriptions.Item label="Thumbnail">
               <Image className="project-image-view" src={data.thumbnail} />
@@ -149,15 +157,16 @@ const OverView = memo(({ data }: { data: IProject }) => {
           </Descriptions>
           <Descriptions layout="vertical">
             <Descriptions.Item label="Images">
-              <Space>
+              <Image.PreviewGroup>
                 {data.images.map((image: string, index: number) => (
                   <Image
                     className="project-image-view"
                     key={index}
                     src={image}
+                    alt="image"
                   />
                 ))}
-              </Space>
+              </Image.PreviewGroup>
             </Descriptions.Item>
           </Descriptions>
         </Col>

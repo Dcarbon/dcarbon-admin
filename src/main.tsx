@@ -71,8 +71,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             colorPrimary: '#7bda08',
             fontFamily: 'Lexend',
             fontFamilyCode: 'Lexend',
-            colorBgMask: 'rgba(0, 0, 0, 0.07)',
-            boxShadow: '3px 3px 5px 1px rgba(0, 0, 0, 0.03)',
             colorPrimaryBgHover: '#5daf01',
             colorBgTextHover: '#F6F6F6',
             fontSize: 20,

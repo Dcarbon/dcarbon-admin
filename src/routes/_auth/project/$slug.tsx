@@ -4,7 +4,7 @@ import ProjectDashboard from '@/components/features/project/dashboard';
 import OverView from '@/components/features/project/overview';
 import { QUERY_KEYS } from '@/utils/constants';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useSearch } from '@tanstack/react-router';
 import { Tabs } from 'antd';
 import Devices from '@components/features/project/devices';
 
@@ -14,6 +14,11 @@ const postQueryOptions = (slug: string) =>
     queryFn: () => getProjectBySlug(slug),
   });
 export const Route = createFileRoute('/_auth/project/$slug')({
+  validateSearch: (search: Record<string, unknown>): { key?: string } => {
+    return {
+      ...search,
+    };
+  },
   loader: ({ context, params: { slug } }) => {
     const { queryClient } = context as any;
     return queryClient.ensureQueryData(postQueryOptions(slug));
@@ -23,11 +28,12 @@ export const Route = createFileRoute('/_auth/project/$slug')({
 const ProjectDetail = memo(() => {
   const slug = Route.useParams().slug;
   const { data } = useSuspenseQuery(postQueryOptions(slug));
+  const search = useSearch({ from: '/_auth/project/$slug' });
   return (
     <div>
       {/* <NavigationBack href="/project" />*/}
       <Tabs
-        defaultActiveKey="2"
+        defaultActiveKey={search.key || '1'}
         items={[
           {
             key: '1',
