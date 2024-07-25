@@ -26,7 +26,6 @@ interface IRef {
 }
 
 const ContractConfig = () => {
-  console.info('ContractConfig');
   const [loading, setLoading] = useState(false);
   const [refetch, setRefetch] = useState(0);
   const [myNotification] = useNotification();

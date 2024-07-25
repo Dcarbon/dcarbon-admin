@@ -35,7 +35,6 @@ const defaultAdmins: IContractUser[] = [
 const AdminScreen = memo(
   forwardRef(
     ({ loading, isMaster, setAdmin, triggerRemoveAdmin }: IProps, ref) => {
-      console.info('AdminScreen');
       const [administrators, addAdministrators] =
         useState<IContractUser[]>(defaultAdmins);
       const [myNotification] = useNotification();

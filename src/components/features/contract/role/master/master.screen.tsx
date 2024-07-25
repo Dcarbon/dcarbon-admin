@@ -20,7 +20,6 @@ const defaultMaster: IContractUser = {
 const MasterScreen = memo(
   forwardRef(
     ({ loading, currentWallet, triggerTransferMaster }: IProps, ref) => {
-      console.info(MasterScreen);
       const [master, setMaster] = useState<IContractUser>(defaultMaster);
       const [newMaster, setNewMaster] = useState<IContractUser>();
       const [myNotification] = useNotification();
