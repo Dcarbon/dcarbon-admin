@@ -141,7 +141,7 @@ const updateProject = async (data: Partial<IProjectRequest>) => {
   try {
     const response = await request<GeneralResponse<{ status: string }>>(
       REQ_METHODS.PUT,
-      API_ROUTES.PROJECT_API,
+      API_ROUTES.PROJECT_API + `/${data.id}`,
       data,
     );
     return response.data;

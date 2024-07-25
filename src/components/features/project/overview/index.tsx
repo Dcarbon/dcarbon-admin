@@ -4,7 +4,7 @@ import TextEditor from '@/components/common/rich-editor/quill-editor';
 import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, Col, Descriptions, Flex, Image, message, Space } from 'antd';
+import { Button, Col, Descriptions, Flex, Image, Space } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import { IProject, IProjectRequest } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
@@ -12,17 +12,14 @@ import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 
 import './overview.css';
 
+import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
+import useNotification from '@utils/helpers/my-notification.tsx';
+
 import ProjectInfoForm from '../info-form';
 import MapOverView from '../map-overview';
 
 const OverView = memo(({ data }: { data: IProject }) => {
-  // const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
-  //   data.devices?.map((data) => ({
-  //     iot_device_id: data.iot_device_id,
-  //     iot_device_type: data.device_type,
-  //   })) || [],
-  // );
-  // const [openModal, setOpenModal] = useState(false);
+  const [myNotification] = useNotification();
   const [openForm, setOpenForm] = useState(false);
   const [openEditor, setOpenEditor] = useState(false);
   const DescriptionRef = useRef({
@@ -32,25 +29,23 @@ const OverView = memo(({ data }: { data: IProject }) => {
   const handleUpdate = useMutation({
     mutationFn: updateProject,
     onSuccess: () => {
-      message.success('Update project success');
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_PROJECT_BY_SLUG, data.slug],
+      myNotification({
+        type: 'success',
+        description: SUCCESS_MSG.PROJECT.UPDATE_SUCCESS,
       });
+      queryClient
+        .invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_PROJECT_BY_SLUG, data.slug],
+        })
+        .then();
     },
     onError: (error: any) => {
-      message.error(error.message);
+      myNotification({
+        message: ERROR_MSG.PROJECT.UPDATE_ERROR,
+        description: error.message || ERROR_MSG.COMMON.DEFAULT_ERROR,
+      });
     },
   });
-  // const handleUpdateDevice = useCallback(async () => {
-  //   handleUpdate
-  //     .mutateAsync({ id: data.id, devices: selectedDevice })
-  //     .then((res) => {
-  //       if (res.data.status === 'SUCCESS') {
-  //         setOpenModal(false);
-  //       }
-  //     });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedDevice]);
   const handleUpdateDescription = useCallback(() => {
     handleUpdate
       .mutateAsync({
@@ -84,13 +79,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
         loading={handleUpdate.isPending}
         data={data}
       />
-      {/* <DeviceTable*/}
-      {/*  onOk={handleUpdateDevice}*/}
-      {/*  open={openModal}*/}
-      {/*  setOpen={setOpenModal}*/}
-      {/*  selectedDevice={selectedDevice}*/}
-      {/*  setSelectDevice={setSelectDevice}*/}
-      {/* />*/}
       <Flex className="project-overview" gap={10}>
         <Col span={12} className="project-overview-content">
           <Descriptions
@@ -111,7 +99,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.project_name}
             </Descriptions.Item>
             <Descriptions.Item label="Project manager">
-              {data.manager?.user_name}
+              {data.manager?.profile_name}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
               {data.country?.code ? (

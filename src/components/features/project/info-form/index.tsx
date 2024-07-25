@@ -5,11 +5,13 @@ import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { createStyles } from 'antd-style';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
 import { IProject } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import useNotification from '@utils/helpers/my-notification.tsx';
 
 type InfoFormProps = {
   onFinish: (values: any) => void;
@@ -19,13 +21,38 @@ type InfoFormProps = {
   loading?: boolean;
 };
 
+const useStyle = createStyles(() => ({
+  'my-modal-mask': {
+    boxShadow: `inset 0 0 15px #fff`,
+  },
+  'my-modal-content': {
+    border: '1px solid #333',
+  },
+}));
+
 const ProjectInfoForm = memo(
   ({ onFinish, open, setOpen, data, loading }: InfoFormProps) => {
     const [form] = Form.useForm();
+    const [myNotification] = useNotification();
     const { data: types } = useQuery({
       queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
       queryFn: getModelProject,
     });
+    const { styles } = useStyle();
+    const classNames = {
+      mask: styles['my-modal-mask'],
+      content: styles['my-modal-content'],
+    };
+
+    const modalStyles = {
+      mask: {
+        backdropFilter: 'blur(10px)',
+      },
+      content: {
+        boxShadow: '0 0 30px #999',
+        borderRadius: 'var(--div-radius)',
+      },
+    };
     return (
       <Modal
         open={open}
@@ -35,6 +62,8 @@ const ProjectInfoForm = memo(
         width={'50%'}
         maskClosable={!loading}
         centered
+        classNames={classNames}
+        styles={modalStyles}
       >
         <Form
           form={form}
@@ -43,7 +72,10 @@ const ProjectInfoForm = memo(
             ...data,
             country_id: data.country?.code,
             type: data.type.code,
-            spec: JSON.stringify(data.spec),
+            spec: (() => {
+              if (data.specs) delete data.specs.id;
+              return data.specs ? JSON.stringify(data.specs) : undefined;
+            })(),
             po_id: data.manager.id,
           }}
           onFinish={(values) => {
@@ -56,7 +88,6 @@ const ProjectInfoForm = memo(
             if (values.spec) {
               values.spec = JSON.parse(values.spec);
             }
-            values.type = [values.type];
             if (values.po_id === data.manager?.id) {
               delete values.po_id;
             }
@@ -69,10 +100,28 @@ const ProjectInfoForm = memo(
             ) {
               delete values.spec;
             }
+            if (values.spec) {
+              try {
+                if (Object.keys(values.spec).length < 1) {
+                  throw new Error();
+                }
+              } catch (e) {
+                // eslint-disable-next-line prefer-promise-reject-errors
+                myNotification({ description: 'Spec must be json data' });
+                return;
+              }
+            }
             if (values.country_id === data.country?.code) {
               delete values.country_id;
             }
-            console.info(values);
+            if (
+              values.location.name !== data.location.name ||
+              values.location.latitude !== data.location.latitude ||
+              values.location.longitude !== data.location.longitude ||
+              values.location.iframe !== data.location.iframe
+            ) {
+              //
+            } else delete values.location;
             onFinish(values);
           }}
         >
@@ -151,6 +200,13 @@ const ProjectInfoForm = memo(
                   <MyInputNumber width="100%" />
                 </Form.Item>
               </Flex>
+              <Form.Item
+                className="w-full"
+                name={['location', 'iframe']}
+                label="Iframe"
+              >
+                <MyInputNumber width="100%" />
+              </Form.Item>
             </Col>
             <Col span={11}>
               <InfiniteScrollSelect />

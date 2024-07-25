@@ -114,6 +114,10 @@ const CreateProject = memo(() => {
           formData.spec && Object.keys(formData.spec).length > 0
             ? JSON.parse(formData.spec)
             : undefined,
+        location: {
+          ...formData.location,
+          name,
+        },
       };
       handleCreateProject.mutate(body);
     },
@@ -129,7 +133,6 @@ const CreateProject = memo(() => {
     queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
     queryFn: getModelProject,
   });
-  console.info(iframe);
   return (
     <div className="project-create-layout">
       <Form
@@ -314,7 +317,7 @@ const CreateProject = memo(() => {
               <Form.Item className={'w-full'}>
                 <Form.Item
                   label="Location name"
-                  name="location_name"
+                  name={['location', 'name']}
                   rules={[
                     {
                       required: true,

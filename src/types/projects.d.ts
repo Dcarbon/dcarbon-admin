@@ -33,6 +33,7 @@ interface IProject {
   manager: Pick<IPo, 'profile_name' | 'user_name' | 'id'>;
   power: number;
   spec: object;
+  specs: any;
   status: 'draft' | 'active' | 'deactivate';
 }
 
