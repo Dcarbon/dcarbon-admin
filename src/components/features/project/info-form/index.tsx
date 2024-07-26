@@ -102,7 +102,10 @@ const ProjectInfoForm = memo(
             }
             if (values.spec) {
               try {
-                if (Object.keys(values.spec).length < 1) {
+                if (
+                  Object.keys(values.spec).length < 1 ||
+                  typeof JSON.parse(values.spec) !== 'object'
+                ) {
                   throw new Error();
                 }
               } catch (e) {

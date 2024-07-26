@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { addDevices, getIoTDevice } from '@adapters/project.ts';
-import { PlusOutlined } from '@ant-design/icons';
+import { EditFilled, PlusOutlined } from '@ant-design/icons';
 import { DEFAULT_PAGING } from '@constants/common.constant.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Flex, Modal } from 'antd';
@@ -80,6 +80,9 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         message: ERROR_MSG.PROJECT.ADD_DEVICES_ERROR,
         description: error.message || ERROR_MSG.COMMON.DEFAULT_ERROR,
       });
+      if (devices && devices.data?.length > 0) {
+        setSelectDevice(devices.data?.map((info) => info.iot_device_id));
+      }
     },
   });
   const { styles } = useStyle();
@@ -108,7 +111,14 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     <>
       <Flex justify="end" className="project-action-bar">
         <SubmitButton
-          icon={<PlusOutlined />}
+          disabled={isLoading}
+          icon={
+            isLoading || !devices || devices?.data?.length === 0 ? (
+              <PlusOutlined />
+            ) : (
+              <EditFilled />
+            )
+          }
           onClick={() => setOpenModifyDevices(true)}
         >
           Devices
