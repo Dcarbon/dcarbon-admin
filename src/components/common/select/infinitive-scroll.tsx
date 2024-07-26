@@ -9,6 +9,11 @@ const { Option } = Select;
 
 interface IProps {
   status?: EUserStatus;
+  defaultValue?: {
+    id: string;
+    profile_name: string;
+    user_name: string;
+  };
 }
 
 const InfiniteScrollSelect = memo((props: IProps) => {
@@ -56,12 +61,19 @@ const InfiniteScrollSelect = memo((props: IProps) => {
         notFoundContent={isLoading ? <Spin size="small" /> : null}
         filterOption={false}
       >
+        {props.defaultValue ? (
+          <Option value={props.defaultValue.id}>
+            {props.defaultValue.profile_name}
+          </Option>
+        ) : null}
         {data?.pages.map((page) =>
-          page.data.map((item) => (
-            <Option key={item.id} value={item.id}>
-              {item.profile_name}
-            </Option>
-          )),
+          page.data
+            .filter((e) => e.id !== props.defaultValue?.id)
+            .map((item) => (
+              <Option key={item.id} value={item.id}>
+                {item.profile_name}
+              </Option>
+            )),
         )}
         {isFetchingNextPage && (
           <Option disabled key="loading">

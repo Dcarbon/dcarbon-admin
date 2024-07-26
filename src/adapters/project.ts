@@ -125,6 +125,32 @@ const uploadProjectImage = async (data: IProjectImageRequest) => {
     throw error;
   }
 };
+const uploadMultipleProjectImage = async (data: {
+  image: any[];
+  type: 'thumbnail' | 'list';
+}) => {
+  try {
+    const formData = new FormData();
+
+    data.image.map((image) => formData.append('files', image.originFileObj));
+    formData.append('category', 'project');
+    data.type && formData.append('type', data.type);
+    const response = await request<GeneralResponse<IProjectImageResponse>>(
+      REQ_METHODS.PATCH,
+      API_ROUTES.MUTIPLER_UPLOAD,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 const getProjectBySlug = async (slug: string) => {
   try {
     const response = await request<GeneralResponse<IProject>>(
@@ -172,4 +198,5 @@ export {
   createProject,
   updateProject,
   addDevices,
+  uploadMultipleProjectImage,
 };

@@ -6,6 +6,7 @@ const API_ROUTES = {
   PROJECT_MODEL: 'projects/iot-models',
   PROJECT_UPLOAD: 'projects/upload',
   SINGER_UPLOAD: 'common/upload',
+  MUTIPLER_UPLOAD: 'common/upload-multiple',
   COMMON: {
     UPLOAD_METADATA: 'common/upload-metadata',
   },

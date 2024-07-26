@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { getModelProject } from '@/adapters/project';
 import MyInputNumber from '@/components/common/input/my-input-number';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
+import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
@@ -211,7 +212,10 @@ const ProjectInfoForm = memo(
               </Form.Item>
             </Col>
             <Col span={11}>
-              <InfiniteScrollSelect />
+              <InfiniteScrollSelect
+                status={EUserStatus.ACTIVE}
+                defaultValue={data.manager}
+              />
               <Form.Item
                 label="Type"
                 name="type"
@@ -225,7 +229,11 @@ const ProjectInfoForm = memo(
                   {types &&
                     types.length > 0 &&
                     types.map((item: any) => (
-                      <Select.Option key={item.code} value={item.code}>
+                      <Select.Option
+                        key={item.code}
+                        value={item.code}
+                        disabled={!item.active}
+                      >
                         {item.name}
                       </Select.Option>
                     ))}

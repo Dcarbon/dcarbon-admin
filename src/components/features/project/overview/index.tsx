@@ -1,10 +1,18 @@
-import { memo, useCallback, useRef, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { updateProject } from '@/adapters/project';
 import TextEditor from '@/components/common/rich-editor/quill-editor';
 import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, Col, Descriptions, Flex, Image, Space } from 'antd';
+import {
+  Button,
+  Col,
+  Descriptions,
+  Flex,
+  Form,
+  Image,
+  Space,
+} from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import { IProject, IProjectRequest } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
@@ -17,14 +25,23 @@ import useNotification from '@utils/helpers/my-notification.tsx';
 
 import ProjectInfoForm from '../info-form';
 import MapOverView from '../map-overview';
+import UpdateImage from '../update-image';
 
 const OverView = memo(({ data }: { data: IProject }) => {
   const [myNotification] = useNotification();
+  // const [selectedDevice, setSelectDevice] = useState<DeviceType[]>(
+  //   data.devices?.map((data) => ({
+  //     iot_device_id: data.iot_device_id,
+  //     iot_device_type: data.device_type,
+  //   })) || [],
+  // );
+  // const [openModal, setOpenModal] = useState(false);
+  const [form] = Form.useForm();
   const [openForm, setOpenForm] = useState(false);
   const [openEditor, setOpenEditor] = useState(false);
-  const DescriptionRef = useRef({
-    description: data.description,
-  });
+  const [isEditThumbnail, setIsEditThumbnail] = useState(false);
+  const [isEditImages, setIsEditImages] = useState(false);
+
   const queryClient = useQueryClient();
   const handleUpdate = useMutation({
     mutationFn: updateProject,
@@ -50,7 +67,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
     handleUpdate
       .mutateAsync({
         id: data.id,
-        description: DescriptionRef.current.description,
+        description: form.getFieldValue('description'),
       })
       .then((res) => {
         if (res.data.status === 'SUCCESS') {
@@ -58,7 +75,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
         }
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [DescriptionRef.current.description]);
+  }, [form]);
   const handleUpdateInfo = useCallback(
     (values: Partial<IProjectRequest>) => {
       if (Object.keys(values).length === 0) return setOpenForm(false);
@@ -115,9 +132,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Location">
               {data.location.name}
             </Descriptions.Item>
-            <Descriptions.Item label="Destination wallet">
-              {data.destination_wallet}
-            </Descriptions.Item>
             <Descriptions.Item label="Power">{data.power}</Descriptions.Item>
             <Descriptions.Item label="Status">{data.status}</Descriptions.Item>
             <Descriptions.Item label="IOT Models">
@@ -137,21 +151,47 @@ const OverView = memo(({ data }: { data: IProject }) => {
           ) : null}
           <Descriptions layout="vertical">
             <Descriptions.Item label="Thumbnail">
-              <Image className="project-image-view" src={data.thumbnail} />
+              {!isEditThumbnail ? (
+                <>
+                  <Image className="project-image-view" src={data.thumbnail} />{' '}
+                  <Button onClick={() => setIsEditThumbnail(true)}>
+                    <EditOutlined />
+                  </Button>
+                </>
+              ) : (
+                <UpdateImage
+                  image={[data.thumbnail]}
+                  type="thumbnail"
+                  setIsEdit={setIsEditThumbnail}
+                />
+              )}
             </Descriptions.Item>
           </Descriptions>
           <Descriptions layout="vertical">
             <Descriptions.Item label="Images">
-              <Image.PreviewGroup>
-                {data.images.map((image: string, index: number) => (
-                  <Image
-                    className="project-image-view"
-                    key={index}
-                    src={image}
-                    alt="image"
-                  />
-                ))}
-              </Image.PreviewGroup>
+              {!isEditImages ? (
+                <>
+                  <Image.PreviewGroup>
+                    {data.images.map((image: string, index: number) => (
+                      <Image
+                        className="project-image-view"
+                        key={index}
+                        src={image}
+                        alt="image"
+                      />
+                    ))}
+                  </Image.PreviewGroup>
+                  <Button onClick={() => setIsEditImages(true)}>
+                    <EditOutlined />
+                  </Button>
+                </>
+              ) : (
+                <UpdateImage
+                  image={data.images}
+                  type="list"
+                  setIsEdit={setIsEditImages}
+                />
+              )}
             </Descriptions.Item>
           </Descriptions>
         </Col>
@@ -171,10 +211,25 @@ const OverView = memo(({ data }: { data: IProject }) => {
             </>
           ) : (
             <>
-              <TextEditor
-                value={DescriptionRef.current.description}
-                onChange={(e) => (DescriptionRef.current.description = e)}
-              />
+              <Form form={form}>
+                <Form.Item
+                  name="description"
+                  initialValue={data.description}
+                  rules={[
+                    {
+                      required: true,
+                      max: 5000,
+                    },
+                  ]}
+                >
+                  <TextEditor
+                    value={form.getFieldValue('description')}
+                    onChange={(value) =>
+                      form.setFieldValue('description', value)
+                    }
+                  />
+                </Form.Item>
+              </Form>
               <br />
               <Flex gap={10} justify="end">
                 <SubmitButtonAction
