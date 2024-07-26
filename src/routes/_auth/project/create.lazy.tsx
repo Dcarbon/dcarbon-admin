@@ -114,10 +114,6 @@ const CreateProject = memo(() => {
           formData.spec && Object.keys(formData.spec).length > 0
             ? JSON.parse(formData.spec)
             : undefined,
-        location: {
-          ...formData.location,
-          name,
-        },
       };
       handleCreateProject.mutate(body);
     },
