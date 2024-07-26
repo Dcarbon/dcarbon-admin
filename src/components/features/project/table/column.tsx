@@ -35,11 +35,11 @@ const PoColumn = () => {
   const columns: TableColumnsType<ProjectList> = [
     {
       title: 'Name',
+      width: 400,
       dataIndex: 'project_name',
     },
     {
       title: 'Location',
-      width: 400,
       render: ({ country, location }: ProjectList) =>
         country?.code && (
           <SpanOneLine width={'400px'} style={{ paddingRight: '15px' }}>
@@ -55,23 +55,9 @@ const PoColumn = () => {
     },
     {
       title: 'Status',
+      width: 170,
       dataIndex: 'status',
-      filters: [
-        {
-          text: 'Draft',
-          value: 'draft',
-        },
-        {
-          text: 'Inactive',
-          value: 'inactive',
-        },
-        {
-          text: 'Active',
-          value: 'active',
-        },
-      ],
       render: (status) => <span>{renderTag(status)}</span>,
-      onFilter: (value, record) => record.status === value,
     },
     {
       title: 'Action',

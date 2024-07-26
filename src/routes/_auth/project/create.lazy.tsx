@@ -124,7 +124,6 @@ const CreateProject = memo(() => {
       });
     },
   });
-
   const { data: model } = useQuery({
     queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
     queryFn: getModelProject,
