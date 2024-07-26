@@ -14,6 +14,7 @@ type TIotDeviceType = {
 
 type TIotDeviceStatus = {
   id: EIotDeviceStatus;
+  code: string;
   name: string;
 };
 

@@ -122,7 +122,7 @@ const DeviceTable = memo(
             disabled={isLoadingAdd}
           >
             {data?.common.iot_device_status.map((info: TIotDeviceStatus) => (
-              <Option key={info.id} value={info.id}>
+              <Option key={info.code} value={info.code}>
                 {info.name}
               </Option>
             ))}
