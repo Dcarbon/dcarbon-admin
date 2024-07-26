@@ -111,7 +111,7 @@ const CreateProject = memo(() => {
           ?.result.map((item) => item.relative_path),
         type: formData.type,
         spec:
-          formData.spec && Object.keys(formData.spec).length > 0
+          formData.spec && Object.keys(JSON.parse(formData.spec)).length > 0
             ? JSON.parse(formData.spec)
             : undefined,
       };
@@ -134,13 +134,27 @@ const CreateProject = memo(() => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={() =>
+        onFinish={(values) => {
+          if (values.spec) {
+            try {
+              if (
+                Object.keys(values.spec).length < 1 ||
+                typeof JSON.parse(values.spec) !== 'object'
+              ) {
+                throw new Error();
+              }
+            } catch (e) {
+              // eslint-disable-next-line prefer-promise-reject-errors
+              myNotification({ description: 'Spec must be json data' });
+              return;
+            }
+          }
           handleSave.mutate({
             thumbnail: thumbnail,
             images,
             category: 'project',
-          })
-        }
+          });
+        }}
       >
         <Flex gap={20}>
           <Col span={11}>
@@ -223,21 +237,6 @@ const CreateProject = memo(() => {
               <Form.Item
                 label="Spec"
                 name="spec"
-                rules={[
-                  {
-                    validator(_, value) {
-                      if (!value) return Promise.resolve();
-                      try {
-                        if (Object.keys(JSON.parse(value)).length < 1) {
-                          throw new Error();
-                        }
-                      } catch (e) {
-                        // eslint-disable-next-line prefer-promise-reject-errors
-                        return Promise.reject('Spec must be json data');
-                      }
-                    },
-                  },
-                ]}
                 style={{
                   display: 'inline-block',
                   margin: '0 8px',

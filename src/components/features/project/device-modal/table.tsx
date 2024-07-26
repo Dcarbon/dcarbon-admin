@@ -95,16 +95,20 @@ const DeviceTable = memo(
         onCancel={() => cancelModal()}
         onOk={async () => {
           setLoadingAdd(true);
-          await handleAddDevices();
-          setLoadingAdd(false);
-          setOpen(false);
+          try {
+            await handleAddDevices();
+          } catch (e) {
+            //
+          } finally {
+            setLoadingAdd(false);
+            setOpen(false);
+          }
         }}
         onClose={() => setOpen(false)}
         classNames={classNames}
         styles={modalStyles}
         okButtonProps={{
-          disabled:
-            isLoadingAdd || !selectedDevice || selectedDevice.length === 0,
+          disabled: isLoadingAdd,
           loading: isLoadingAdd,
         }}
         cancelButtonProps={{ disabled: isLoadingAdd }}
