@@ -1,13 +1,14 @@
 import { memo, useEffect, useState } from 'react';
 import { ERROR_CONTRACT } from '@/constants';
 import { EIotDeviceType } from '@/enums';
+import { FormOutlined } from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, IdlTypes, Program } from '@coral-xyz/anchor';
 import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Flex, Form } from 'antd';
-import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IDeviceSettingState } from '@components/features/project/devices/column.tsx';
@@ -24,6 +25,7 @@ interface IProps {
   connection?: Connection;
   publicKey: PublicKey | null;
   wallet: Wallet | null;
+  refetch: () => void;
 }
 
 interface IFormValues {
@@ -48,6 +50,7 @@ const DeviceSetting = memo(
     connection,
     publicKey,
     wallet,
+    refetch,
   }: IProps) => {
     const [form] = Form.useForm<IFormValues>();
     const [myNotification] = useNotification();
@@ -146,6 +149,7 @@ const DeviceSetting = memo(
           tx_type: 'tx',
         });
         closeSettingModel(undefined);
+        refetch();
       } catch (e) {
         setTxModalOpen(false);
         myNotification(ERROR_CONTRACT.COMMON.TX_ERROR);
@@ -270,11 +274,13 @@ const DeviceSetting = memo(
               />
             </Form.Item>
             <Flex justify={'center'} style={{ marginTop: '30px' }}>
-              <SubmitButtonAction
+              <SubmitButton
+                htmlType="submit"
+                icon={<FormOutlined />}
                 disabled={loading || form.getFieldValue('isOnChainSetting')}
               >
                 Register
-              </SubmitButtonAction>
+              </SubmitButton>
             </Flex>
           </Form>
         )}

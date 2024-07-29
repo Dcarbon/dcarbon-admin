@@ -116,7 +116,8 @@ const DeviceTable = memo(
       >
         <Flex className="device-modal" gap={10}>
           <Input.Search
-            placeholder="Search"
+            placeholder="Enter device id"
+            type={'number'}
             onSearch={(e) => setSearch({ ...search, id: e })}
             disabled={isLoadingAdd}
           />

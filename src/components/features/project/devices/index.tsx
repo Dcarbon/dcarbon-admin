@@ -59,6 +59,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
   });
   const [openModifyDevices, setOpenModifyDevices] = useState(false);
   const [selectedDevice, setSelectDevice] = useState<string[]>([]);
+  const [refetch, setRefetch] = useState(0);
   const { publicKey, wallet } = useWallet();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
@@ -122,6 +123,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     } catch (e) {
       //
     } finally {
+      setRefetch((prevState) => prevState + 1);
       setLoadingActive('0');
     }
   };
@@ -193,7 +195,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     if (devices && devices.data && devices.data.length > 0) {
       getOnChainSetting().then();
     }
-  }, [devices?.data, anchorWallet, connection]);
+  }, [devices?.data, anchorWallet, connection, refetch]);
   const { mutateAsync } = useMutation({
     mutationFn: addDevices,
     onSuccess: () => {
@@ -294,6 +296,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
             connection={connection}
             wallet={wallet}
             publicKey={publicKey}
+            refetch={() => setRefetch((prevState) => prevState + 1)}
           />
         </Modal>
       )}
