@@ -1,0 +1,285 @@
+import { memo, useEffect, useState } from 'react';
+import { ERROR_CONTRACT } from '@/constants';
+import { EIotDeviceType } from '@/enums';
+import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
+import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
+import { AnchorProvider, IdlTypes, Program } from '@coral-xyz/anchor';
+import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
+import { Connection, PublicKey } from '@solana/web3.js';
+import { Flex, Form } from 'antd';
+import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import SkeletonInput from '@components/common/input/skeleton-input.tsx';
+import TxModal from '@components/common/modal/tx-modal.tsx';
+import { IDeviceSettingState } from '@components/features/project/devices/column.tsx';
+import useNotification from '@utils/helpers/my-notification.tsx';
+import { sendTx } from '@utils/wallet';
+
+interface IProps {
+  projectId: string;
+  device: IDeviceSettingState;
+  owner: string;
+  minter: string;
+  closeSettingModel: (status: IDeviceSettingState | undefined) => void;
+  anchorWallet?: AnchorWallet;
+  connection?: Connection;
+  publicKey: PublicKey | null;
+  wallet: Wallet | null;
+}
+
+interface IFormValues {
+  project_id: string;
+  device_id: string;
+  device_type: EIotDeviceType;
+  owner: string;
+  minter: string;
+  isOnChainSetting?: boolean;
+}
+
+type RegisterDeviceArgs = IdlTypes<ICarbonContract>['registerDeviceArgs'];
+
+const DeviceSetting = memo(
+  ({
+    projectId,
+    device,
+    closeSettingModel,
+    minter,
+    owner,
+    anchorWallet,
+    connection,
+    publicKey,
+    wallet,
+  }: IProps) => {
+    const [form] = Form.useForm<IFormValues>();
+    const [myNotification] = useNotification();
+    const [txModalOpen, setTxModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const getDeviceSetting = async () => {
+      let initData: IFormValues | undefined;
+      try {
+        if (!anchorWallet || !connection || !publicKey || !wallet) {
+          myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+          return;
+        }
+        setLoading(true);
+        const provider = new AnchorProvider(connection, anchorWallet);
+        const program = new Program<ICarbonContract>(
+          CARBON_IDL as ICarbonContract,
+          provider,
+        );
+        const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('device'),
+            Buffer.from(String(projectId).padStart(24, '0')),
+            Buffer.from(String(device?.id).padStart(24, '0')),
+          ],
+          program.programId,
+        );
+        const data = await program.account.device.fetch(deviceSettingProgram);
+        if (data) {
+          initData = {
+            device_id: device.id,
+            project_id: projectId,
+            device_type: data.deviceType,
+            isOnChainSetting: true,
+            owner: data.owner.toString(),
+            minter: data.minter.toString(),
+          };
+        }
+      } catch (e) {
+        //
+      } finally {
+        if (!initData) {
+          initData = {
+            device_id: device.id,
+            project_id: projectId,
+            device_type: device.type.id,
+            minter,
+            owner,
+          };
+        }
+        form.setFieldsValue({
+          ...initData,
+        });
+        setLoading(false);
+      }
+    };
+    useEffect(() => {
+      getDeviceSetting().then();
+    }, []);
+    const submitSetting = async (values: IFormValues) => {
+      let transaction;
+      try {
+        if (!anchorWallet || !connection || !publicKey || !wallet) {
+          return;
+        }
+        setTxModalOpen(true);
+        const provider = new AnchorProvider(connection, anchorWallet);
+        const program = new Program<ICarbonContract>(
+          CARBON_IDL as ICarbonContract,
+          provider,
+        );
+        const registerDeviceArgs: RegisterDeviceArgs = {
+          projectId: String(values.project_id).padStart(24, '0'),
+          deviceId: String(values.device_id).padStart(24, '0'),
+          deviceType: Number(values.device_type),
+          owner: new PublicKey(values.owner),
+          minter: new PublicKey(values.minter),
+        };
+        const registerDeviceIns = await program.methods
+          .registerDevice(registerDeviceArgs)
+          .accounts({
+            signer: publicKey,
+          })
+          .instruction();
+        const { status, tx } = await sendTx({
+          connection,
+          wallet,
+          payerKey: publicKey,
+          txInstructions: registerDeviceIns,
+        });
+        transaction = tx;
+        setTxModalOpen(false);
+        if (status === 'reject') return;
+        myNotification({
+          description: transaction,
+          type: status,
+          tx_type: 'tx',
+        });
+        closeSettingModel(undefined);
+      } catch (e) {
+        setTxModalOpen(false);
+        myNotification(ERROR_CONTRACT.COMMON.TX_ERROR);
+        console.error(e);
+      }
+    };
+    return (
+      <>
+        {' '}
+        <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
+        {!connection || !anchorWallet ? (
+          <span
+            style={{
+              fontSize: '18px',
+              fontWeight: '500',
+              color: 'orange',
+              textAlign: 'center',
+            }}
+          >
+            You need to connect your wallet to continue!
+          </span>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            style={{ width: '100%', marginTop: '30px' }}
+            onFinish={(values) => submitSetting(values)}
+            disabled={loading || form.getFieldValue('isOnChainSetting')}
+          >
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Form.Item
+                label="Project ID"
+                name="project_id"
+                initialValue={projectId}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+              >
+                <SkeletonInput loading={loading} disabled />
+              </Form.Item>
+              <Form.Item
+                label="Device ID"
+                name="device_id"
+                initialValue={device?.id}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50%)',
+                  margin: '0px 0px 0px 8px',
+                }}
+              >
+                <SkeletonInput loading={loading} disabled />
+              </Form.Item>
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Form.Item
+                label="Minting Limit"
+                name="mingting_limit"
+                initialValue={device?.limit}
+                // rules={[
+                //   {
+                //     required: true,
+                //   },
+                // ]}
+                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+              >
+                <SkeletonInput loading={loading} disabled />
+              </Form.Item>
+              <Form.Item
+                label="Device Type"
+                name="device_type"
+                initialValue={device?.type?.id}
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50%)',
+                  margin: '0px 0px 0px 8px',
+                }}
+              >
+                <SkeletonInput loading={loading} disabled />
+              </Form.Item>
+            </Form.Item>
+            <Form.Item
+              label="Owner"
+              name="owner"
+              initialValue={owner}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <SkeletonInput
+                loading={loading}
+                placeholder={'Enter Owner address'}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Minter"
+              name="minter"
+              initialValue={minter}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <SkeletonInput
+                loading={loading}
+                placeholder={'Enter Minter address'}
+              />
+            </Form.Item>
+            <Flex justify={'center'} style={{ marginTop: '30px' }}>
+              <SubmitButtonAction
+                disabled={loading || form.getFieldValue('isOnChainSetting')}
+              >
+                Register
+              </SubmitButtonAction>
+            </Flex>
+          </Form>
+        )}
+      </>
+    );
+  },
+);
+export default DeviceSetting;

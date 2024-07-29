@@ -1,6 +1,17 @@
-import { EIotDeviceStatus } from '@/enums';
-import { SettingOutlined } from '@ant-design/icons';
-import { Button, Space, TableColumnsType, Tag } from 'antd';
+import { EIotDeviceStatus, EIotDeviceType } from '@/enums';
+import Icon, {
+  ExclamationCircleOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
+import {
+  Button,
+  Skeleton,
+  Space,
+  Switch,
+  TableColumnsType,
+  Tag,
+  Tooltip,
+} from 'antd';
 import {
   DeviceDataType,
   TIotDeviceStatus,
@@ -9,11 +20,50 @@ import {
 
 import './project-devices.css';
 
-interface IProps {
-  openSetting: (deviceId: string) => void;
+import DotIcon from '@icons/dot.icon.tsx';
+import WalletIcon from '@icons/wallet.icon.tsx';
+
+const OnChainIc = () => (
+  <Icon
+    size={20}
+    component={() => <WalletIcon size={22} color={'var(--main-color)'} />}
+  />
+);
+
+const StarIc = () => (
+  <Icon component={() => <DotIcon size={22} color={'var(--main-color)'} />} />
+);
+
+export interface IDeviceSettingState {
+  id: string;
+  type: {
+    name: string;
+    id: EIotDeviceType;
+  };
+  limit?: number;
 }
 
-const ProjectDevicesColumn = ({ openSetting }: IProps) => {
+interface IProps {
+  openSetting: (device: IDeviceSettingState) => void;
+  active: (id: string, status: boolean) => void;
+  loadingActive?: string;
+  onChainSetting: IOnChainSettingProps;
+  connectWallet?: boolean;
+}
+
+export interface IOnChainSettingProps {
+  isLoading?: boolean;
+  activeDevices: string[];
+  registerDevices: string[];
+}
+
+const ProjectDevicesColumn = ({
+  openSetting,
+  active,
+  loadingActive,
+  onChainSetting,
+  connectWallet,
+}: IProps) => {
   const renderTag = (data: TIotDeviceStatus) => {
     let color = 'orange';
     switch (data.id) {
@@ -80,28 +130,65 @@ const ProjectDevicesColumn = ({ openSetting }: IProps) => {
       render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
     },
     {
-      title: 'Active',
-      // dataIndex: 'status',
-      // key: 'status',
-      // render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
+      title: (
+        <Tooltip title={'OnChain data'}>
+          <span style={{ display: 'flex' }}>
+            <span>Active</span>
+            <OnChainIc />
+          </span>{' '}
+        </Tooltip>
+      ),
+      render: (device: DeviceDataType) => {
+        if (!connectWallet) {
+          return (
+            <Tooltip title={'Connect wallet to display data'}>
+              <ExclamationCircleOutlined
+                style={{ color: 'orange', fontSize: '18px' }}
+              />
+            </Tooltip>
+          );
+        }
+        return onChainSetting?.isLoading ? (
+          <Skeleton.Button style={{ height: '25px' }} active />
+        ) : (
+          <Switch
+            defaultChecked={onChainSetting.activeDevices.includes(
+              device.iot_device_id,
+            )}
+            disabled={loadingActive !== '0'}
+            loading={loadingActive === device.iot_device_id}
+            onChange={(status) => active(device.iot_device_id, status)}
+          />
+        );
+      },
     },
     {
-      title: 'Nonce',
-      // dataIndex: 'status',
-      // key: 'status',
-      // render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
-    },
-    {
-      title: 'Owner',
-      // dataIndex: 'status',
-      // key: 'status',
-      // render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
-    },
-    {
-      title: 'Signer',
-      // dataIndex: 'status',
-      // key: 'status',
-      // render: (status: TIotDeviceStatus) => <span>{renderTag(status)}</span>,
+      title: (
+        <Tooltip title={'OnChain data'}>
+          <span style={{ display: 'flex' }}>
+            <span>Register</span>
+            <OnChainIc />
+          </span>{' '}
+        </Tooltip>
+      ),
+      render: (device: DeviceDataType) => {
+        if (!connectWallet) {
+          return (
+            <Tooltip title={'Connect wallet to display data'}>
+              <ExclamationCircleOutlined
+                style={{ color: 'orange', fontSize: '18px' }}
+              />
+            </Tooltip>
+          );
+        }
+        return onChainSetting?.isLoading ? (
+          <Skeleton.Button style={{ height: '25px' }} active />
+        ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+          <StarIc />
+        ) : (
+          ''
+        );
+      },
     },
     {
       title: 'Action',
@@ -110,8 +197,17 @@ const ProjectDevicesColumn = ({ openSetting }: IProps) => {
       render: (device: DeviceDataType) => (
         <Space className={'active-div'}>
           <Button
+            disabled={loadingActive !== '0' || onChainSetting?.isLoading}
             icon={<SettingOutlined />}
-            onClick={() => openSetting(device.iot_device_id.toString())}
+            onClick={() =>
+              openSetting({
+                id: device.iot_device_id.toString(),
+                type: {
+                  id: device.device_type.id,
+                  name: device.device_name,
+                },
+              })
+            }
           />
         </Space>
       ),

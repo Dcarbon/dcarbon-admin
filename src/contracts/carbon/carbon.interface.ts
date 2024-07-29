@@ -223,8 +223,8 @@ export type ICarbonContract = {
       ];
     },
     {
-      name: 'mintToken';
-      discriminator: [172, 137, 183, 14, 207, 110, 234, 56];
+      name: 'mintSft';
+      discriminator: [225, 138, 215, 72, 133, 196, 238, 223];
       accounts: [
         {
           name: 'signer';
@@ -232,10 +232,54 @@ export type ICarbonContract = {
           signer: true;
         },
         {
-          name: 'receiver';
+          name: 'deviceOwner';
         },
         {
-          name: 'toAta';
+          name: 'contractConfig';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
+              },
+            ];
+          };
+        },
+        {
+          name: 'claim';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [99, 108, 97, 105, 109];
+              },
+              {
+                kind: 'account';
+                path: 'mint';
+              },
+            ];
+          };
+        },
+        {
+          name: 'ownerAta';
           writable: true;
         },
         {
@@ -248,11 +292,40 @@ export type ICarbonContract = {
               },
               {
                 kind: 'arg';
-                path: 'mint_token_args.project_id';
+                path: 'mint_sft_args.project_id';
               },
               {
                 kind: 'arg';
-                path: 'mint_token_args.device_id';
+                path: 'mint_sft_args.device_id';
+              },
+            ];
+          };
+        },
+        {
+          name: 'deviceStatus';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  100,
+                  101,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'device';
               },
             ];
           };
@@ -271,9 +344,11 @@ export type ICarbonContract = {
         {
           name: 'mint';
           writable: true;
+          signer: true;
         },
         {
           name: 'metadata';
+          writable: true;
         },
         {
           name: 'tokenProgram';
@@ -294,10 +369,18 @@ export type ICarbonContract = {
       ];
       args: [
         {
-          name: 'mintTokenArgs';
+          name: 'mintSftArgs';
           type: {
             defined: {
-              name: 'mintTokenArgs';
+              name: 'mintSftArgs';
+            };
+          };
+        },
+        {
+          name: 'verifyMessageArgs';
+          type: {
+            defined: {
+              name: 'verifyMessageArgs';
             };
           };
         },
@@ -378,37 +461,8 @@ export type ICarbonContract = {
           };
         },
         {
-          name: 'authority';
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [97, 117, 116, 104, 111, 114, 105, 116, 121];
-              },
-            ];
-          };
-        },
-        {
-          name: 'mint';
-          writable: true;
-          signer: true;
-        },
-        {
-          name: 'metadata';
-          writable: true;
-        },
-        {
-          name: 'tokenProgram';
-        },
-        {
           name: 'systemProgram';
           address: '11111111111111111111111111111111';
-        },
-        {
-          name: 'sysvarProgram';
-        },
-        {
-          name: 'tokenMetadataProgram';
         },
       ];
       args: [
@@ -419,10 +473,6 @@ export type ICarbonContract = {
               name: 'registerDeviceArgs';
             };
           };
-        },
-        {
-          name: 'metadataVec';
-          type: 'bytes';
         },
       ];
     },
@@ -508,6 +558,58 @@ export type ICarbonContract = {
         {
           name: 'deviceId';
           type: 'string';
+        },
+      ];
+    },
+    {
+      name: 'setCoefficient';
+      discriminator: [82, 162, 57, 29, 162, 186, 172, 156];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'masterPda';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [109, 97, 115, 116, 101, 114];
+              },
+            ];
+          };
+        },
+        {
+          name: 'coefficient';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [99, 111, 101, 102, 102, 105, 99, 105, 101, 110, 116];
+              },
+              {
+                kind: 'arg';
+                path: 'deviceId';
+              },
+            ];
+          };
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+      ];
+      args: [
+        {
+          name: 'deviceId';
+          type: 'string';
+        },
+        {
+          name: 'value';
+          type: 'u64';
         },
       ];
     },
@@ -636,6 +738,66 @@ export type ICarbonContract = {
       ];
     },
     {
+      name: 'setRate';
+      discriminator: [99, 58, 170, 238, 160, 120, 74, 11];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'masterPda';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [109, 97, 115, 116, 101, 114];
+              },
+            ];
+          };
+        },
+        {
+          name: 'contractConfig';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
+              },
+            ];
+          };
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+      ];
+      args: [
+        {
+          name: 'rate';
+          type: 'u64';
+        },
+      ];
+    },
+    {
       name: 'transferMasterRights';
       discriminator: [230, 240, 167, 33, 38, 45, 180, 155];
       accounts: [
@@ -669,6 +831,14 @@ export type ICarbonContract = {
     {
       name: 'admin';
       discriminator: [244, 158, 220, 65, 8, 73, 4, 65];
+    },
+    {
+      name: 'claim';
+      discriminator: [155, 70, 22, 176, 123, 215, 246, 102];
+    },
+    {
+      name: 'coefficient';
+      discriminator: [2, 50, 46, 101, 246, 105, 23, 251];
     },
     {
       name: 'contractConfig';
@@ -713,6 +883,11 @@ export type ICarbonContract = {
       name: 'contractConfigIsAlreadyInit';
       msg: 'Contract config account is already init';
     },
+    {
+      code: 6005;
+      name: 'deviceIsNotActive';
+      msg: 'Must active this device to mint semi-fungible token';
+    },
   ];
   types: [
     {
@@ -723,6 +898,38 @@ export type ICarbonContract = {
           {
             name: 'adminKey';
             type: 'pubkey';
+          },
+        ];
+      };
+    },
+    {
+      name: 'claim';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'isClaimed';
+            type: 'bool';
+          },
+          {
+            name: 'mint';
+            type: 'pubkey';
+          },
+          {
+            name: 'amount';
+            type: 'u64';
+          },
+        ];
+      };
+    },
+    {
+      name: 'coefficient';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'value';
+            type: 'u64';
           },
         ];
       };
@@ -813,12 +1020,16 @@ export type ICarbonContract = {
             type: 'u16';
           },
           {
-            name: 'mint';
+            name: 'projectId';
+            type: 'string';
+          },
+          {
+            name: 'owner';
             type: 'pubkey';
           },
           {
-            name: 'projectId';
-            type: 'string';
+            name: 'minter';
+            type: 'pubkey';
           },
         ];
       };
@@ -876,7 +1087,7 @@ export type ICarbonContract = {
       };
     },
     {
-      name: 'mintTokenArgs';
+      name: 'mintSftArgs';
       type: {
         kind: 'struct';
         fields: [
@@ -887,6 +1098,10 @@ export type ICarbonContract = {
           {
             name: 'deviceId';
             type: 'string';
+          },
+          {
+            name: 'createMintDataVec';
+            type: 'bytes';
           },
           {
             name: 'mintDataVec';
@@ -911,6 +1126,38 @@ export type ICarbonContract = {
           {
             name: 'deviceType';
             type: 'u16';
+          },
+          {
+            name: 'owner';
+            type: 'pubkey';
+          },
+          {
+            name: 'minter';
+            type: 'pubkey';
+          },
+        ];
+      };
+    },
+    {
+      name: 'verifyMessageArgs';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'hash';
+            type: 'bytes';
+          },
+          {
+            name: 'recoveryId';
+            type: 'u8';
+          },
+          {
+            name: 'signature';
+            type: 'bytes';
+          },
+          {
+            name: 'expected';
+            type: 'bytes';
           },
         ];
       };

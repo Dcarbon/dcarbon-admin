@@ -1,19 +1,33 @@
 import { memo, useEffect, useState } from 'react';
-import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
+import { ERROR_CONTRACT, ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { addDevices, getIoTDevice } from '@adapters/project.ts';
 import { EditFilled, PlusOutlined } from '@ant-design/icons';
 import { DEFAULT_PAGING } from '@constants/common.constant.ts';
+import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
+import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
+import { AnchorProvider, Program } from '@coral-xyz/anchor';
+import {
+  useAnchorWallet,
+  useConnection,
+  useWallet,
+} from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Flex, Modal } from 'antd';
 import { createStyles } from 'antd-style';
 import { IDeviceRequest } from '@/types/device';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+import TxModal from '@components/common/modal/tx-modal.tsx';
 import MyTable from '@components/common/table/my-table.tsx';
 import DeviceTable from '@components/features/project/device-modal/table.tsx';
-import ProjectDevicesColumn from '@components/features/project/devices/column.tsx';
+import ProjectDevicesColumn, {
+  IDeviceSettingState,
+  IOnChainSettingProps,
+} from '@components/features/project/devices/column.tsx';
+import DeviceSetting from '@components/features/project/devices/device-setting.tsx';
 import { QUERY_KEYS } from '@utils/constants';
-import useModalAction from '@utils/helpers/back-action.tsx';
 import useNotification from '@utils/helpers/my-notification.tsx';
+import { sendTx } from '@utils/wallet';
 
 interface IProps {
   projectSlug: string;
@@ -33,18 +47,30 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     limit: 9999,
     project_id: projectSlug,
   } as IDeviceRequest);
-  const [openDeviceSetting, setOpenDeviceSetting] = useState<string>('__');
+  const [openDeviceSetting, setOpenDeviceSetting] = useState<
+    IDeviceSettingState | undefined
+  >(undefined);
+  const [txModalOpen, setTxModalOpen] = useState(false);
+  const [loadingActive, setLoadingActive] = useState('0');
+  const [onChainSetting, setOnChainSetting] = useState<IOnChainSettingProps>({
+    isLoading: false,
+    registerDevices: [],
+    activeDevices: [],
+  });
   const [openModifyDevices, setOpenModifyDevices] = useState(false);
   const [selectedDevice, setSelectDevice] = useState<string[]>([]);
+  const { publicKey, wallet } = useWallet();
+  const { connection } = useConnection();
+  const anchorWallet = useAnchorWallet();
   const queryClient = useQueryClient();
   const [myNotification] = useNotification();
-  const openSetting = (deviceId: string) => {
-    setOpenDeviceSetting(deviceId);
+  const openSetting = (device: IDeviceSettingState) => {
+    if (!anchorWallet || !connection || !publicKey || !wallet) {
+      myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+      return;
+    }
+    setOpenDeviceSetting(device);
   };
-  const cancelModal = useModalAction({
-    danger: true,
-    fn: () => setOpenDeviceSetting('__'),
-  });
   const { data: devices, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.GET_IOT_MODELS, search],
     queryFn: () => getIoTDevice(search),
@@ -57,11 +83,117 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         !!search.page ||
         true),
   });
+  const active = async (id: string) => {
+    let transaction;
+    try {
+      if (!anchorWallet || !connection || !publicKey || !wallet) {
+        myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+        return;
+      }
+      setLoadingActive(id);
+      const provider = new AnchorProvider(connection, anchorWallet);
+      const program = new Program<ICarbonContract>(
+        CARBON_IDL as ICarbonContract,
+        provider,
+      );
+      const activeDeviceIns = await program.methods
+        .setActive(
+          String(projectSlug).padStart(24, '0'),
+          String(id).padStart(24, '0'),
+        )
+        .accounts({
+          signer: publicKey,
+        })
+        .instruction();
+      const { status, tx } = await sendTx({
+        connection,
+        wallet,
+        payerKey: publicKey,
+        txInstructions: activeDeviceIns,
+      });
+      transaction = tx;
+      setTxModalOpen(false);
+      if (status === 'reject') return;
+      myNotification({
+        description: transaction,
+        type: status,
+        tx_type: 'tx',
+      });
+    } catch (e) {
+      //
+    } finally {
+      setLoadingActive('0');
+    }
+  };
+  const getOnChainSetting = async () => {
+    try {
+      if (!anchorWallet || !connection || !publicKey || !wallet) {
+        return;
+      }
+      if (!devices || !devices.data || devices.data.length === 0) return;
+      setOnChainSetting({
+        isLoading: true,
+        registerDevices: [],
+        activeDevices: [],
+      });
+      const provider = new AnchorProvider(connection, anchorWallet);
+      const program = new Program<ICarbonContract>(
+        CARBON_IDL as ICarbonContract,
+        provider,
+      );
+      const activeDevices: string[] = [];
+      const registerDevices: string[] = [];
+      await Promise.all(
+        devices.data.map(async (device) => {
+          try {
+            const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
+              [
+                Buffer.from('device'),
+                Buffer.from(String(projectSlug).padStart(24, '0')),
+                Buffer.from(String(device.iot_device_id).padStart(24, '0')),
+              ],
+              program.programId,
+            );
+            const register =
+              await program.account.device.fetch(deviceSettingProgram);
+            if (register && register.id) {
+              registerDevices.push(device.iot_device_id);
+              const [deviceStatusProgram] = PublicKey.findProgramAddressSync(
+                [Buffer.from('device_status'), deviceSettingProgram.toBuffer()],
+                program.programId,
+              );
+              const activeData =
+                await program.account.deviceStatus.fetch(deviceStatusProgram);
+              if (activeData.isActive) activeDevices.push(device.iot_device_id);
+            }
+          } catch (e) {
+            //
+          }
+        }),
+      );
+      setOnChainSetting({
+        isLoading: false,
+        activeDevices: activeDevices,
+        registerDevices: registerDevices,
+      });
+    } catch (e) {
+      setOnChainSetting({
+        isLoading: false,
+        registerDevices: [],
+        activeDevices: [],
+      });
+    }
+  };
   useEffect(() => {
     if (devices && devices.data?.length > 0) {
       setSelectDevice(devices.data.map((dv) => dv.iot_device_id));
     }
   }, [devices?.data]);
+  useEffect(() => {
+    if (devices && devices.data && devices.data.length > 0) {
+      getOnChainSetting().then();
+    }
+  }, [devices?.data, anchorWallet, connection]);
   const { mutateAsync } = useMutation({
     mutationFn: addDevices,
     onSuccess: () => {
@@ -100,7 +232,13 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       borderRadius: 'var(--div-radius)',
     },
   };
-  const columns = ProjectDevicesColumn({ openSetting });
+  const columns = ProjectDevicesColumn({
+    openSetting,
+    active,
+    loadingActive,
+    onChainSetting,
+    connectWallet: !!anchorWallet && !!connection && !!publicKey && !!wallet,
+  });
   const handleAddDevices = async (): Promise<void> => {
     await mutateAsync({
       project_id: projectSlug,
@@ -109,6 +247,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
   };
   return (
     <>
+      <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
       <Flex justify="end" className="project-action-bar">
         <SubmitButton
           disabled={isLoading}
@@ -131,21 +270,33 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         setSelectDevice={setSelectDevice}
         handleAddDevices={handleAddDevices}
       />
-      <Modal
-        open={openDeviceSetting !== '__'}
-        title={'Device register (On Chain)'}
-        centered
-        destroyOnClose
-        maskClosable
-        width={'calc(100vw / 2)'}
-        onCancel={() => cancelModal()}
-        onOk={() => setOpenDeviceSetting('__')}
-        onClose={() => setOpenDeviceSetting('__')}
-        classNames={classNames}
-        styles={modalStyles}
-      >
-        <h3>{openDeviceSetting}</h3>
-      </Modal>
+      {openDeviceSetting && (
+        <Modal
+          open={!!openDeviceSetting?.id}
+          title={'Device register (On Chain)'}
+          centered
+          destroyOnClose
+          maskClosable={false}
+          onCancel={() => setOpenDeviceSetting(undefined)}
+          onOk={() => setOpenDeviceSetting(undefined)}
+          onClose={() => setOpenDeviceSetting(undefined)}
+          footer={null}
+          classNames={classNames}
+          styles={modalStyles}
+        >
+          <DeviceSetting
+            projectId={projectSlug}
+            owner={'5dmFkoQrniKnC5idFRe7GqSghwWYjJavXVPphLEgZgEr'}
+            minter={'AaWkNxT7DiDZzgaXnE1eWqTteRJMua45cZqUw94f2bcc'}
+            device={openDeviceSetting}
+            closeSettingModel={setOpenDeviceSetting}
+            anchorWallet={anchorWallet}
+            connection={connection}
+            wallet={wallet}
+            publicKey={publicKey}
+          />
+        </Modal>
+      )}
       <MyTable
         columns={columns}
         rowKey={'id'}
