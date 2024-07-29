@@ -33,6 +33,7 @@ const useStyle = createStyles(() => ({
     border: '1px solid #333',
   },
 }));
+
 const DeviceTable = memo(
   ({
     open,
