@@ -22,6 +22,7 @@ import './project-devices.css';
 
 import DotIcon from '@icons/dot.icon.tsx';
 import WalletIcon from '@icons/wallet.icon.tsx';
+import { Link } from '@tanstack/react-router';
 
 const OnChainIc = () => (
   <Icon
@@ -155,7 +156,10 @@ const ProjectDevicesColumn = ({
             defaultChecked={onChainSetting.activeDevices.includes(
               device.iot_device_id,
             )}
-            disabled={loadingActive !== '0'}
+            disabled={
+              loadingActive !== '0' ||
+              !onChainSetting.registerDevices.includes(device.iot_device_id)
+            }
             loading={loadingActive === device.iot_device_id}
             onChange={(status) => active(device.iot_device_id, status)}
           />
@@ -196,19 +200,35 @@ const ProjectDevicesColumn = ({
       width: 100,
       render: (device: DeviceDataType) => (
         <Space className={'active-div'}>
-          <Button
-            disabled={loadingActive !== '0' || onChainSetting?.isLoading}
-            icon={<SettingOutlined />}
-            onClick={() =>
-              openSetting({
-                id: device.iot_device_id.toString(),
-                type: {
-                  id: device.device_type.id,
-                  name: device.device_name,
-                },
-              })
-            }
-          />
+          {onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+            <Link
+              onClick={() =>
+                openSetting({
+                  id: device.iot_device_id.toString(),
+                  type: {
+                    id: device.device_type.id,
+                    name: device.device_name,
+                  },
+                })
+              }
+            >
+              View
+            </Link>
+          ) : (
+            <Button
+              disabled={loadingActive !== '0' || onChainSetting?.isLoading}
+              icon={<SettingOutlined />}
+              onClick={() =>
+                openSetting({
+                  id: device.iot_device_id.toString(),
+                  type: {
+                    id: device.device_type.id,
+                    name: device.device_name,
+                  },
+                })
+              }
+            />
+          )}
         </Space>
       ),
     },
