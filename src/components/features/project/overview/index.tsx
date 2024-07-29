@@ -4,15 +4,7 @@ import TextEditor from '@/components/common/rich-editor/quill-editor';
 import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Button,
-  Col,
-  Descriptions,
-  Flex,
-  Form,
-  Image,
-  Space,
-} from 'antd';
+import { Button, Col, Descriptions, Flex, Form, Image, Space } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import { IProject, IProjectRequest } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
@@ -143,13 +135,13 @@ const OverView = memo(({ data }: { data: IProject }) => {
             </Descriptions.Item>
           </Descriptions>
           {data.location.iframe ? (
-            <Descriptions>
+            <Descriptions className="m-vertical-8">
               <Descriptions.Item label="Location">
                 <MapOverView src={data.location.iframe} />
               </Descriptions.Item>
             </Descriptions>
           ) : null}
-          <Descriptions layout="vertical">
+          <Descriptions layout="vertical" className="m-vertical-8">
             <Descriptions.Item label="Thumbnail">
               {!isEditThumbnail ? (
                 <>
@@ -167,7 +159,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
               )}
             </Descriptions.Item>
           </Descriptions>
-          <Descriptions layout="vertical">
+          <Descriptions layout="vertical" className="m-vertical-8">
             <Descriptions.Item label="Images">
               {!isEditImages ? (
                 <>
