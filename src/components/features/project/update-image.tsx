@@ -81,11 +81,17 @@ const UpdateImage = ({ image, type, setIsEdit }: Props) => {
     },
     onError: (error: any) => {
       myNotification({
-        message: ERROR_MSG.PROJECT.CREATE_ERROR,
+        message: ERROR_MSG.PROJECT.UPDATE_ERROR,
         description: error.message || 'Something went wrong',
       });
     },
   });
+  const handleRemove = (file: any) => {
+    if (file.originFileObj && type === 'list') {
+      return true;
+    }
+    return false;
+  };
   return (
     <Form
       form={form}
@@ -115,11 +121,32 @@ const UpdateImage = ({ image, type, setIsEdit }: Props) => {
           listType="picture-card"
           accept="image/*"
           multiple
-          onPreview={() => null}
+          itemRender={(originNode, file) => {
+            if (file.url && type === 'list') {
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '100%',
+                  }}
+                >
+                  <img
+                    src={file.url}
+                    alt={file.name}
+                    style={{ maxWidth: '80px', aspectRatio: '16/9' }}
+                  />
+                  <span>{file.name}</span>
+                </div>
+              );
+            }
+            return originNode;
+          }}
           maxCount={type === 'thumbnail' ? 1 : 5}
           fileList={images}
           onChange={handleImagesChange}
           beforeUpload={beforeUpload}
+          onRemove={handleRemove}
         >
           {images.length < (type === 'list' ? 5 : 1) && (
             <div>
@@ -127,9 +154,14 @@ const UpdateImage = ({ image, type, setIsEdit }: Props) => {
             </div>
           )}
         </Upload>
-        <Flex>
-          <SubmitButtonAction>Save</SubmitButtonAction>
-          <CancelButtonAction onClick={() => setIsEdit(false)}>
+        <Flex gap={10} className="m-vertical-8">
+          <SubmitButtonAction loading={handleSave.isPending}>
+            Save
+          </SubmitButtonAction>
+          <CancelButtonAction
+            disabled={handleSave.isPending}
+            onClick={() => setIsEdit(false)}
+          >
             Cancel
           </CancelButtonAction>
         </Flex>

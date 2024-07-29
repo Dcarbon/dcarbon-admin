@@ -143,6 +143,10 @@ button {
   width: 100%;
 }
 
+.m-vertical-8 {
+  margin: 8px 0;
+}
+
 .device-modal {
   padding-bottom: 15px;
 }
