@@ -190,11 +190,13 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     if (devices && devices.data?.length > 0) {
       setSelectDevice(devices.data.map((dv) => dv.iot_device_id));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices?.data]);
   useEffect(() => {
     if (devices && devices.data && devices.data.length > 0) {
       getOnChainSetting().then();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices?.data, anchorWallet, connection, refetch]);
   const { mutateAsync } = useMutation({
     mutationFn: addDevices,
