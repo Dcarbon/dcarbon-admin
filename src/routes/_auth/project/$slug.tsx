@@ -40,21 +40,25 @@ const ProjectDetail = memo(() => {
       <Tabs
         defaultActiveKey={search.key?.toString() || '1'}
         onChange={(key) => navigate({ search: { key } })}
+        destroyInactiveTabPane
         items={[
           {
             key: '1',
             label: 'Overview',
             children: <OverView data={data} />,
+            destroyInactiveTabPane: true,
           },
           {
             key: '2',
             label: 'Devices',
             children: <Devices projectSlug={slug} />,
+            destroyInactiveTabPane: true,
           },
           {
             key: '3',
             label: 'Dashboard',
             children: <ProjectDashboard />,
+            destroyInactiveTabPane: true,
           },
         ]}
       />

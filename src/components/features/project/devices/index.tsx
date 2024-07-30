@@ -305,10 +305,18 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       <MyTable
         columns={columns}
         rowKey={'id'}
+        loading={
+          isLoading
+            ? {
+                spinning: isLoading,
+                indicator: <div />,
+              }
+            : false
+        }
         dataSource={isLoading || !devices ? [] : devices.data}
         scroll={{ y: '55vh' }}
         pagination={{
-          pageSize: devices?.paging.limit || 1,
+          pageSize: devices?.paging.limit || 12,
           total: devices?.paging.total || 1,
           current: devices?.paging.page || 1,
           onChange: (page) => setSearch({ ...search, page }),

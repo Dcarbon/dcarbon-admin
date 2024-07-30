@@ -9,7 +9,7 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Empty, Flex, Select, Space } from 'antd';
+import { Flex, Select, Space } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import MyInputSearch from '@components/common/input/my-input-search.tsx';
 
@@ -126,7 +126,7 @@ const PoPage = memo(() => {
           PO
         </SubmitButton>
       </Flex>
-      {data ? <PoTableList data={data} /> : <Empty />}
+      <PoTableList data={data || ({} as IPoPage)} />
     </div>
   );
 });
