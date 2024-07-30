@@ -190,11 +190,13 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     if (devices && devices.data?.length > 0) {
       setSelectDevice(devices.data.map((dv) => dv.iot_device_id));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices?.data]);
   useEffect(() => {
     if (devices && devices.data && devices.data.length > 0) {
       getOnChainSetting().then();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [devices?.data, anchorWallet, connection, refetch]);
   const { mutateAsync } = useMutation({
     mutationFn: addDevices,
@@ -303,10 +305,18 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       <MyTable
         columns={columns}
         rowKey={'id'}
+        loading={
+          isLoading
+            ? {
+                spinning: isLoading,
+                indicator: <div />,
+              }
+            : false
+        }
         dataSource={isLoading || !devices ? [] : devices.data}
         scroll={{ y: '55vh' }}
         pagination={{
-          pageSize: devices?.paging.limit || 1,
+          pageSize: devices?.paging.limit || 12,
           total: devices?.paging.total || 1,
           current: devices?.paging.page || 1,
           onChange: (page) => setSearch({ ...search, page }),

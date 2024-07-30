@@ -15,6 +15,7 @@ import './overview.css';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
+import ImageGallery from '../image-gallery';
 import ProjectInfoForm from '../info-form';
 import MapOverView from '../map-overview';
 import UpdateImage from '../update-image';
@@ -163,7 +164,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Images">
               {!isEditImages ? (
                 <>
-                  <Image.PreviewGroup>
+                  {/* <Image.PreviewGroup>
                     {data.images.map((image: string, index: number) => (
                       <Image
                         className="project-image-view"
@@ -172,7 +173,8 @@ const OverView = memo(({ data }: { data: IProject }) => {
                         alt="image"
                       />
                     ))}
-                  </Image.PreviewGroup>
+                  </Image.PreviewGroup> */}
+                  <ImageGallery data={data.images} />
                   <Button onClick={() => setIsEditImages(true)}>
                     <EditOutlined />
                   </Button>

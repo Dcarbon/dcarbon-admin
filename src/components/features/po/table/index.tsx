@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { banPo, deletePo } from '@adapters/po.ts';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useIsFetching,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import MyTable from '@components/common/table/my-table.tsx';
 import columns, {
@@ -17,6 +21,9 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
   const [loadingHandleAction, setLoadingHandleAction] =
     useState<TLoadingActionState>();
   const [myNotification] = useNotification();
+  const isFetching = useIsFetching();
+  const isLoading = isFetching > 0;
+
   const handleDeletePo = useMutation({
     mutationFn: deletePo,
     onSuccess: () => {
@@ -88,12 +95,20 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
       rowKey={'id'}
       scroll={{ y: '56vh', x: 800 }}
       tableLayout="auto"
+      loading={
+        isLoading
+          ? {
+              spinning: isLoading || !data,
+              indicator: <div />,
+            }
+          : false
+      }
       pagination={{
-        defaultPageSize: data.paging.limit,
+        defaultPageSize: data?.paging?.limit || 12,
         defaultCurrent: 1,
         showSizeChanger: false,
-        current: data.paging.page,
-        total: data.paging.total,
+        current: data?.paging?.page,
+        total: data?.paging?.total,
       }}
       onChange={(page: any, _filters: any, sorter: any) => {
         return navigate({
