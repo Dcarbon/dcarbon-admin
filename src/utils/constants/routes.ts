@@ -16,6 +16,7 @@ const API_ROUTES = {
   DEVICE: {
     ROOT: 'devices',
     TYPES: 'devices/types',
+    CONTRACT_SETTINGS: 'devices/contract-settings',
   },
   PO: {
     BAN: 'po/ban',
