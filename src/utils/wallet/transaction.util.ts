@@ -14,7 +14,8 @@ interface ISendTxOption {
   connection: Connection;
   wallet: Wallet;
   payerKey: PublicKey;
-  txInstructions: TransactionInstruction;
+  txInstructions?: TransactionInstruction;
+  arrTxInstructions?: TransactionInstruction[];
   otherSigner?: Keypair;
 }
 
@@ -24,11 +25,21 @@ const sendTx = async ({
   payerKey,
   txInstructions,
   otherSigner,
+  arrTxInstructions,
 }: ISendTxOption): Promise<{
   status: 'success' | 'error' | 'reject';
   tx?: string;
 }> => {
   let tx: string | undefined;
+  if (
+    !txInstructions &&
+    (!arrTxInstructions || arrTxInstructions.length === 0)
+  ) {
+    return {
+      status: 'error',
+      tx,
+    };
+  }
   try {
     const blockhash =
       await connection.getLatestBlockhashAndContext('confirmed');
@@ -38,7 +49,11 @@ const sendTx = async ({
     const messageV0 = new TransactionMessage({
       payerKey,
       recentBlockhash: blockhash.value.blockhash,
-      instructions: [setComputeUnitPriceIx, txInstructions],
+      instructions: txInstructions
+        ? [setComputeUnitPriceIx, txInstructions]
+        : arrTxInstructions
+          ? [setComputeUnitPriceIx, ...arrTxInstructions]
+          : [],
     }).compileToV0Message();
     const transactionV0 = new VersionedTransaction(messageV0);
     if (otherSigner) transactionV0.sign([otherSigner]);

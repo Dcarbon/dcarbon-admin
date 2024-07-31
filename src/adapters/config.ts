@@ -1,5 +1,5 @@
 import { request } from '@adapters/xhr.ts';
-import { TIotDeviceType } from '@/types/device';
+import { IDeviceContractSettings, TIotDeviceType } from '@/types/device';
 import { IConfigTokenResponse } from '@/types/projects';
 import { API_ROUTES, REQ_METHODS } from '@utils/constants';
 
@@ -27,4 +27,16 @@ const getDeviceTypes = async () => {
     throw error;
   }
 };
-export { getConfigTokens, getDeviceTypes };
+const getDeviceContractSettings = async () => {
+  try {
+    const response = await request<GeneralResponse<IDeviceContractSettings>>(
+      REQ_METHODS.GET,
+      API_ROUTES.DEVICE.CONTRACT_SETTINGS,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+export { getConfigTokens, getDeviceTypes, getDeviceContractSettings };

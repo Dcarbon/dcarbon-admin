@@ -291,7 +291,6 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
           <DeviceSetting
             projectId={projectSlug}
             owner={'5dmFkoQrniKnC5idFRe7GqSghwWYjJavXVPphLEgZgEr'}
-            minter={'AaWkNxT7DiDZzgaXnE1eWqTteRJMua45cZqUw94f2bcc'}
             device={openDeviceSetting}
             closeSettingModel={setOpenDeviceSetting}
             anchorWallet={anchorWallet}
