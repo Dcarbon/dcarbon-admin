@@ -38,7 +38,7 @@ const ProjectDetail = memo(() => {
     <div>
       {/* <NavigationBack href="/project" />*/}
       <Tabs
-        defaultActiveKey={search.key?.toString() || '1'}
+        defaultActiveKey={search.tab?.toString() || '1'}
         onChange={(key) => navigate({ search: { tab: +key } })}
         destroyInactiveTabPane
         items={[

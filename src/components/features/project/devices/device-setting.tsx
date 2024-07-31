@@ -9,6 +9,7 @@ import { AnchorProvider, IdlTypes, Program } from '@coral-xyz/anchor';
 import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Flex, Form, Switch } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
@@ -266,6 +267,12 @@ const DeviceSetting = memo(
                 rules={[
                   {
                     required: true,
+                    message: (
+                      <span>
+                        Need to <Link to={'/contract?tab=3'}>setting</Link>{' '}
+                        minting limit
+                      </span>
+                    ),
                   },
                 ]}
                 style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
