@@ -9,7 +9,8 @@ import {
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
-import { Empty, Flex } from 'antd';
+import { Flex } from 'antd';
+import { IProjectPage } from '@/types/projects';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import MyInputSearch from '@components/common/input/my-input-search.tsx';
 
@@ -57,7 +58,6 @@ const ProjectPage = memo(() => {
     return navigate({
       to: '/project',
       search: {
-        ...search,
         keyword: value,
       },
     });
@@ -66,7 +66,7 @@ const ProjectPage = memo(() => {
     <div>
       <Flex justify="space-between" className="project-action-bar">
         <MyInputSearch
-          placeholder="Input search text"
+          placeholder="Input project name"
           allowClear
           className="project-search-bar"
           onSearch={handleSearch}
@@ -83,7 +83,7 @@ const ProjectPage = memo(() => {
           Project
         </SubmitButton>
       </Flex>
-      {data ? <ProjectTableList data={data} /> : <Empty />}
+      <ProjectTableList data={data || ({} as IProjectPage)} />
     </div>
   );
 });

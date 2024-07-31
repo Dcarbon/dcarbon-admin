@@ -1,3 +1,4 @@
+import { useIsFetching } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { IProjectPage, ProjectList } from '@/types/projects';
 import MyTable from '@components/common/table/my-table.tsx';
@@ -7,18 +8,28 @@ const ProjectTableList = ({ data }: { data: IProjectPage }) => {
   const columns = projectColumns();
   const search = useSearch({ from: '/_auth/project/' });
   const navigate = useNavigate();
+  const isFetching = useIsFetching();
+  const isLoading = isFetching > 0;
 
   return (
     <MyTable
       columns={columns}
       scroll={{ y: '56vh' }}
       id="id"
+      loading={
+        isLoading
+          ? {
+              spinning: isLoading || !data,
+              indicator: <div />,
+            }
+          : false
+      }
       rowKey={'id'}
       pagination={{
-        pageSize: data.paging.limit,
-        defaultPageSize: 10,
-        total: data.paging.total,
-        current: data.paging.page,
+        pageSize: data?.paging?.limit || 12,
+        defaultPageSize: 12,
+        total: data?.paging?.total,
+        current: data?.paging?.page,
         showSizeChanger: false,
       }}
       onChange={(page: any, _filters: any, sorter: any) => {

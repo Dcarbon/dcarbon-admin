@@ -4,7 +4,11 @@ import ProjectDashboard from '@/components/features/project/dashboard';
 import OverView from '@/components/features/project/overview';
 import { QUERY_KEYS } from '@/utils/constants';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute, useSearch } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  useNavigate,
+  useSearch,
+} from '@tanstack/react-router';
 import { Tabs } from 'antd';
 import Devices from '@components/features/project/devices';
 
@@ -29,26 +33,32 @@ const ProjectDetail = memo(() => {
   const slug = Route.useParams().slug;
   const { data } = useSuspenseQuery(postQueryOptions(slug));
   const search = useSearch({ from: '/_auth/project/$slug' });
+  const navigate = useNavigate();
   return (
     <div>
       {/* <NavigationBack href="/project" />*/}
       <Tabs
         defaultActiveKey={search.key?.toString() || '1'}
+        onChange={(key) => navigate({ search: { key } })}
+        destroyInactiveTabPane
         items={[
           {
             key: '1',
             label: 'Overview',
             children: <OverView data={data} />,
+            destroyInactiveTabPane: true,
           },
           {
             key: '2',
             label: 'Devices',
             children: <Devices projectSlug={slug} />,
+            destroyInactiveTabPane: true,
           },
           {
             key: '3',
             label: 'Dashboard',
             children: <ProjectDashboard />,
+            destroyInactiveTabPane: true,
           },
         ]}
       />

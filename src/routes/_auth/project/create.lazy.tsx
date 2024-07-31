@@ -211,16 +211,13 @@ const CreateProject = memo(() => {
                   accept="image/*"
                   multiple
                   onPreview={() => null}
-                  maxCount={5}
                   fileList={images}
                   onChange={handleImagesChange}
                   beforeUpload={beforeUpload}
                 >
-                  {images.length < 5 && (
-                    <div>
-                      <PlusOutlined /> Upload
-                    </div>
-                  )}
+                  <div>
+                    <PlusOutlined /> Upload
+                  </div>
                 </Upload>
               </Form.Item>
             </Form.Item>

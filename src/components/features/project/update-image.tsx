@@ -87,7 +87,7 @@ const UpdateImage = ({ image, type, setIsEdit }: Props) => {
     },
   });
   const handleRemove = (file: any) => {
-    if (file.originFileObj && type === 'list') {
+    if ((file.originFileObj && type === 'list') || type === 'thumbnail') {
       return true;
     }
     return false;
@@ -142,13 +142,13 @@ const UpdateImage = ({ image, type, setIsEdit }: Props) => {
             }
             return originNode;
           }}
-          maxCount={type === 'thumbnail' ? 1 : 5}
+          maxCount={type === 'thumbnail' ? 1 : undefined}
           fileList={images}
           onChange={handleImagesChange}
           beforeUpload={beforeUpload}
           onRemove={handleRemove}
         >
-          {images.length < (type === 'list' ? 5 : 1) && (
+          {images.length < (type === 'thumbnail' ? 1 : 99999) && (
             <div>
               <PlusOutlined /> Upload
             </div>

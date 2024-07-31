@@ -106,6 +106,7 @@ const DeviceTable = memo(
           }
         }}
         onClose={() => setOpen(false)}
+        afterClose={() => setSearch({})}
         classNames={classNames}
         styles={modalStyles}
         okButtonProps={{
@@ -118,13 +119,13 @@ const DeviceTable = memo(
           <Input.Search
             placeholder="Enter device id"
             type={'number'}
-            onSearch={(e) => setSearch({ ...search, id: e })}
+            onSearch={(e) => setSearch({ id: e })}
             disabled={isLoadingAdd}
           />
           <Select
             placeholder="Status"
             className="device-modal-select"
-            onChange={(status) => setSearch({ ...search, status })}
+            onChange={(status) => setSearch({ ...search, status, page: 1 })}
             disabled={isLoadingAdd}
           >
             {data?.common.iot_device_status.map((info: TIotDeviceStatus) => (
@@ -136,7 +137,7 @@ const DeviceTable = memo(
           <Select
             placeholder="Type"
             className="device-modal-select"
-            onChange={(type) => setSearch({ ...search, type })}
+            onChange={(type) => setSearch({ ...search, type, page: 1 })}
             disabled={isLoadingAdd}
           >
             {data?.common.iot_device_types.map((info: TIotDeviceType) => (
@@ -147,6 +148,13 @@ const DeviceTable = memo(
           </Select>
         </Flex>
         <MyTable
+          loading={
+            isLoading || isLoadingAdd
+              ? {
+                  spinning: isLoading || !data,
+                }
+              : false
+          }
           rowSelection={{
             type: 'checkbox',
             preserveSelectedRowKeys: true,
@@ -182,7 +190,6 @@ const DeviceTable = memo(
           }}
           columns={columns}
           key={'id'}
-          loading={isLoading}
           dataSource={data?.data as DeviceDataType[]}
           rowKey="id"
           scroll={{ y: '60vh' }}
@@ -193,7 +200,8 @@ const DeviceTable = memo(
           }
           pagination={{
             disabled: isLoadingAdd,
-            pageSize: data?.paging.limit || 1,
+            showSizeChanger: false,
+            defaultPageSize: data?.paging.limit || 12,
             total: data?.paging.total || 1,
             current: data?.paging.page || 1,
             onChange: (page) => setSearch({ ...search, page }),
