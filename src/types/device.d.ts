@@ -47,3 +47,8 @@ interface IDevicePage {
   };
   common: CommonType;
 }
+
+interface IDeviceContractSettings {
+  mint_signers: string[];
+  devices_limit: TIotDeviceType[];
+}
