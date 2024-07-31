@@ -18,7 +18,7 @@ const postQueryOptions = (slug: string) =>
     queryFn: () => getProjectBySlug(slug),
   });
 export const Route = createFileRoute('/_auth/project/$slug')({
-  validateSearch: (search: Record<string, unknown>): { key?: string } => {
+  validateSearch: (search: Record<string, unknown>): { tab?: string } => {
     return {
       ...search,
     };
@@ -38,8 +38,8 @@ const ProjectDetail = memo(() => {
     <div>
       {/* <NavigationBack href="/project" />*/}
       <Tabs
-        defaultActiveKey={search.key?.toString() || '1'}
-        onChange={(key) => navigate({ search: { key } })}
+        defaultActiveKey={search.tab?.toString() || '1'}
+        onChange={(key) => navigate({ search: { tab: +key } })}
         destroyInactiveTabPane
         items={[
           {
