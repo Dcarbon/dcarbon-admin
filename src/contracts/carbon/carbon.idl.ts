@@ -170,6 +170,33 @@ export const CARBON_IDL = {
           },
         },
         {
+          name: 'contract_config',
+          writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [
+                  99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102,
+                  105, 103,
+                ],
+              },
+            ],
+          },
+        },
+        {
+          name: 'governance',
+          writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101],
+              },
+            ],
+          },
+        },
+        {
           name: 'mint',
         },
         {
@@ -229,16 +256,28 @@ export const CARBON_IDL = {
           name: 'device_owner',
         },
         {
-          name: 'contract_config',
+          name: 'owner_governance',
           writable: true,
           pda: {
             seeds: [
               {
                 kind: 'const',
-                value: [
-                  99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102,
-                  105, 103,
-                ],
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101],
+              },
+              {
+                kind: 'account',
+                path: 'device_owner',
+              },
+            ],
+          },
+        },
+        {
+          name: 'governance',
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101],
               },
             ],
           },
@@ -293,8 +332,8 @@ export const CARBON_IDL = {
                 ],
               },
               {
-                kind: 'account',
-                path: 'device',
+                kind: 'arg',
+                path: 'mint_sft_args.device_id',
               },
             ],
           },
@@ -328,6 +367,7 @@ export const CARBON_IDL = {
         },
         {
           name: 'sysvar_program',
+          address: 'Sysvar1nstructions1111111111111111111111111',
         },
         {
           name: 'token_metadata_program',
@@ -411,8 +451,8 @@ export const CARBON_IDL = {
                 ],
               },
               {
-                kind: 'account',
-                path: 'device',
+                kind: 'arg',
+                path: 'register_device_args.device_id',
               },
             ],
           },
@@ -488,8 +528,8 @@ export const CARBON_IDL = {
                 ],
               },
               {
-                kind: 'account',
-                path: 'device',
+                kind: 'arg',
+                path: '_device_id',
               },
             ],
           },
@@ -498,11 +538,11 @@ export const CARBON_IDL = {
       args: [
         {
           name: 'project_id',
-          type: 'string',
+          type: 'u16',
         },
         {
           name: 'device_id',
-          type: 'string',
+          type: 'u16',
         },
       ],
     },
@@ -537,7 +577,7 @@ export const CARBON_IDL = {
               },
               {
                 kind: 'arg',
-                path: '_device_id',
+                path: 'key',
               },
             ],
           },
@@ -549,8 +589,8 @@ export const CARBON_IDL = {
       ],
       args: [
         {
-          name: 'device_id',
-          type: 'string',
+          name: 'key',
+          type: 'pubkey',
         },
         {
           name: 'value',
@@ -759,6 +799,10 @@ export const CARBON_IDL = {
       discriminator: [13, 226, 26, 137, 144, 41, 230, 121],
     },
     {
+      name: 'Governance',
+      discriminator: [18, 143, 88, 13, 73, 217, 47, 49],
+    },
+    {
       name: 'Master',
       discriminator: [168, 213, 193, 12, 77, 162, 58, 235],
     },
@@ -794,6 +838,15 @@ export const CARBON_IDL = {
       name: 'DeviceIsNotActive',
       msg: 'Must active this device to mint semi-fungible token',
     },
+    {
+      code: 6006,
+      name: 'SigVerificationFailed',
+    },
+    {
+      code: 6007,
+      name: 'InitArgsInvalid',
+      msg: 'Init config for contract is invalid',
+    },
   ],
   types: [
     {
@@ -825,6 +878,10 @@ export const CARBON_IDL = {
             name: 'amount',
             type: 'u64',
           },
+          {
+            name: 'project_id',
+            type: 'u16',
+          },
         ],
       },
     },
@@ -833,6 +890,10 @@ export const CARBON_IDL = {
       type: {
         kind: 'struct',
         fields: [
+          {
+            name: 'key',
+            type: 'pubkey',
+          },
           {
             name: 'value',
             type: 'u64',
@@ -851,6 +912,10 @@ export const CARBON_IDL = {
           },
           {
             name: 'rate',
+            type: 'u64',
+          },
+          {
+            name: 'governance_amount',
             type: 'u64',
           },
         ],
@@ -882,6 +947,10 @@ export const CARBON_IDL = {
                 },
               },
             },
+          },
+          {
+            name: 'governance_amount',
+            type: 'u64',
           },
         ],
       },
@@ -919,7 +988,7 @@ export const CARBON_IDL = {
         fields: [
           {
             name: 'id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'device_type',
@@ -927,7 +996,7 @@ export const CARBON_IDL = {
           },
           {
             name: 'project_id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'owner',
@@ -981,6 +1050,22 @@ export const CARBON_IDL = {
       },
     },
     {
+      name: 'Governance',
+      type: {
+        kind: 'struct',
+        fields: [
+          {
+            name: 'owner',
+            type: 'pubkey',
+          },
+          {
+            name: 'amount',
+            type: 'u64',
+          },
+        ],
+      },
+    },
+    {
       name: 'Master',
       type: {
         kind: 'struct',
@@ -999,11 +1084,11 @@ export const CARBON_IDL = {
         fields: [
           {
             name: 'project_id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'device_id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'create_mint_data_vec',
@@ -1023,11 +1108,11 @@ export const CARBON_IDL = {
         fields: [
           {
             name: 'project_id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'device_id',
-            type: 'string',
+            type: 'u16',
           },
           {
             name: 'device_type',
@@ -1050,20 +1135,24 @@ export const CARBON_IDL = {
         kind: 'struct',
         fields: [
           {
-            name: 'hash',
+            name: 'eth_address',
+            type: {
+              array: ['u8', 20],
+            },
+          },
+          {
+            name: 'msg',
             type: 'bytes',
+          },
+          {
+            name: 'sig',
+            type: {
+              array: ['u8', 64],
+            },
           },
           {
             name: 'recovery_id',
             type: 'u8',
-          },
-          {
-            name: 'signature',
-            type: 'bytes',
-          },
-          {
-            name: 'expected',
-            type: 'bytes',
           },
         ],
       },

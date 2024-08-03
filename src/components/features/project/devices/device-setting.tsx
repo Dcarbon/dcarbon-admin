@@ -5,7 +5,7 @@ import { getDeviceContractSettings } from '@adapters/config.ts';
 import { FormOutlined } from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
-import { AnchorProvider, IdlTypes, Program } from '@coral-xyz/anchor';
+import { AnchorProvider, BN, IdlTypes, Program } from '@coral-xyz/anchor';
 import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
@@ -40,6 +40,7 @@ interface IFormValues {
   minter?: string;
   isOnChainSetting?: boolean;
   active?: boolean;
+  currentActive?: boolean;
 }
 
 type RegisterDeviceArgs = IdlTypes<ICarbonContract>['registerDeviceArgs'];
@@ -67,6 +68,7 @@ const DeviceSetting = memo(
     });
     const getDeviceSetting = async () => {
       let initData: IFormValues | undefined;
+      let isActive = false;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
           myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
@@ -81,37 +83,43 @@ const DeviceSetting = memo(
         const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
           [
             Buffer.from('device'),
-            Buffer.from(String(projectId).padStart(24, '0')),
-            Buffer.from(String(device?.id).padStart(24, '0')),
+            new BN(Number(projectId)).toBuffer('le', 2),
+            new BN(Number(device?.id)).toBuffer('le', 2),
           ],
           program.programId,
         );
-        const data = await program.account.device.fetch(deviceSettingProgram);
-        if (data) {
-          let isActive = true;
-          try {
-            const [deviceStatusProgram] = PublicKey.findProgramAddressSync(
-              [Buffer.from('device_status'), deviceSettingProgram.toBuffer()],
-              program.programId,
-            );
-            const activeData =
-              await program.account.deviceStatus.fetch(deviceStatusProgram);
-            isActive = activeData.isActive;
-          } catch (e) {
-            isActive = false;
+        try {
+          const data = await program.account.device.fetch(deviceSettingProgram);
+          if (data) {
+            initData = {
+              device_id: device.id,
+              project_id: projectId,
+              device_type: data.deviceType,
+              isOnChainSetting: true,
+              owner: data.owner.toString(),
+              minter: data.minter.toString(),
+              active: false,
+            };
           }
-          initData = {
-            device_id: device.id,
-            project_id: projectId,
-            device_type: data.deviceType,
-            isOnChainSetting: true,
-            owner: data.owner.toString(),
-            minter: data.minter.toString(),
-            active: isActive,
-          };
+        } catch (e2) {
+          //
+        }
+        try {
+          const [deviceStatusProgram] = PublicKey.findProgramAddressSync(
+            [
+              Buffer.from('device_status'),
+              new BN(Number(device?.id)).toBuffer('le', 2),
+            ],
+            program.programId,
+          );
+          const activeData =
+            await program.account.deviceStatus.fetch(deviceStatusProgram);
+          isActive = activeData.isActive;
+        } catch (e) {
+          isActive = false;
         }
       } catch (e) {
-        //
+        console.error(e);
       } finally {
         if (!initData) {
           initData = {
@@ -120,6 +128,7 @@ const DeviceSetting = memo(
             device_type: device.type.id,
             owner,
             active: true,
+            currentActive: isActive,
           };
         }
         form.setFieldsValue({
@@ -157,8 +166,8 @@ const DeviceSetting = memo(
           provider,
         );
         const registerDeviceArgs: RegisterDeviceArgs = {
-          projectId: String(values.project_id).padStart(24, '0'),
-          deviceId: String(values.device_id).padStart(24, '0'),
+          projectId: Number(values.project_id),
+          deviceId: Number(values.device_id),
           deviceType: Number(values.device_type),
           owner: new PublicKey(values.owner),
           minter: new PublicKey(values.minter || ''),
@@ -171,12 +180,9 @@ const DeviceSetting = memo(
           })
           .instruction();
         insArray.push(registerDeviceIns);
-        if (values.active) {
+        if (values.active && !values.currentActive) {
           const activeDeviceIns = await program.methods
-            .setActive(
-              String(values.project_id).padStart(24, '0'),
-              String(values.device_id).padStart(24, '0'),
-            )
+            .setActive(Number(values.project_id), Number(values.device_id))
             .accounts({
               signer: publicKey,
             })
@@ -301,7 +307,10 @@ const DeviceSetting = memo(
               <Switch
                 defaultChecked={activeDevices?.includes(device.id)}
                 loading={loading || isLoading}
-                disabled={form.getFieldValue('isOnChainSetting')}
+                disabled={
+                  form.getFieldValue('isOnChainSetting') ||
+                  form.getFieldValue('currentActive')
+                }
               />
             </Form.Item>
             <Form.Item

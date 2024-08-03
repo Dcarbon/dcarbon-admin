@@ -159,18 +159,22 @@ const ProjectDevicesColumn = ({
               )}
               disabled={
                 loadingActive !== '0' ||
-                !onChainSetting.registerDevices.includes(device.iot_device_id)
+                (!onChainSetting.registerDevices.includes(
+                  device.iot_device_id,
+                ) &&
+                  !onChainSetting.activeDevices.includes(device.iot_device_id))
               }
               loading={loadingActive === device.iot_device_id}
               onChange={(status) => active(device.iot_device_id, status)}
             />
-            {!onChainSetting.registerDevices.includes(device.iot_device_id) && (
-              <Tooltip title={'Need to register device first'}>
-                <ExclamationCircleOutlined
-                  style={{ color: 'orange', fontSize: '18px' }}
-                />
-              </Tooltip>
-            )}
+            {!onChainSetting.registerDevices.includes(device.iot_device_id) &&
+              !onChainSetting.activeDevices.includes(device.iot_device_id) && (
+                <Tooltip title={'Need to register device first'}>
+                  <ExclamationCircleOutlined
+                    style={{ color: 'orange', fontSize: '18px' }}
+                  />
+                </Tooltip>
+              )}
           </Space>
         );
       },

@@ -1,9 +1,3 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/dcarbon_contract.json`.
- */
 export type ICarbonContract = {
   address: string;
   metadata: {
@@ -176,6 +170,30 @@ export type ICarbonContract = {
           };
         },
         {
+          name: 'contractConfig';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+              },
+            ];
+          };
+        },
+        {
+          name: 'governance';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101];
+              },
+            ];
+          };
+        },
+        {
           name: 'mint';
         },
         {
@@ -209,7 +227,7 @@ export type ICarbonContract = {
         },
         {
           name: 'program';
-          address: string;
+          address: '75eELePzbpEwD1tAEvYna5ZJtC26GeU42uF3ycyyTCt2';
         },
         {
           name: 'programData';
@@ -235,29 +253,28 @@ export type ICarbonContract = {
           name: 'deviceOwner';
         },
         {
-          name: 'contractConfig';
+          name: 'ownerGovernance';
           writable: true;
           pda: {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101];
+              },
+              {
+                kind: 'account';
+                path: 'deviceOwner';
+              },
+            ];
+          };
+        },
+        {
+          name: 'governance';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101];
               },
             ];
           };
@@ -307,25 +324,11 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
-                kind: 'account';
-                path: 'device';
+                kind: 'arg';
+                path: 'mint_sft_args.device_id';
               },
             ];
           };
@@ -359,6 +362,7 @@ export type ICarbonContract = {
         },
         {
           name: 'sysvarProgram';
+          address: 'Sysvar1nstructions1111111111111111111111111';
         },
         {
           name: 'tokenMetadataProgram';
@@ -437,25 +441,11 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
-                kind: 'account';
-                path: 'device';
+                kind: 'arg';
+                path: 'register_device_args.device_id';
               },
             ];
           };
@@ -526,25 +516,11 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
-                kind: 'account';
-                path: 'device';
+                kind: 'arg';
+                path: 'deviceId';
               },
             ];
           };
@@ -553,11 +529,11 @@ export type ICarbonContract = {
       args: [
         {
           name: 'projectId';
-          type: 'string';
+          type: 'u16';
         },
         {
           name: 'deviceId';
-          type: 'string';
+          type: 'u16';
         },
       ];
     },
@@ -592,7 +568,7 @@ export type ICarbonContract = {
               },
               {
                 kind: 'arg';
-                path: 'deviceId';
+                path: 'key';
               },
             ];
           };
@@ -604,8 +580,8 @@ export type ICarbonContract = {
       ];
       args: [
         {
-          name: 'deviceId';
-          type: 'string';
+          name: 'key';
+          type: 'pubkey';
         },
         {
           name: 'value';
@@ -640,23 +616,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -700,23 +660,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -764,23 +708,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -853,6 +781,10 @@ export type ICarbonContract = {
       discriminator: [13, 226, 26, 137, 144, 41, 230, 121];
     },
     {
+      name: 'governance';
+      discriminator: [18, 143, 88, 13, 73, 217, 47, 49];
+    },
+    {
       name: 'master';
       discriminator: [168, 213, 193, 12, 77, 162, 58, 235];
     },
@@ -888,6 +820,15 @@ export type ICarbonContract = {
       name: 'deviceIsNotActive';
       msg: 'Must active this device to mint semi-fungible token';
     },
+    {
+      code: 6006;
+      name: 'sigVerificationFailed';
+    },
+    {
+      code: 6007;
+      name: 'initArgsInvalid';
+      msg: 'Init config for contract is invalid';
+    },
   ];
   types: [
     {
@@ -919,6 +860,10 @@ export type ICarbonContract = {
             name: 'amount';
             type: 'u64';
           },
+          {
+            name: 'projectId';
+            type: 'u16';
+          },
         ];
       };
     },
@@ -927,6 +872,10 @@ export type ICarbonContract = {
       type: {
         kind: 'struct';
         fields: [
+          {
+            name: 'key';
+            type: 'pubkey';
+          },
           {
             name: 'value';
             type: 'u64';
@@ -945,6 +894,10 @@ export type ICarbonContract = {
           },
           {
             name: 'rate';
+            type: 'u64';
+          },
+          {
+            name: 'governanceAmount';
             type: 'u64';
           },
         ];
@@ -976,6 +929,10 @@ export type ICarbonContract = {
                 };
               };
             };
+          },
+          {
+            name: 'governanceAmount';
+            type: 'u64';
           },
         ];
       };
@@ -1013,7 +970,7 @@ export type ICarbonContract = {
         fields: [
           {
             name: 'id';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'deviceType';
@@ -1021,7 +978,7 @@ export type ICarbonContract = {
           },
           {
             name: 'projectId';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'owner';
@@ -1075,6 +1032,22 @@ export type ICarbonContract = {
       };
     },
     {
+      name: 'governance';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'owner';
+            type: 'pubkey';
+          },
+          {
+            name: 'amount';
+            type: 'u64';
+          },
+        ];
+      };
+    },
+    {
       name: 'master';
       type: {
         kind: 'struct';
@@ -1093,11 +1066,11 @@ export type ICarbonContract = {
         fields: [
           {
             name: 'projectId';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'deviceId';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'createMintDataVec';
@@ -1117,11 +1090,11 @@ export type ICarbonContract = {
         fields: [
           {
             name: 'projectId';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'deviceId';
-            type: 'string';
+            type: 'u16';
           },
           {
             name: 'deviceType';
@@ -1144,20 +1117,24 @@ export type ICarbonContract = {
         kind: 'struct';
         fields: [
           {
-            name: 'hash';
+            name: 'ethAddress';
+            type: {
+              array: ['u8', 20];
+            };
+          },
+          {
+            name: 'msg';
             type: 'bytes';
+          },
+          {
+            name: 'sig';
+            type: {
+              array: ['u8', 64];
+            };
           },
           {
             name: 'recoveryId';
             type: 'u8';
-          },
-          {
-            name: 'signature';
-            type: 'bytes';
-          },
-          {
-            name: 'expected';
-            type: 'bytes';
           },
         ];
       };

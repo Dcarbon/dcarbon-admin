@@ -103,7 +103,7 @@ const sendTx = async ({
       await waitToConfirm();
 
       const sigStatus = await connection.getSignatureStatus(signatureEncode);
-
+      tx = signatureEncode;
       if (sigStatus.value?.err) {
         if (import.meta.env.VITE_SKIP_PREFLIGHT === '1') {
           console.error('GetSignatureStatus Error', data?.value?.logs);
@@ -111,7 +111,6 @@ const sendTx = async ({
         throw new Error('UNKNOWN_TRANSACTION');
       }
       if (sigStatus.value?.confirmationStatus === 'confirmed') {
-        tx = signatureEncode;
         break;
       }
 
