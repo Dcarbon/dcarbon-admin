@@ -5,7 +5,7 @@ import { EditFilled, PlusOutlined } from '@ant-design/icons';
 import { DEFAULT_PAGING } from '@constants/common.constant.ts';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
-import { AnchorProvider, Program } from '@coral-xyz/anchor';
+import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import {
   useAnchorWallet,
   useConnection,
@@ -32,6 +32,7 @@ import { sendTx } from '@utils/wallet';
 interface IProps {
   projectSlug: string;
 }
+
 const useStyle = createStyles(() => ({
   'my-modal-mask': {
     boxShadow: `inset 0 0 15px #fff`,
@@ -98,10 +99,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         provider,
       );
       const activeDeviceIns = await program.methods
-        .setActive(
-          String(projectSlug).padStart(24, '0'),
-          String(id).padStart(24, '0'),
-        )
+        .setActive(Number(projectSlug), Number(id))
         .accounts({
           signer: publicKey,
         })
@@ -151,8 +149,8 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
             const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
               [
                 Buffer.from('device'),
-                Buffer.from(String(projectSlug).padStart(24, '0')),
-                Buffer.from(String(device.iot_device_id).padStart(24, '0')),
+                new BN(Number(projectSlug)).toBuffer('le', 2),
+                new BN(Number(device.iot_device_id)).toBuffer('le', 2),
               ],
               program.programId,
             );
@@ -160,14 +158,21 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
               await program.account.device.fetch(deviceSettingProgram);
             if (register && register.id) {
               registerDevices.push(device.iot_device_id);
-              const [deviceStatusProgram] = PublicKey.findProgramAddressSync(
-                [Buffer.from('device_status'), deviceSettingProgram.toBuffer()],
-                program.programId,
-              );
-              const activeData =
-                await program.account.deviceStatus.fetch(deviceStatusProgram);
-              if (activeData.isActive) activeDevices.push(device.iot_device_id);
             }
+          } catch (e) {
+            //
+          }
+          try {
+            const [deviceStatusProgram] = PublicKey.findProgramAddressSync(
+              [
+                Buffer.from('device_status'),
+                new BN(Number(device.iot_device_id)).toBuffer('le', 2),
+              ],
+              program.programId,
+            );
+            const activeData =
+              await program.account.deviceStatus.fetch(deviceStatusProgram);
+            if (activeData.isActive) activeDevices.push(device.iot_device_id);
           } catch (e) {
             //
           }
@@ -304,6 +309,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       <MyTable
         columns={columns}
         rowKey={'id'}
+        key={'id'}
         loading={
           isLoading
             ? {

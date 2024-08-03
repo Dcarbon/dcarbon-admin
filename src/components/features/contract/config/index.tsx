@@ -98,6 +98,13 @@ const ContractConfig = () => {
             signer: publicKey,
           })
           .instruction();
+      } else if (config.type == 'rate' && config.rate) {
+        instructions = await program.methods
+          .setRate(new BN(Number(config.rate)))
+          .accounts({
+            signer: publicKey,
+          })
+          .instruction();
       } else if (config.type === 'device_limit') {
         instructions = await program.methods
           .setMintingLimit(new BN(config.d_type), new BN(config.type_limit))
