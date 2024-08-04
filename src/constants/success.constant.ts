@@ -2,6 +2,9 @@ const SUCCESS_MSG = {
   AUTH: {
     SIGN_IN_SUCCESS: 'Sign In Successfully',
   },
+  MINT: {
+    MINT_SNFT_SUCCESS: 'Mint sNFT successfully',
+  },
   PO: {
     BAN_SUCCESS: 'Ban PO successfully',
     DELETE_SUCCESS: 'Delete PO successfully',

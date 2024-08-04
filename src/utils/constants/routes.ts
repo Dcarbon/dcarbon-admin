@@ -25,5 +25,8 @@ const API_ROUTES = {
   PROJECT: {
     ADD_DEVICES: 'projects/add-devices',
   },
+  MINT: {
+    ROOT: 'minting',
+  },
 };
 export { API_ROUTES };
