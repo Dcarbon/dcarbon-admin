@@ -39,6 +39,7 @@ const request = async <T>(
   url: string,
   data?: any,
   options?: AxiosRequestConfig,
+  isOverWriteUrl?: boolean,
 ): Promise<AxiosResponse<T>> => {
   const controller = new AbortController();
 
@@ -69,7 +70,10 @@ const request = async <T>(
   }
 
   try {
-    const result = await axiosInstance(BASE_URL + url, commonOptions);
+    const result = await axiosInstance(
+      isOverWriteUrl ? url : BASE_URL + url,
+      commonOptions,
+    );
     return result;
   } catch (error: any) {
     throw error.response?.data || THROW_EXCEPTION;

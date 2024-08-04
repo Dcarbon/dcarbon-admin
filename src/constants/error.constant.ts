@@ -64,6 +64,9 @@ const ERROR_MSG = {
   COMMON: {
     DEFAULT_ERROR: 'Something went wrong',
   },
+  MINT: {
+    MINT_SNFT_ERROR: 'Mint sNFT error',
+  },
   PO: {
     BAN_ERROR: 'Ban PO has error',
     DELETE_ERROR: 'Delete PO has error',

@@ -1,17 +1,20 @@
 import { memo, useEffect, useState } from 'react';
-import { ERROR_CONTRACT } from '@/constants';
+import { ERROR_CONTRACT, ERROR_MSG, SUCCESS_MSG } from '@/constants';
 import { EIotDeviceType } from '@/enums';
 import { getDeviceContractSettings } from '@adapters/config.ts';
+import { mintSNFT } from '@adapters/mint.ts';
 import { FormOutlined } from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, BN, IdlTypes, Program } from '@coral-xyz/anchor';
 import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Flex, Form, Switch } from 'antd';
+import CancelButton from '@components/common/button/cancel-button.tsx';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+import MyDatePicker from '@components/common/date/my-datepicker.tsx';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IDeviceSettingState } from '@components/features/project/devices/column.tsx';
@@ -45,6 +48,10 @@ interface IFormValues {
 
 type RegisterDeviceArgs = IdlTypes<ICarbonContract>['registerDeviceArgs'];
 
+const config = {
+  rules: [{ type: 'object' as const, message: 'Please select time!' }],
+};
+
 const DeviceSetting = memo(
   ({
     projectId,
@@ -62,9 +69,28 @@ const DeviceSetting = memo(
     const [myNotification] = useNotification();
     const [txModalOpen, setTxModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [mintingLoading, setMintingLoading] = useState(false);
     const { data, isLoading } = useQuery({
       queryKey: [QUERY_KEYS.DEVICE.CONTRACT_SETTINGS],
       queryFn: getDeviceContractSettings,
+    });
+    const handleMintSNFT = useMutation({
+      mutationFn: mintSNFT,
+      onSuccess: () => {
+        myNotification({
+          type: 'success',
+          description: SUCCESS_MSG.MINT.MINT_SNFT_SUCCESS,
+        });
+        form.resetFields();
+        setMintingLoading(false);
+      },
+      onError: (err: any) => {
+        myNotification({
+          message: ERROR_MSG.MINT.MINT_SNFT_ERROR,
+          description: err.message || 'Something went wrong',
+        });
+        setMintingLoading(false);
+      },
     });
     const getDeviceSetting = async () => {
       let initData: IFormValues | undefined;
@@ -211,6 +237,21 @@ const DeviceSetting = memo(
         console.error(e);
       }
     };
+    const mint = async () => {
+      const nonce = form.getFieldValue('nonce_test');
+      const amount = form.getFieldValue('amount_test');
+      const mintTime = form.getFieldValue('mint_time');
+      if (nonce && amount && mintTime) {
+        setMintingLoading(true);
+        await handleMintSNFT.mutateAsync({
+          project_id: projectId,
+          device_id: device.id,
+          amount,
+          nonce,
+          mint_time: new Date(mintTime).getTime(),
+        });
+      }
+    };
     return (
       <>
         {' '}
@@ -232,7 +273,6 @@ const DeviceSetting = memo(
             layout="vertical"
             style={{ width: '100%', marginTop: '30px' }}
             onFinish={(values) => submitSetting(values)}
-            disabled={loading || form.getFieldValue('isOnChainSetting')}
           >
             <Form.Item style={{ marginBottom: 0 }}>
               <Form.Item
@@ -344,6 +384,49 @@ const DeviceSetting = memo(
                 placeholder={'Enter Minter address'}
               />
             </Form.Item>
+            {form.getFieldValue('isOnChainSetting') && (
+              <div
+                style={{
+                  backgroundColor: '#ff000017',
+                  padding: '10px 20px 20px 20px',
+                  borderRadius: '4px',
+                }}
+              >
+                <label style={{ fontWeight: '500' }}>Minting (Test only)</label>
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <Form.Item
+                    label="Nonce"
+                    name="nonce_test"
+                    style={{
+                      display: 'inline-block',
+                      width: 'calc(50% - 8px)',
+                    }}
+                  >
+                    <SkeletonInput
+                      loading={loading}
+                      disabled={mintingLoading}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Amount"
+                    name="amount_test"
+                    style={{
+                      display: 'inline-block',
+                      width: 'calc(50%)',
+                      margin: '0px 0px 0px 8px',
+                    }}
+                  >
+                    <SkeletonInput
+                      loading={loading}
+                      disabled={mintingLoading}
+                    />
+                  </Form.Item>
+                </Form.Item>
+                <Form.Item name="mint_time" label="Minting time" {...config}>
+                  <MyDatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                </Form.Item>
+              </div>
+            )}
             <Flex justify={'center'} style={{ marginTop: '30px' }}>
               <SubmitButton
                 htmlType="submit"
@@ -354,6 +437,16 @@ const DeviceSetting = memo(
               >
                 Register
               </SubmitButton>
+              {form.getFieldValue('isOnChainSetting') && (
+                <CancelButton
+                  style={{ marginLeft: '5px', color: 'red !important' }}
+                  loading={mintingLoading}
+                  disabled={loading || isLoading || mintingLoading}
+                  onClick={() => mint()}
+                >
+                  Mint (Test only)
+                </CancelButton>
+              )}
             </Flex>
           </Form>
         )}
