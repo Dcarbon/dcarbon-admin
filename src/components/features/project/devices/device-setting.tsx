@@ -82,7 +82,7 @@ const DeviceSetting = memo(
           description: SUCCESS_MSG.MINT.MINT_SNFT_SUCCESS,
         });
         form.resetFields();
-        setMintingLoading(false);
+        closeSettingModel(undefined);
       },
       onError: (err: any) => {
         myNotification({
