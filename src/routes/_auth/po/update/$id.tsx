@@ -49,7 +49,7 @@ const UpdatePo = () => {
     onSuccess: () => {
       queryClient
         .invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_PO, param.id],
+          queryKey: [QUERY_KEYS.GET_PO],
         })
         .then();
       myNotification({
@@ -134,7 +134,7 @@ const UpdatePo = () => {
             </SubmitButtonAction>
             <CancelButtonAction
               disabled={updateMutation.isPending}
-              onClick={goBack}
+              onClick={() => goBack({ formData: form.getFieldsValue() })}
             >
               Cancel
             </CancelButtonAction>

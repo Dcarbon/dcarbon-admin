@@ -73,6 +73,10 @@ const PoPage = memo(() => {
             placeholder="Input search text"
             allowClear
             className="project-search-bar"
+            onChange={(e) =>
+              e.target.value === '' &&
+              handleSearch({ ...search, keyword: e.target.value, page: 1 })
+            }
             defaultValue={search.keyword}
             onSearch={handleSearch}
           />

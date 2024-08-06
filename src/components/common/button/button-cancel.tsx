@@ -11,7 +11,7 @@ const CancelButtonAction = ({
   ...props
 }: ButtonCancelProps) => {
   return (
-    <CancelButton htmlType="reset" onClick={onClick} {...props}>
+    <CancelButton onClick={onClick} {...props}>
       {children}
     </CancelButton>
   );

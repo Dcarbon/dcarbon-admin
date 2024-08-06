@@ -29,7 +29,7 @@ const ContractPage = memo(() => {
   const search = useSearch({ from: '/_auth/contract/' });
   return (
     <Tabs
-      defaultActiveKey={search.tab?.toString() || '1'}
+      defaultActiveKey={search.tab?.toString() || '3'}
       size={'large'}
       className="contract-tabs"
       destroyInactiveTabPane
