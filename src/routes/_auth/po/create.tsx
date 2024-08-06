@@ -112,7 +112,7 @@ const PoCreate = memo(() => {
           </SubmitButtonAction>
           <CancelButtonAction
             disabled={handleCreatePo.isPending}
-            onClick={goBack}
+            onClick={() => goBack({ formData: form.getFieldsValue() })}
           >
             Cancel
           </CancelButtonAction>

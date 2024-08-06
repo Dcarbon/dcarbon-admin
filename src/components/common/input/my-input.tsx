@@ -9,7 +9,7 @@ const MyInput = styled(Input).attrs<IProps>((props: IProps) => ({
   ...props,
   allowClear: true,
 }))`
-  background-color: var(--main-gray);
+  background-color: var(--main-gray) !important;
   color: ${(props) =>
     props.viewMode ? 'rgba(0, 0, 0, 0.88) !important' : 'inherit'};
 `;

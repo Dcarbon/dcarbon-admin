@@ -266,7 +266,7 @@ const CreateProject = memo(() => {
               </SubmitButtonAction>
               <CancelButtonAction
                 disabled={handleSave.isPending || handleCreateProject.isPending}
-                onClick={goBack}
+                onClick={() => goBack({ formData: form.getFieldsValue() })}
               >
                 Cancel
               </CancelButtonAction>

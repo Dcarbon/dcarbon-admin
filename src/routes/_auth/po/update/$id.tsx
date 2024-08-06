@@ -134,7 +134,7 @@ const UpdatePo = () => {
             </SubmitButtonAction>
             <CancelButtonAction
               disabled={updateMutation.isPending}
-              onClick={goBack}
+              onClick={() => goBack({ formData: form.getFieldsValue() })}
             >
               Cancel
             </CancelButtonAction>
