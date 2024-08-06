@@ -56,6 +56,8 @@ export interface IOnChainSettingProps {
   isLoading?: boolean;
   activeDevices: string[];
   registerDevices: string[];
+  nonceInfo: { deviceId: string; nonce: number }[];
+  lastMintTime?: { deviceId: string; time: number }[];
 }
 
 const ProjectDevicesColumn = ({
@@ -102,11 +104,11 @@ const ProjectDevicesColumn = ({
       key: 'iot_device_id',
       fixed: 'left',
     },
-    {
-      title: 'Name',
-      dataIndex: 'device_name',
-      key: 'device_name',
-    },
+    // {
+    //   title: 'Name',
+    //   dataIndex: 'device_name',
+    //   key: 'device_name',
+    // },
     {
       title: 'Type',
       dataIndex: 'device_type',
@@ -176,6 +178,78 @@ const ProjectDevicesColumn = ({
                 </Tooltip>
               )}
           </Space>
+        );
+      },
+    },
+    {
+      title: (
+        <Tooltip title={'OnChain data'}>
+          <span style={{ display: 'flex' }}>
+            <span>Nonce</span>
+            <OnChainIc />
+          </span>{' '}
+        </Tooltip>
+      ),
+      render: (device: DeviceDataType) => {
+        if (!connectWallet) {
+          return (
+            <Tooltip title={'Connect wallet to display data'}>
+              <ExclamationCircleOutlined
+                style={{ color: 'orange', fontSize: '18px' }}
+              />
+            </Tooltip>
+          );
+        }
+        const match = onChainSetting?.nonceInfo?.find(
+          (info) => info.deviceId === device.iot_device_id,
+        );
+        return onChainSetting?.isLoading ? (
+          <Skeleton.Button style={{ height: '25px' }} active />
+        ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+          <span
+            style={{
+              fontWeight: 'bold',
+              fontSize: '1.1em',
+              color: 'var(--main-color)',
+            }}
+          >
+            {match ? match.nonce : 0}
+          </span>
+        ) : (
+          ''
+        );
+      },
+    },
+    {
+      title: (
+        <Tooltip title={'OnChain data'}>
+          <span style={{ display: 'flex' }}>
+            <span>Last Minted</span>
+            <OnChainIc />
+          </span>{' '}
+        </Tooltip>
+      ),
+      render: (device: DeviceDataType) => {
+        if (!connectWallet) {
+          return (
+            <Tooltip title={'Connect wallet to display data'}>
+              <ExclamationCircleOutlined
+                style={{ color: 'orange', fontSize: '18px' }}
+              />
+            </Tooltip>
+          );
+        }
+        const match = onChainSetting?.lastMintTime?.find(
+          (info) => info.deviceId === device.iot_device_id,
+        );
+        return onChainSetting?.isLoading ? (
+          <Skeleton.Button style={{ height: '25px' }} active />
+        ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+          <span>
+            {match ? new Date(match.time * 1000).toLocaleString('vi-VN') : ''}
+          </span>
+        ) : (
+          ''
         );
       },
     },
