@@ -77,7 +77,7 @@ const CreateProject = memo(() => {
           to: '/project/$slug',
           params: { slug: data.data.slug },
           search: {
-            key: 2,
+            tab: 2,
           },
         }),
       );
@@ -266,7 +266,7 @@ const CreateProject = memo(() => {
               </SubmitButtonAction>
               <CancelButtonAction
                 disabled={handleSave.isPending || handleCreateProject.isPending}
-                onClick={goBack}
+                onClick={() => goBack({ formData: form.getFieldsValue() })}
               >
                 Cancel
               </CancelButtonAction>

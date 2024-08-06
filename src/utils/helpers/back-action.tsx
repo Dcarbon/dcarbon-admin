@@ -25,6 +25,7 @@ const useStyle = createStyles(() => ({
 const useModalAction = (option?: IOption) => {
   const router = useRouter();
   const { styles } = useStyle();
+
   const classNames = {
     mask: styles['my-modal-mask'],
     content: styles['my-modal-content'],
@@ -45,7 +46,14 @@ const useModalAction = (option?: IOption) => {
     // eslint-disable-next-line @typescript-eslint/ban-types
     cancelFn?: Function;
     content?: string;
+    formData?: { [key: string]: any };
   }) => {
+    if (
+      option2?.formData &&
+      Object.values(option2.formData).filter((item) => !!item).length === 0
+    ) {
+      return router.navigate({ to: '/po' });
+    }
     Modal.confirm({
       title: option?.title || 'Are you sure?',
       centered: true,

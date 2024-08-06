@@ -1,8 +1,15 @@
 import { useState } from 'react';
+import { getDashBoardProject } from '@/adapters/project';
 import CancelButtonAction from '@/components/common/button/button-cancel';
 import SubmitButtonAction from '@/components/common/button/button-submit';
-import { Button, Card, Flex, Form, InputNumber, Modal, Typography } from 'antd';
+import { QUERY_KEYS } from '@/utils/constants';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
+import { Button, Empty, Flex, Form, InputNumber, Modal, Row } from 'antd';
 import { createStyles } from 'antd-style';
+
+import AnalyticsCard from '../analytics-card';
+import TotalOutputCard from '../total-output-card';
 
 const useStyle = createStyles(() => ({
   'my-modal-mask': {
@@ -16,6 +23,10 @@ const ProjectDashboard = () => {
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const { styles } = useStyle();
+  const param = useParams({
+    from: '/_auth/project/$slug',
+    select: (params) => ({ id: params.slug }),
+  });
   const classNames = {
     mask: styles['my-modal-mask'],
     content: styles['my-modal-content'],
@@ -29,6 +40,10 @@ const ProjectDashboard = () => {
       borderRadius: 'var(--div-radius)',
     },
   };
+  const { data } = useQuery({
+    queryKey: [QUERY_KEYS.GET_PROJECT_DASHBOARD, param.id],
+    queryFn: () => getDashBoardProject(param.id),
+  });
   return (
     <Flex vertical gap={10}>
       <Modal
@@ -72,35 +87,42 @@ const ProjectDashboard = () => {
           Listing
         </Button>
       </Flex>
-      <Flex className="project-dashboard" gap={20} wrap>
-        <Card hoverable className="project-dashboard-card" title="Crypto">
-          <Typography.Title level={2}>~12.9</Typography.Title>
-        </Card>
-        <Card
-          hoverable
-          className="project-dashboard-card"
-          title="revenue - Cost"
-        >
-          <Typography.Title level={2}>126$</Typography.Title>
-        </Card>
-        <Card hoverable className="project-dashboard-card" title="Total Assets">
-          <Typography.Title level={2}>90</Typography.Title>
-        </Card>
-        <Card
-          hoverable
-          className="project-dashboard-card"
-          title="Total Carbon minted"
-        >
-          <Typography.Title level={2}>45</Typography.Title>
-        </Card>
-        <Card
-          hoverable
-          className="project-dashboard-card"
-          title="Total Carbon Sold"
-        >
-          <Typography.Title level={2}>45</Typography.Title>
-        </Card>
-      </Flex>
+      {data ? (
+        <>
+          <Row gutter={[16, 16]} className="project-dashboard">
+            <TotalOutputCard
+              data={data.carbon_credit.minted}
+              title="Total carbon minted"
+              img="/image/dashboard/total-minted.svg"
+            />
+            <TotalOutputCard
+              data={data.carbon_credit.sold}
+              title="Totalcarbon sold"
+              img="/image/dashboard/total-carbon-sold.svg"
+            />
+          </Row>
+          <Row gutter={[16, 16]} className="project-dashboard">
+            <AnalyticsCard
+              data={data.aggregation.cost.amount}
+              currency={data.aggregation.cost.currency}
+              title="Total cost"
+              img="/image/dashboard/total-cost.webp"
+            />
+            <AnalyticsCard
+              data={data.aggregation.assets_total}
+              title="Total assets available"
+              img="/image/dashboard/total-assets.webp"
+            />
+            <AnalyticsCard
+              data={data.aggregation.crypto}
+              title="Total crypto available"
+              img="/image/dashboard/crypto.webp"
+            />
+          </Row>
+        </>
+      ) : (
+        <Empty />
+      )}
     </Flex>
   );
 };

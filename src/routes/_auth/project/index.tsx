@@ -68,6 +68,9 @@ const ProjectPage = memo(() => {
         <MyInputSearch
           placeholder="Input project name"
           allowClear
+          onChange={(e) =>
+            e.target.value === '' && handleSearch(e.target.value)
+          }
           className="project-search-bar"
           onSearch={handleSearch}
         />

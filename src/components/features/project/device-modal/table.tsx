@@ -119,6 +119,7 @@ const DeviceTable = memo(
           <Input.Search
             placeholder="Enter device id"
             type={'number'}
+            onChange={(e) => e.target.value === '' && setSearch({})}
             onSearch={(e) => setSearch({ id: e })}
             disabled={isLoadingAdd}
           />

@@ -1,16 +1,24 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Flex } from 'antd';
-import SubmitButton from '@components/common/button/submit-button.tsx';
+import { Button, Flex, Typography } from 'antd';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
   return (
-    <Flex justify="center" vertical align="center" className="not-found-layout">
-      <h1>404 - Not Found</h1>
+    <Flex
+      justify="center"
+      vertical
+      align="center"
+      className="not-found-layout"
+      gap={10}
+    >
+      <Typography.Title level={1} type="danger">
+        404
+      </Typography.Title>
+      <Typography.Title level={2}>Page Not Found</Typography.Title>
       <p>The page you are looking for does not exist.</p>
-      <SubmitButton onClick={() => navigate({ to: '/po' })}>
+      <Button type="primary" onClick={() => navigate({ to: '/' })}>
         Go Back
-      </SubmitButton>
+      </Button>
     </Flex>
   );
 };

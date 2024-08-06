@@ -1,1 +1,2 @@
-export * from './back-action';
+export { default as BackAction } from './back-action';
+export * from './common';

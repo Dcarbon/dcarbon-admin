@@ -10,6 +10,7 @@ import {
   IProjectPage,
   IProjectPageRequest,
   IProjectRequest,
+  ProjectDashboardTypes,
 } from '@/types/projects';
 
 import { request } from './xhr';
@@ -189,6 +190,18 @@ const addDevices = async (data: Partial<IAddDevicesInput>) => {
     throw error;
   }
 };
+const getDashBoardProject = async (slug: string) => {
+  try {
+    const response = await request<GeneralResponse<ProjectDashboardTypes>>(
+      REQ_METHODS.GET,
+      API_ROUTES.PROJECT_API + `/${slug}/dashboard`,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -199,4 +212,5 @@ export {
   updateProject,
   addDevices,
   uploadMultipleProjectImage,
+  getDashBoardProject,
 };

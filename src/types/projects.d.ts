@@ -140,7 +140,26 @@ interface IAddDevicesInput {
   project_id: string;
   device_ids: string[];
 }
-
+type ProjectDashboardTypes = {
+  carbon_credit: {
+    minted: {
+      total: number;
+      compare_last_week_ratio: number;
+    };
+    sold: {
+      total: number;
+      compare_last_week_ratio: number;
+    };
+  };
+  aggregation: {
+    crypto: number;
+    cost: {
+      amount: number;
+      currency: string;
+    };
+    assets_total: number;
+  };
+};
 type ProjectList = Omit<
   IProject,
   | 'images'
