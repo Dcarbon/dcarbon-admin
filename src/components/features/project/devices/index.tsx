@@ -57,6 +57,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
     isLoading: false,
     registerDevices: [],
     activeDevices: [],
+    nonceInfo: [],
   });
   const [openModifyDevices, setOpenModifyDevices] = useState(false);
   const [selectedDevice, setSelectDevice] = useState<string[]>([]);
@@ -135,6 +136,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         isLoading: true,
         registerDevices: [],
         activeDevices: [],
+        nonceInfo: [],
       });
       const provider = new AnchorProvider(connection, anchorWallet);
       const program = new Program<ICarbonContract>(
@@ -143,6 +145,8 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       );
       const activeDevices: string[] = [];
       const registerDevices: string[] = [];
+      const nonceInfo: { deviceId: string; nonce: number }[] = [];
+      const lastMintTime: { deviceId: string; time: number }[] = [];
       await Promise.all(
         devices.data.map(async (device) => {
           try {
@@ -173,6 +177,18 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
             const activeData =
               await program.account.deviceStatus.fetch(deviceStatusProgram);
             if (activeData.isActive) activeDevices.push(device.iot_device_id);
+            if (activeData) {
+              nonceInfo.push({
+                deviceId: device.iot_device_id,
+                nonce: activeData.nonce || 0,
+              });
+              if (activeData.lastMintTime) {
+                lastMintTime.push({
+                  deviceId: device.iot_device_id,
+                  time: activeData.lastMintTime.toNumber(),
+                });
+              }
+            }
           } catch (e) {
             //
           }
@@ -182,12 +198,15 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         isLoading: false,
         activeDevices: activeDevices,
         registerDevices: registerDevices,
+        nonceInfo,
+        lastMintTime,
       });
     } catch (e) {
       setOnChainSetting({
         isLoading: false,
         registerDevices: [],
         activeDevices: [],
+        nonceInfo: [],
       });
     }
   };

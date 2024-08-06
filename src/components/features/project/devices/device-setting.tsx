@@ -44,6 +44,7 @@ interface IFormValues {
   isOnChainSetting?: boolean;
   active?: boolean;
   currentActive?: boolean;
+  nonce_test: number;
 }
 
 type RegisterDeviceArgs = IdlTypes<ICarbonContract>['registerDeviceArgs'];
@@ -95,6 +96,7 @@ const DeviceSetting = memo(
     const getDeviceSetting = async () => {
       let initData: IFormValues | undefined;
       let isActive = false;
+      let nonce = 0;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
           myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
@@ -125,6 +127,7 @@ const DeviceSetting = memo(
               owner: data.owner.toString(),
               minter: data.minter.toString(),
               active: false,
+              nonce_test: nonce + 1,
             };
           }
         } catch (e2) {
@@ -140,7 +143,8 @@ const DeviceSetting = memo(
           );
           const activeData =
             await program.account.deviceStatus.fetch(deviceStatusProgram);
-          isActive = activeData.isActive;
+          isActive = activeData?.isActive;
+          nonce = activeData?.nonce;
         } catch (e) {
           isActive = false;
         }
@@ -155,10 +159,12 @@ const DeviceSetting = memo(
             owner,
             active: true,
             currentActive: isActive,
+            nonce_test: nonce + 1,
           };
         }
         form.setFieldsValue({
           ...initData,
+          nonce_test: nonce + 1,
         });
         setLoading(false);
       }
@@ -402,10 +408,7 @@ const DeviceSetting = memo(
                       width: 'calc(50% - 8px)',
                     }}
                   >
-                    <SkeletonInput
-                      loading={loading}
-                      disabled={mintingLoading}
-                    />
+                    <SkeletonInput loading={loading} disabled />
                   </Form.Item>
                   <Form.Item
                     label="Amount"
