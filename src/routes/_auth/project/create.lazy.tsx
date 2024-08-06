@@ -77,7 +77,7 @@ const CreateProject = memo(() => {
           to: '/project/$slug',
           params: { slug: data.data.slug },
           search: {
-            key: 2,
+            tab: 2,
           },
         }),
       );
