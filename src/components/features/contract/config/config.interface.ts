@@ -14,6 +14,11 @@ interface IConfig {
     device_type: number;
     limit: number;
   }[];
+
+  coefficients?: {
+    key: string;
+    value: number;
+  }[];
 }
 
 export type { IConfig };

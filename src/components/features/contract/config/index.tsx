@@ -11,6 +11,8 @@ import {
 } from '@solana/wallet-adapter-react';
 import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
+import base58 from 'bs58';
+import { ICoefficient } from '@/types/common';
 import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IConfig } from '@components/features/contract/config/config.interface.ts';
@@ -57,7 +59,10 @@ const ContractConfig = () => {
         [Buffer.from('contract_config')],
         program.programId,
       );
-      const data = await program.account.contractConfig.fetch(configContract);
+      const [data, coefficients] = await Promise.all([
+        program.account.contractConfig.fetch(configContract),
+        getCoefficients(program),
+      ]);
       if (data) {
         setLoading(false);
         configRef.current?.triggerSetConfig({
@@ -70,11 +75,52 @@ const ContractConfig = () => {
               limit: info.limit,
             };
           }),
+          coefficients,
         });
       }
     } catch (e) {
       setLoading(false);
       console.error(e);
+    }
+  };
+  const getCoefficients = async (
+    program: Program<ICarbonContract>,
+  ): Promise<ICoefficient[]> => {
+    try {
+      const data = await connection.getProgramAccounts(program.programId, {
+        dataSlice: { offset: 8, length: 32 },
+        filters: [
+          {
+            memcmp: {
+              offset: 0,
+              bytes: base58.encode(
+                CARBON_IDL?.accounts.find(
+                  (acc: { name: string; discriminator: number[] }) =>
+                    acc.name === 'Coefficient',
+                )?.discriminator as number[],
+              ),
+            },
+          },
+        ],
+      });
+      const coefficients: ICoefficient[] = [];
+      await Promise.all(
+        data?.map(async (info) => {
+          const data = await program.account.coefficient.fetch(info.pubkey);
+          coefficients.push({
+            key: data.key.toString(),
+            value: data.value.toNumber(),
+            isOnChain: true,
+          });
+        }),
+      );
+      return coefficients.filter(
+        (info) => info.key !== '111111111111111111111111Ahg1opVcGX',
+      );
+    } catch (e) {
+      console.error(e);
+      myNotification(ERROR_CONTRACT.COMMON.ON_CHAIN_FETCH_ERROR);
+      return [];
     }
   };
   const updateConfig = async (config: TConfigUpdate) => {
@@ -112,6 +158,16 @@ const ContractConfig = () => {
             signer: publicKey,
           })
           .instruction();
+      } else if (config.type === 'coefficient') {
+        instructions = await program.methods
+          .setCoefficient(
+            new PublicKey(config.coefficient?.key || ''),
+            new BN(Number(config.coefficient?.value)),
+          )
+          .accounts({
+            signer: publicKey,
+          })
+          .instruction();
       }
       if (!instructions) throw new Error('instructions is required');
       const { status, tx } = await sendTx({
@@ -143,10 +199,9 @@ const ContractConfig = () => {
       {' '}
       <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
       <CenterContentLayout
-        contentWidth={!connection || !anchorWallet ? '50%' : '45%'}
-        contentMinWidth={'500px'}
-        marginBottom={'0px'}
-        vertical
+        contentWidth={'100%'}
+        align={'start'}
+        className={'ft-div'}
       >
         {!connection || !anchorWallet ? (
           <span

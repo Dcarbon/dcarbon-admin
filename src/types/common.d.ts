@@ -36,3 +36,9 @@ interface IUploadMetadataResponse {
 interface IMyCountry extends Country {
   id: string;
 }
+
+interface ICoefficient {
+  key: string;
+  value: number;
+  isOnChain?: boolean;
+}
