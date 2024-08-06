@@ -49,7 +49,7 @@ const UpdatePo = () => {
     onSuccess: () => {
       queryClient
         .invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_PO, param.id],
+          queryKey: [QUERY_KEYS.GET_PO],
         })
         .then();
       myNotification({

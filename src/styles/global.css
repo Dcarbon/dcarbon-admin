@@ -80,6 +80,14 @@ button {
   transition: border-color 0.25s;
 }
 
+.primary-color-600 {
+  color: #5daf01;
+}
+
+.neutral-color-400 {
+  color: #a8a8a8;
+}
+
 /* Sidebar */
 .ant-layout-sider-children {
   padding: 0 10px;
@@ -370,6 +378,21 @@ button {
 /* Not Found Layout */
 .not-found-layout {
   height: 100vh;
+  margin: 0 auto;
+  background-color: #e4e4e4;
+}
+
+.not-found-layout h1,
+h2 {
+  margin: 0 !important;
+}
+
+.not-found-layout h1 {
+  font-size: 7rem;
+}
+
+.not-found-layout h2 {
+  font-size: 3rem;
 }
 
 /* Footer */
@@ -508,6 +531,56 @@ textarea {
 /* Project Dashboard */
 .project-dashboard {
   padding: 10px;
+}
+
+.project-dashboard .ant-card {
+  box-shadow: 7px 7px 10px 0 #f1f1f1;
+}
+
+/* Dashboard Project Value */
+.dashboard-project-value {
+  font-size: 48px;
+  font-weight: 600;
+}
+
+/* Dashboard Statistic */
+.dashboard-statistic {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dashboard-statistic .ant-statistic-content {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-total-project .ant-typography {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dashboard-project-row .ant-typography {
+  margin: 0;
+}
+
+.dashboard-project-row .ant-typography-secondary {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dashboard-project-row .dashboard-project-link {
+  font-size: 15px;
+  font-weight: 500;
+  color: #019dab !important;
+}
+
+.dashboard-project-row .project-column-item {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
 }
 
 /* Ant Notification Notice Message */
