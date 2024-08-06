@@ -57,6 +57,10 @@ const ERROR_CONTRACT = {
         message: 'Input invalid',
         description: 'Collect Fee Wallet equals current value',
       },
+      COEFFICIENT_INVALID: {
+        message: 'Input invalid',
+        description: 'Coefficient invalid',
+      },
     },
   },
 };
