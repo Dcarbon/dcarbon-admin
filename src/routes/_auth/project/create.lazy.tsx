@@ -12,9 +12,10 @@ import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import useBackAction from '@/utils/helpers/back-action';
 import { PlusOutlined } from '@ant-design/icons';
+import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
-import { Col, Flex, Form, Select, Upload } from 'antd';
+import { Col, Flex, Form, Row, Select, Upload } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
@@ -221,7 +222,6 @@ const CreateProject = memo(() => {
                 </Upload>
               </Form.Item>
             </Form.Item>
-
             <Flex>
               <Form.Item
                 label="Power"
@@ -242,6 +242,47 @@ const CreateProject = memo(() => {
                 <MyInputTextArea rows={5} placeholder="Ex: {'key':'value'}" />
               </Form.Item>
             </Flex>
+            <Row style={{ margin: '16px 0px' }}>
+              <Col span={24}>
+                <Form.Item label="Mint Schedule" required={true}>
+                  <Form.Item
+                    name="mint_schedule"
+                    style={{
+                      display: 'inline-block',
+                      width: 'calc(50% - 8px)',
+                      marginRight: '8px',
+                    }}
+                  >
+                    <MySelect
+                      placeholder="Schedule type"
+                      onSelect={(e) => {
+                        const match = MINT_SCHEDULE_TYPE.find(
+                          (info) => info.type === e,
+                        );
+                        if (match) {
+                          form.setFieldValue('mint_schedule_time', match.time);
+                        }
+                      }}
+                    >
+                      {MINT_SCHEDULE_TYPE.map((item) => (
+                        <Select.Option key={item.type} value={item.type}>
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                    </MySelect>
+                  </Form.Item>
+                  <Form.Item
+                    name="mint_schedule_time"
+                    style={{
+                      display: 'inline-block',
+                      width: 'calc(50% - 8px)',
+                    }}
+                  >
+                    <MyInput viewMode disabled />
+                  </Form.Item>
+                </Form.Item>
+              </Col>
+            </Row>
             <Form.Item
               label="Description"
               name="description"

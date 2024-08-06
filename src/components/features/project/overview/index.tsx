@@ -13,6 +13,7 @@ import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import './overview.css';
 
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
+import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 import ImageGallery from '../image-gallery';
@@ -133,6 +134,23 @@ const OverView = memo(({ data }: { data: IProject }) => {
                   <span>{data.type.name}</span>
                 </Flex>
               </Space>
+            </Descriptions.Item>
+            <Descriptions.Item label="Minting Schedule">
+              {(() => {
+                const match = MINT_SCHEDULE_TYPE.find(
+                  (info) => info.type === data.mint_schedule,
+                );
+                return match ? (
+                  <span>
+                    <span style={{ fontWeight: '500' }}>{match.name}</span>{' '}
+                    <span style={{ fontSize: '.9em', color: 'gray' }}>
+                      ({match.time})
+                    </span>
+                  </span>
+                ) : (
+                  'Unset'
+                );
+              })()}
             </Descriptions.Item>
           </Descriptions>
           {data.location.iframe ? (
