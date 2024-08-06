@@ -2,11 +2,6 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 import { request } from '@/adapters/xhr';
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import Quill from 'quill';
-import BlotFormatter, {
-  AlignAction,
-  DeleteAction,
-  ImageSpec,
-} from 'quill-blot-formatter';
 import ImageUploader from 'quill-image-uploader';
 import ReactQuill from 'react-quill';
 
@@ -27,7 +22,6 @@ interface QuillEditorProps {
   onChange?: (value: string) => void;
 }
 Quill.register('modules/imageUploader', ImageUploader);
-Quill.register('modules/blotFormatter', BlotFormatter);
 
 interface IUpload {
   id: string;
@@ -39,18 +33,13 @@ interface IUpload {
     }[];
   }[];
 }
-class CustomImageSpec extends ImageSpec {
-  getActions() {
-    return [AlignAction, DeleteAction];
-  }
-}
+
 const QuillEditor = ({ value, onChange, style }: QuillEditorProps) => {
   const [editorHtml, setEditorHtml] = useState('');
   if (typeof window !== 'undefined') {
     window.Quill = Quill;
   }
   const handleChange = useCallback((html: string) => {
-    console.info(html);
     setEditorHtml(html);
     if (onChange) {
       onChange(html);
@@ -136,9 +125,6 @@ QuillEditor.modules = {
   },
   clipboard: {
     matchVisual: false,
-  },
-  blotFormatter: {
-    specs: [CustomImageSpec],
   },
 };
 
