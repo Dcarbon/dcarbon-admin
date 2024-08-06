@@ -1,4 +1,5 @@
 import { request } from '@adapters/xhr.ts';
+import { IMintInput } from '@/types/mint';
 import { API_ROUTES, REQ_METHODS } from '@utils/constants';
 
 const mintSNFT = async (data: IMintInput) => {

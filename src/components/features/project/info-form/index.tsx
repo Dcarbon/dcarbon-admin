@@ -4,6 +4,7 @@ import MyInputNumber from '@/components/common/input/my-input-number';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import { EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
+import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { useQuery } from '@tanstack/react-query';
 import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
 import { createStyles } from 'antd-style';
@@ -12,6 +13,8 @@ import ReactCountryFlag from 'react-country-flag';
 import { IProject } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import MyInput from '@components/common/input/my-input.tsx';
+import MySelect from '@components/common/input/my-select.tsx';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 type InfoFormProps = {
@@ -78,6 +81,12 @@ const ProjectInfoForm = memo(
               return data.specs ? JSON.stringify(data.specs) : undefined;
             })(),
             po_id: data.manager.id,
+            mint_schedule_time: (() => {
+              const match = MINT_SCHEDULE_TYPE.find(
+                (info) => info.type === data.mint_schedule,
+              );
+              return match ? match.time : 'Unknown';
+            })(),
           }}
           onFinish={(values) => {
             Object.keys(values).forEach((key) => {
@@ -125,6 +134,9 @@ const ProjectInfoForm = memo(
             ) {
               //
             } else delete values.location;
+            if (values.mint_schedule === data.mint_schedule) {
+              delete values.mint_schedule;
+            }
             onFinish(values);
           }}
         >
@@ -244,6 +256,43 @@ const ProjectInfoForm = memo(
               </Form.Item>
               <Form.Item label="Spec" name="spec">
                 <Input.TextArea />
+              </Form.Item>
+              <Form.Item label="Mint Schedule" required={true}>
+                <Form.Item
+                  name="mint_schedule"
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                    marginRight: '8px',
+                  }}
+                >
+                  <MySelect
+                    placeholder="Schedule type"
+                    onSelect={(e) => {
+                      const match = MINT_SCHEDULE_TYPE.find(
+                        (info) => info.type === e,
+                      );
+                      if (match) {
+                        form.setFieldValue('mint_schedule_time', match.time);
+                      }
+                    }}
+                  >
+                    {MINT_SCHEDULE_TYPE.map((item) => (
+                      <Select.Option key={item.type} value={item.type}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </MySelect>
+                </Form.Item>
+                <Form.Item
+                  name="mint_schedule_time"
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                  }}
+                >
+                  <MyInput viewMode disabled />
+                </Form.Item>
               </Form.Item>
             </Col>
           </Flex>

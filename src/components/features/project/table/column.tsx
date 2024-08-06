@@ -1,3 +1,5 @@
+import { EMintScheduleType } from '@/enums';
+import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { Link } from '@tanstack/react-router';
 import { Space, TableColumnsType, Tag } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
@@ -31,6 +33,34 @@ const renderTag = (data: string) => {
     </Tag>
   );
 };
+const renderMintingSchedule = (data: EMintScheduleType) => {
+  let color = 'red';
+  const match = MINT_SCHEDULE_TYPE.find((info) => info.type === data);
+  const text = match ? match.name : 'Unset';
+  switch (data) {
+    case EMintScheduleType.WEEKLY:
+      color = 'orange';
+      break;
+    case EMintScheduleType.MONTHLY:
+      color = 'purple';
+      break;
+    case EMintScheduleType.DAILY:
+      color = 'green';
+      break;
+  }
+  return (
+    <Tag
+      color={color}
+      style={{
+        minWidth: '63px',
+        textAlign: 'center',
+        fontSize: '12px',
+      }}
+    >
+      {text}
+    </Tag>
+  );
+};
 const PoColumn = () => {
   const columns: TableColumnsType<ProjectList> = [
     {
@@ -52,6 +82,14 @@ const PoColumn = () => {
             {location?.name ? `, ${location?.name}` : ''}
           </SpanOneLine>
         ),
+    },
+    {
+      title: 'Minting Schedule',
+      width: 170,
+      dataIndex: 'mint_schedule',
+      render: (mintSchedule) => (
+        <span>{renderMintingSchedule(mintSchedule)}</span>
+      ),
     },
     {
       title: 'Status',
