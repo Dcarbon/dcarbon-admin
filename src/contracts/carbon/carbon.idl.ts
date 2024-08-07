@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
-
 export const CARBON_IDL = {
   address: import.meta.env.VITE_CARBON_PROGRAM_ID,
   metadata: {
