@@ -291,7 +291,7 @@ export const CARBON_IDL = {
         },
         {
           name: 'program',
-          address: import.meta.env.VITE_CARBON_PROGRAM_ID,
+          address: process.env.CONTRACT_CARBON_PROGRAM_ID,
         },
         {
           name: 'program_data',
@@ -467,25 +467,6 @@ export const CARBON_IDL = {
         {
           name: 'owner_ata',
           writable: true,
-        },
-        {
-          name: 'device',
-          pda: {
-            seeds: [
-              {
-                kind: 'const',
-                value: [100, 101, 118, 105, 99, 101],
-              },
-              {
-                kind: 'arg',
-                path: 'mint_sft_args.project_id',
-              },
-              {
-                kind: 'arg',
-                path: 'mint_sft_args.device_id',
-              },
-            ],
-          },
         },
         {
           name: 'device_status',
