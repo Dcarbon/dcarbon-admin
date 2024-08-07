@@ -66,8 +66,8 @@ const ContractConfig = () => {
       if (data) {
         setLoading(false);
         configRef.current?.triggerSetConfig({
-          rate: data.rate.toNumber(),
-          mint_fee: data.mintingFee.toNumber(), // FIXME: mock data
+          rate: data.rate,
+          mint_fee: data.mintingFee, // FIXME: mock data
           collect_fee_wallet: 'Fxu7o9k8BKKAJyD94UfESH9sMrEFtoXtRRbQiiUFD1pv',
           device_limit: data.mintingLimits.map((info) => {
             return {
@@ -161,7 +161,7 @@ const ContractConfig = () => {
       } else if (config.type === 'coefficient') {
         instructions = await program.methods
           .setCoefficient(
-            new PublicKey(config.coefficient?.key || ''),
+            config.coefficient?.key,
             new BN(Number(config.coefficient?.value)),
           )
           .accounts({
