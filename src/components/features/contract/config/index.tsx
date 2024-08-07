@@ -115,7 +115,7 @@ const ContractConfig = () => {
         }),
       );
       return coefficients.filter(
-        (info) => info.key !== '111111111111111111111111Ahg1opVcGX',
+        (info) => info.key !== '' && info.key !== '\x00',
       );
     } catch (e) {
       console.error(e);
@@ -139,14 +139,14 @@ const ContractConfig = () => {
       let instructions: TransactionInstruction | undefined;
       if (config.type == 'mint_fee' && config.mint_fee) {
         instructions = await program.methods
-          .setMintingFee(new BN(Number(config.mint_fee)))
+          .setMintingFee(Number(config.mint_fee))
           .accounts({
             signer: publicKey,
           })
           .instruction();
       } else if (config.type == 'rate' && config.rate) {
         instructions = await program.methods
-          .setRate(new BN(Number(config.rate)))
+          .setRate(Number(config.rate))
           .accounts({
             signer: publicKey,
           })

@@ -220,10 +220,10 @@ const ConfigScreen = memo(
                             disabled={
                               (loading || !!config?.mint_fee) && !isEdit
                             }
-                            // min={0}
-                            // precision={4}
-                            // step={0.1}
-                            // max={0.99}
+                            min={0}
+                            precision={4}
+                            step={0.1}
+                            max={0.99}
                           />
                         </Form.Item>
                         {isEdit && (
@@ -271,6 +271,10 @@ const ConfigScreen = memo(
                               (loading || !!config?.collect_fee_wallet) &&
                               !isEdit
                             }
+                            min={0}
+                            precision={4}
+                            step={0.1}
+                            max={0.99}
                           />
                         </Form.Item>
                         {isEdit && (
