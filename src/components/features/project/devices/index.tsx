@@ -273,6 +273,9 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
       device_ids: selectedDevice?.map((device) => device) || [],
     });
   };
+  const triggerRefetch = () => {
+    setRefetch((prevState) => prevState + 1);
+  };
   return (
     <>
       <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
@@ -321,7 +324,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
             connection={connection}
             wallet={wallet}
             publicKey={publicKey}
-            refetch={() => setRefetch((prevState) => prevState + 1)}
+            refetch={triggerRefetch}
           />
         </Modal>
       )}

@@ -84,6 +84,7 @@ const DeviceSetting = memo(
         });
         form.resetFields();
         closeSettingModel(undefined);
+        refetch();
       },
       onError: (err: any) => {
         myNotification({
