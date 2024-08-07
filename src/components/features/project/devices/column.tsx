@@ -246,7 +246,9 @@ const ProjectDevicesColumn = ({
           <Skeleton.Button style={{ height: '25px' }} active />
         ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
           <span>
-            {match ? new Date(match.time * 1000).toLocaleString('vi-VN') : ''}
+            {match && match.time > 0
+              ? new Date(match.time * 1000).toLocaleString('vi-VN')
+              : ''}
           </span>
         ) : (
           ''

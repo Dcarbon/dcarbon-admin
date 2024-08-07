@@ -165,6 +165,7 @@ const DeviceSetting = memo(
         form.setFieldsValue({
           ...initData,
           nonce_test: nonce + 1,
+          active: isActive,
         });
         setLoading(false);
       }
