@@ -61,18 +61,10 @@ export type ICarbonContract = {
         {
           name: 'tokenListingInfo';
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [109, 97, 114, 107, 101, 116, 112, 108, 97, 99, 101];
-              },
-              {
-                kind: 'account';
-                path: 'mint';
-              },
-            ];
-          };
+        },
+        {
+          name: 'tokenOwner';
+          writable: true;
         },
         {
           name: 'marketplaceDelegate';
@@ -92,11 +84,15 @@ export type ICarbonContract = {
         {
           name: 'tokenProgram';
         },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
       ];
       args: [
         {
           name: 'amount';
-          type: 'u64';
+          type: 'f64';
         },
       ];
     },
@@ -822,7 +818,7 @@ export type ICarbonContract = {
         },
         {
           name: 'limit';
-          type: 'u16';
+          type: 'f64';
         },
       ];
     },
@@ -1064,6 +1060,10 @@ export type ICarbonContract = {
       code: 6009;
       name: 'notMintTime';
     },
+    {
+      code: 6010;
+      name: 'notEnoughAmount';
+    },
   ];
   types: [
     {
@@ -1093,7 +1093,7 @@ export type ICarbonContract = {
           },
           {
             name: 'amount';
-            type: 'u64';
+            type: 'f64';
           },
           {
             name: 'projectId';
@@ -1133,7 +1133,7 @@ export type ICarbonContract = {
           },
           {
             name: 'governanceAmount';
-            type: 'u64';
+            type: 'f64';
           },
         ];
       };
@@ -1167,7 +1167,7 @@ export type ICarbonContract = {
           },
           {
             name: 'governanceAmount';
-            type: 'u64';
+            type: 'f64';
           },
         ];
       };
@@ -1237,7 +1237,7 @@ export type ICarbonContract = {
           },
           {
             name: 'limit';
-            type: 'u16';
+            type: 'f64';
           },
         ];
       };
@@ -1277,7 +1277,7 @@ export type ICarbonContract = {
           },
           {
             name: 'amount';
-            type: 'u64';
+            type: 'f64';
           },
         ];
       };
@@ -1289,11 +1289,11 @@ export type ICarbonContract = {
         fields: [
           {
             name: 'amount';
-            type: 'u64';
+            type: 'f64';
           },
           {
             name: 'price';
-            type: 'u64';
+            type: 'f64';
           },
           {
             name: 'projectId';
@@ -1302,6 +1302,12 @@ export type ICarbonContract = {
           {
             name: 'nonce';
             type: 'u32';
+          },
+          {
+            name: 'currency';
+            type: {
+              option: 'pubkey';
+            };
           },
         ];
       };
@@ -1353,7 +1359,7 @@ export type ICarbonContract = {
           },
           {
             name: 'totalAmount';
-            type: 'u64';
+            type: 'f64';
           },
         ];
       };
@@ -1401,15 +1407,25 @@ export type ICarbonContract = {
           },
           {
             name: 'amount';
-            type: 'u64';
+            type: 'f64';
           },
           {
             name: 'price';
-            type: 'u64';
+            type: 'f64';
           },
           {
             name: 'projectId';
             type: 'u16';
+          },
+          {
+            name: 'nonce';
+            type: 'u32';
+          },
+          {
+            name: 'currency';
+            type: {
+              option: 'pubkey';
+            };
           },
         ];
       };
