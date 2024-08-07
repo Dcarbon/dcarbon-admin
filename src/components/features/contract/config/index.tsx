@@ -68,7 +68,7 @@ const ContractConfig = () => {
         configRef.current?.triggerSetConfig({
           rate: data.rate,
           mint_fee: data.mintingFee, // FIXME: mock data
-          collect_fee_wallet: 'Fxu7o9k8BKKAJyD94UfESH9sMrEFtoXtRRbQiiUFD1pv',
+          collect_fee_wallet: 'FjMxh8u7VxzhFN8KHGYZFNWxcE71rVVvxyzZcUYwMobx',
           device_limit: data.mintingLimits.map((info) => {
             return {
               device_type: info.deviceType,
