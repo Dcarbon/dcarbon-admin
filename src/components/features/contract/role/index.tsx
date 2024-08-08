@@ -19,7 +19,7 @@ import AdminContainer from '@components/features/contract/role/admin/admin.conta
 import MasterScreen from '@components/features/contract/role/master/master.screen.tsx';
 import { IContractUser } from '@components/features/contract/role/role.interface.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IMasterRef {
   setMaster: (master: IContractUser) => void;
@@ -41,15 +41,8 @@ const ContractRole = memo(() => {
   const [refetch, setRefetch] = useState(0);
   const getMaster = async (): Promise<string | undefined> => {
     try {
-      if (!anchorWallet || !connection) {
-        return;
-      }
       setLoading(true);
-      const provider = new AnchorProvider(connection, anchorWallet);
-      const program = new Program<ICarbonContract>(
-        CARBON_IDL as ICarbonContract,
-        provider,
-      );
+      const program = getProgram(connection);
       const [masterPda] = PublicKey.findProgramAddressSync(
         [Buffer.from('master')],
         program.programId,
@@ -116,37 +109,21 @@ const ContractRole = memo(() => {
     <>
       {' '}
       <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
-      <CenterContentLayout
-        contentWidth={!connection || !anchorWallet ? '50%' : '480px'}
-        vertical
-      >
-        {!connection || !anchorWallet ? (
-          <span
-            style={{
-              fontSize: '24px',
-              fontWeight: '500',
-              color: 'orange',
-              textAlign: 'center',
-            }}
-          >
-            You need to connect your wallet to continue!
-          </span>
-        ) : (
-          <Flex vertical>
-            <MasterScreen
-              loading={loading}
-              ref={masterRef}
-              currentWallet={anchorWallet?.publicKey.toString()}
-              triggerTransferMaster={triggerTransferMaster}
-            />
-            <AdminContainer
-              connection={connection}
-              anchorWallet={anchorWallet}
-              ref={adminRef}
-              currentWallet={anchorWallet?.publicKey.toString()}
-            />
-          </Flex>
-        )}
+      <CenterContentLayout contentWidth={'480px'} vertical>
+        <Flex vertical>
+          <MasterScreen
+            loading={loading}
+            ref={masterRef}
+            currentWallet={anchorWallet?.publicKey.toString()}
+            triggerTransferMaster={triggerTransferMaster}
+          />
+          <AdminContainer
+            connection={connection}
+            anchorWallet={anchorWallet}
+            ref={adminRef}
+            currentWallet={anchorWallet?.publicKey.toString()}
+          />
+        </Flex>
       </CenterContentLayout>
     </>
   );

@@ -17,7 +17,7 @@ import TxModal from '@components/common/modal/tx-modal.tsx';
 import AdminScreen from '@components/features/contract/role/admin/admin.screen.tsx';
 import { IContractUser } from '@components/features/contract/role/role.interface.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IRef {
   setAdministrators: (admins: IContractUser[]) => void;
@@ -25,7 +25,7 @@ interface IRef {
 
 interface IProps {
   connection: Connection;
-  anchorWallet: AnchorWallet;
+  anchorWallet?: AnchorWallet;
   currentWallet?: string;
 }
 
@@ -45,15 +45,8 @@ const AdminContainer = memo(
     }));
     const getAdministrators = async (): Promise<string | undefined> => {
       try {
-        if (!anchorWallet || !connection || !masterWallet) {
-          return;
-        }
         setLoading(true);
-        const provider = new AnchorProvider(connection, anchorWallet);
-        const program = new Program<ICarbonContract>(
-          CARBON_IDL as ICarbonContract,
-          provider,
-        );
+        const program = getProgram(connection);
         const data = await connection.getProgramAccounts(program.programId, {
           dataSlice: { offset: 8, length: 32 },
           filters: [

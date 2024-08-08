@@ -20,7 +20,7 @@ import TxModal from '@components/common/modal/tx-modal.tsx';
 import { IDeviceSettingState } from '@components/features/project/devices/column.tsx';
 import { QUERY_KEYS } from '@utils/constants';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IProps {
   projectId: string;
@@ -99,16 +99,8 @@ const DeviceSetting = memo(
       let isActive = false;
       let nonce = 0;
       try {
-        if (!anchorWallet || !connection || !publicKey || !wallet) {
-          myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
-          return;
-        }
         setLoading(true);
-        const provider = new AnchorProvider(connection, anchorWallet);
-        const program = new Program<ICarbonContract>(
-          CARBON_IDL as ICarbonContract,
-          provider,
-        );
+        const program = getProgram(connection);
         const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
           [
             Buffer.from('device'),
@@ -264,197 +256,181 @@ const DeviceSetting = memo(
       <>
         {' '}
         <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
-        {!connection || !anchorWallet ? (
-          <span
-            style={{
-              fontSize: '18px',
-              fontWeight: '500',
-              color: 'orange',
-              textAlign: 'center',
-            }}
-          >
-            You need to connect your wallet to continue!
-          </span>
-        ) : (
-          <Form
-            form={form}
-            layout="vertical"
-            style={{ width: '100%', marginTop: '30px' }}
-            onFinish={(values) => submitSetting(values)}
-          >
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Form.Item
-                label="Project ID"
-                name="project_id"
-                initialValue={projectId}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-              >
-                <SkeletonInput loading={loading} disabled />
-              </Form.Item>
-              <Form.Item
-                label="Device ID"
-                name="device_id"
-                initialValue={device?.id}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{
-                  display: 'inline-block',
-                  width: 'calc(50%)',
-                  margin: '0px 0px 0px 8px',
-                }}
-              >
-                <SkeletonInput loading={loading} disabled />
-              </Form.Item>
-            </Form.Item>
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Form.Item
-                label="Minting Limit"
-                name="mingting_limit"
-                rules={[
-                  {
-                    required: true,
-                    message: (
-                      <span>
-                        Need to <Link to={'/contract?tab=3'}>setting</Link>{' '}
-                        minting limit
-                      </span>
-                    ),
-                  },
-                ]}
-                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-              >
-                <SkeletonInput loading={loading || isLoading} disabled />
-              </Form.Item>
-              <Form.Item
-                label="Device Type"
-                name="device_type"
-                initialValue={device?.type?.id}
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-                style={{
-                  display: 'inline-block',
-                  width: 'calc(50%)',
-                  margin: '0px 0px 0px 8px',
-                }}
-              >
-                <SkeletonInput loading={loading} disabled />
-              </Form.Item>
-            </Form.Item>
-            <Form.Item label="Active" name="active">
-              <Switch
-                defaultChecked={activeDevices?.includes(device.id)}
-                loading={loading || isLoading}
-                disabled={
-                  form.getFieldValue('isOnChainSetting') ||
-                  form.getFieldValue('currentActive')
-                }
-              />
-            </Form.Item>
+        <Form
+          form={form}
+          layout="vertical"
+          style={{ width: '100%', marginTop: '30px' }}
+          onFinish={(values) => submitSetting(values)}
+        >
+          <Form.Item style={{ marginBottom: 0 }}>
             <Form.Item
-              label="Owner"
-              name="owner"
-              initialValue={owner}
+              label="Project ID"
+              name="project_id"
+              initialValue={projectId}
               rules={[
                 {
                   required: true,
                 },
               ]}
+              style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
             >
-              <SkeletonInput
-                disabled
-                loading={loading}
-                placeholder={'Enter Owner address'}
-              />
+              <SkeletonInput loading={loading} disabled />
             </Form.Item>
             <Form.Item
-              label="Minter"
-              name="minter"
+              label="Device ID"
+              name="device_id"
+              initialValue={device?.id}
               rules={[
                 {
                   required: true,
                 },
               ]}
+              style={{
+                display: 'inline-block',
+                width: 'calc(50%)',
+                margin: '0px 0px 0px 8px',
+              }}
             >
-              <SkeletonInput
-                loading={loading}
-                disabled
-                placeholder={'Enter Minter address'}
-              />
+              <SkeletonInput loading={loading} disabled />
             </Form.Item>
-            {form.getFieldValue('isOnChainSetting') && (
-              <div
-                style={{
-                  backgroundColor: '#ff000017',
-                  padding: '10px 20px 20px 20px',
-                  borderRadius: '4px',
-                }}
-              >
-                <label style={{ fontWeight: '500' }}>Minting (Test only)</label>
-                <Form.Item style={{ marginBottom: 0 }}>
-                  <Form.Item
-                    label="Nonce"
-                    name="nonce_test"
-                    style={{
-                      display: 'inline-block',
-                      width: 'calc(50% - 8px)',
-                    }}
-                  >
-                    <SkeletonInput loading={loading} disabled />
-                  </Form.Item>
-                  <Form.Item
-                    label="Amount"
-                    name="amount_test"
-                    style={{
-                      display: 'inline-block',
-                      width: 'calc(50%)',
-                      margin: '0px 0px 0px 8px',
-                    }}
-                  >
-                    <SkeletonInput
-                      loading={loading}
-                      disabled={mintingLoading}
-                    />
-                  </Form.Item>
-                </Form.Item>
-                <Form.Item name="mint_time" label="Minting time" {...config}>
-                  <MyDatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-                </Form.Item>
-              </div>
-            )}
-            <Flex justify={'center'} style={{ marginTop: '30px' }}>
-              <SubmitButton
-                htmlType="submit"
-                icon={<FormOutlined />}
-                disabled={
-                  loading || form.getFieldValue('isOnChainSetting') || isLoading
-                }
-              >
-                Register
-              </SubmitButton>
-              {form.getFieldValue('isOnChainSetting') && (
-                <CancelButton
-                  style={{ marginLeft: '5px', color: 'red !important' }}
-                  loading={mintingLoading}
-                  disabled={loading || isLoading || mintingLoading}
-                  onClick={() => mint()}
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Form.Item
+              label="Minting Limit"
+              name="mingting_limit"
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <span>
+                      Need to <Link to={'/contract?tab=3'}>setting</Link>{' '}
+                      minting limit
+                    </span>
+                  ),
+                },
+              ]}
+              style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+            >
+              <SkeletonInput loading={loading || isLoading} disabled />
+            </Form.Item>
+            <Form.Item
+              label="Device Type"
+              name="device_type"
+              initialValue={device?.type?.id}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{
+                display: 'inline-block',
+                width: 'calc(50%)',
+                margin: '0px 0px 0px 8px',
+              }}
+            >
+              <SkeletonInput loading={loading} disabled />
+            </Form.Item>
+          </Form.Item>
+          <Form.Item label="Active" name="active">
+            <Switch
+              defaultChecked={activeDevices?.includes(device.id)}
+              loading={loading || isLoading}
+              disabled={
+                form.getFieldValue('isOnChainSetting') ||
+                form.getFieldValue('currentActive')
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            label="Owner"
+            name="owner"
+            initialValue={owner}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <SkeletonInput
+              disabled
+              loading={loading}
+              placeholder={'Enter Owner address'}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Minter"
+            name="minter"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <SkeletonInput
+              loading={loading}
+              disabled
+              placeholder={'Enter Minter address'}
+            />
+          </Form.Item>
+          {form.getFieldValue('isOnChainSetting') && (
+            <div
+              style={{
+                backgroundColor: '#ff000017',
+                padding: '10px 20px 20px 20px',
+                borderRadius: '4px',
+              }}
+            >
+              <label style={{ fontWeight: '500' }}>Minting (Test only)</label>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Form.Item
+                  label="Nonce"
+                  name="nonce_test"
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                  }}
                 >
-                  Mint (Test only)
-                </CancelButton>
-              )}
-            </Flex>
-          </Form>
-        )}
+                  <SkeletonInput loading={loading} disabled />
+                </Form.Item>
+                <Form.Item
+                  label="Amount"
+                  name="amount_test"
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50%)',
+                    margin: '0px 0px 0px 8px',
+                  }}
+                >
+                  <SkeletonInput loading={loading} disabled={mintingLoading} />
+                </Form.Item>
+              </Form.Item>
+              <Form.Item name="mint_time" label="Minting time" {...config}>
+                <MyDatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+              </Form.Item>
+            </div>
+          )}
+          <Flex justify={'center'} style={{ marginTop: '30px' }}>
+            <SubmitButton
+              htmlType="submit"
+              icon={<FormOutlined />}
+              disabled={
+                loading || form.getFieldValue('isOnChainSetting') || isLoading
+              }
+            >
+              Register
+            </SubmitButton>
+            {form.getFieldValue('isOnChainSetting') && (
+              <CancelButton
+                style={{ marginLeft: '5px', color: 'red !important' }}
+                loading={mintingLoading}
+                disabled={loading || isLoading || mintingLoading}
+                onClick={() => mint()}
+              >
+                Mint (Test only)
+              </CancelButton>
+            )}
+          </Flex>
+        </Form>
       </>
     );
   },

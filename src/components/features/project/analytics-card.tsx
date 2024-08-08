@@ -3,11 +3,19 @@ import { Card, Col, Flex, Space, Typography } from 'antd';
 
 interface IGeneralData {
   data: number;
+  warning?: string;
   img: string;
   title: string;
   currency?: string;
 }
-const AnalyticsCard = ({ data, img, title, currency }: IGeneralData) => {
+
+const AnalyticsCard = ({
+  data,
+  img,
+  title,
+  currency,
+  warning,
+}: IGeneralData) => {
   return (
     <Col xxl={7} md={12}>
       <Card className="analytics-card">
@@ -18,7 +26,13 @@ const AnalyticsCard = ({ data, img, title, currency }: IGeneralData) => {
           </Space>
           <Space size={10} align="baseline">
             <span className="primary-color-600 dashboard-project-value">
-              {formatByEnUsNum(data)}
+              {warning ? (
+                <span style={{ fontSize: '14px', color: 'orange' }}>
+                  {warning}
+                </span>
+              ) : (
+                formatByEnUsNum(data)
+              )}
             </span>
             {currency ? (
               <Typography.Title

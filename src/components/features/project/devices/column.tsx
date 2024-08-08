@@ -45,7 +45,7 @@ export interface IDeviceSettingState {
 }
 
 interface IProps {
-  openSetting: (device: IDeviceSettingState) => void;
+  openSetting: (device: IDeviceSettingState, mode?: string) => void;
   active: (id: string, status: boolean) => void;
   loadingActive?: string;
   onChainSetting: IOnChainSettingProps;
@@ -65,7 +65,6 @@ const ProjectDevicesColumn = ({
   active,
   loadingActive,
   onChainSetting,
-  connectWallet,
 }: IProps) => {
   const renderTag = (data: TIotDeviceStatus) => {
     let color = 'orange';
@@ -142,15 +141,6 @@ const ProjectDevicesColumn = ({
         </Tooltip>
       ),
       render: (device: DeviceDataType) => {
-        if (!connectWallet) {
-          return (
-            <Tooltip title={'Connect wallet to display data'}>
-              <ExclamationCircleOutlined
-                style={{ color: 'orange', fontSize: '18px' }}
-              />
-            </Tooltip>
-          );
-        }
         return onChainSetting?.isLoading ? (
           <Skeleton.Button style={{ height: '25px' }} active />
         ) : (
@@ -191,15 +181,6 @@ const ProjectDevicesColumn = ({
         </Tooltip>
       ),
       render: (device: DeviceDataType) => {
-        if (!connectWallet) {
-          return (
-            <Tooltip title={'Connect wallet to display data'}>
-              <ExclamationCircleOutlined
-                style={{ color: 'orange', fontSize: '18px' }}
-              />
-            </Tooltip>
-          );
-        }
         const match = onChainSetting?.nonceInfo?.find(
           (info) => info.deviceId === device.iot_device_id,
         );
@@ -230,15 +211,6 @@ const ProjectDevicesColumn = ({
         </Tooltip>
       ),
       render: (device: DeviceDataType) => {
-        if (!connectWallet) {
-          return (
-            <Tooltip title={'Connect wallet to display data'}>
-              <ExclamationCircleOutlined
-                style={{ color: 'orange', fontSize: '18px' }}
-              />
-            </Tooltip>
-          );
-        }
         const match = onChainSetting?.lastMintTime?.find(
           (info) => info.deviceId === device.iot_device_id,
         );
@@ -265,15 +237,6 @@ const ProjectDevicesColumn = ({
         </Tooltip>
       ),
       render: (device: DeviceDataType) => {
-        if (!connectWallet) {
-          return (
-            <Tooltip title={'Connect wallet to display data'}>
-              <ExclamationCircleOutlined
-                style={{ color: 'orange', fontSize: '18px' }}
-              />
-            </Tooltip>
-          );
-        }
         return onChainSetting?.isLoading ? (
           <Skeleton.Button style={{ height: '25px' }} active />
         ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
@@ -292,13 +255,16 @@ const ProjectDevicesColumn = ({
           {onChainSetting.registerDevices.includes(device.iot_device_id) ? (
             <Link
               onClick={() =>
-                openSetting({
-                  id: device.iot_device_id.toString(),
-                  type: {
-                    id: device.device_type.id,
-                    name: device.device_name,
+                openSetting(
+                  {
+                    id: device.iot_device_id.toString(),
+                    type: {
+                      id: device.device_type.id,
+                      name: device.device_name,
+                    },
                   },
-                })
+                  'view',
+                )
               }
             >
               View

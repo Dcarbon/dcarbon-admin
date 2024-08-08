@@ -43,8 +43,15 @@ const logger = ({
   }
 };
 
-const truncateText = (text: string) => {
+const truncateText = (text: string, isString = false) => {
   if (!text) return '';
+  if (isString) {
+    return (
+      text.substring(0, 10) +
+      '...' +
+      text.substring(text.length - 6, text.length)
+    );
+  }
   return (
     <p style={{ cursor: 'pointer', marginBottom: '0' }}>
       <Tooltip title={text}>
@@ -92,6 +99,13 @@ function getAvailableCountries(): Country[] {
   );
 }
 
+function u16ToBytes(value: number): Uint8Array {
+  const buffer = new ArrayBuffer(2); // u16 cần 2 bytes
+  const view = new DataView(buffer);
+  view.setUint16(0, value, true); // true để lưu theo Little Endian, false để lưu theo Big Endian
+  return new Uint8Array(buffer);
+}
+
 export {
   formatByEnUsNum,
   truncateText,
@@ -102,4 +116,5 @@ export {
   getInfoDevice,
   isSolanaWallet,
   getAvailableCountries,
+  u16ToBytes,
 };

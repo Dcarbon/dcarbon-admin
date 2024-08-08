@@ -27,7 +27,7 @@ import ProjectDevicesColumn, {
 import DeviceSetting from '@components/features/project/devices/device-setting.tsx';
 import { QUERY_KEYS } from '@utils/constants';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IProps {
   projectSlug: string;
@@ -67,8 +67,11 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
   const anchorWallet = useAnchorWallet();
   const queryClient = useQueryClient();
   const [myNotification] = useNotification();
-  const openSetting = (device: IDeviceSettingState) => {
-    if (!anchorWallet || !connection || !publicKey || !wallet) {
+  const openSetting = (device: IDeviceSettingState, mode?: string) => {
+    if (
+      mode !== 'view' &&
+      (!anchorWallet || !connection || !publicKey || !wallet)
+    ) {
       myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
       return;
     }
@@ -128,9 +131,6 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
   };
   const getOnChainSetting = async () => {
     try {
-      if (!anchorWallet || !connection || !publicKey || !wallet) {
-        return;
-      }
       if (!devices || !devices.data || devices.data.length === 0) return;
       setOnChainSetting({
         isLoading: true,
@@ -138,11 +138,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         activeDevices: [],
         nonceInfo: [],
       });
-      const provider = new AnchorProvider(connection, anchorWallet);
-      const program = new Program<ICarbonContract>(
-        CARBON_IDL as ICarbonContract,
-        provider,
-      );
+      const program = getProgram(connection);
       const activeDevices: string[] = [];
       const registerDevices: string[] = [];
       const nonceInfo: { deviceId: string; nonce: number }[] = [];

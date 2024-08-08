@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { carbonForListing, getDashBoardProject } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
 import { getSplToken } from '@adapters/config.ts';
-import Icon from '@ant-design/icons';
+import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import SellIcon from '@icons/sell.icon.tsx';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { Empty, Flex, Row } from 'antd';
+import { Empty, Flex, Row, Tooltip } from 'antd';
+import bs58 from 'bs58';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import ListingForm from '@components/features/project/dashboard/listing-modal.tsx';
+import { truncateText, u16ToBytes } from '@utils/helpers';
+import { getProgram } from '@utils/wallet';
 
 import AnalyticsCard from '../analytics-card';
 import TotalOutputCard from '../total-output-card';
@@ -20,7 +24,9 @@ const SellIc = () => (
 
 const ProjectDashboard = () => {
   const { publicKey } = useWallet();
+  const { connection } = useConnection();
   const [visible, setVisible] = useState(false);
+  const [ownerWallet, setOwnerWallet] = useState('');
   const param = useParams({
     from: '/_auth/project/$slug',
     select: (params) => ({ id: params.slug }),
@@ -34,13 +40,43 @@ const ProjectDashboard = () => {
     queryFn: () => getSplToken(),
   });
   const { data: carbonForList, refetch } = useQuery({
-    queryKey: [QUERY_KEYS.PROJECT.CARBON_FOR_LISTING, param.id],
-    queryFn: () =>
-      carbonForListing(param.id, publicKey?.toString() || undefined),
-    enabled: !!publicKey,
+    queryKey: [QUERY_KEYS.PROJECT.CARBON_FOR_LISTING, param.id, ownerWallet],
+    queryFn: () => carbonForListing(param.id, ownerWallet || undefined),
+    enabled: !!ownerWallet,
   });
+  const projectOwnerWallet = async () => {
+    const program = getProgram(connection);
+    const accounts = await connection.getProgramAccounts(program.programId, {
+      dataSlice: { offset: 0, length: 0 },
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: bs58.encode(
+              CARBON_IDL?.accounts.find(
+                (acc: { name: string; discriminator: number[] }) =>
+                  acc.name === 'Device',
+              )?.discriminator as number[],
+            ),
+          },
+        },
+        {
+          memcmp: {
+            offset: 8 + 2 + 2,
+            bytes: bs58.encode(u16ToBytes(Number(param.id))),
+          },
+        },
+      ],
+    });
+    if (accounts?.length > 0) {
+      const data = await program.account.device.fetch(accounts[0].pubkey);
+      if (data) {
+        setOwnerWallet(data.owner?.toString());
+      }
+    }
+  };
   useEffect(() => {
-    refetch().then();
+    projectOwnerWallet().then();
   }, [publicKey]);
   return (
     <Flex vertical gap={10}>
@@ -52,9 +88,29 @@ const ProjectDashboard = () => {
         refetch={refetch}
       />
       <Flex justify="end">
-        <SubmitButton icon={<SellIc />} onClick={() => setVisible(true)}>
-          Listing
-        </SubmitButton>
+        {ownerWallet && (!publicKey || ownerWallet !== publicKey.toString()) ? (
+          <Tooltip
+            title={<span>Connect wallet {truncateText(ownerWallet)}</span>}
+          >
+            <SubmitButton
+              icon={<ExclamationCircleOutlined />}
+              disabled={!publicKey || ownerWallet !== publicKey.toString()}
+              onClick={() => setVisible(true)}
+            >
+              Listing
+            </SubmitButton>{' '}
+          </Tooltip>
+        ) : (
+          <SubmitButton
+            icon={<SellIc />}
+            disabled={
+              !publicKey || ownerWallet !== publicKey.toString() || !ownerWallet
+            }
+            onClick={() => setVisible(true)}
+          >
+            Listing
+          </SubmitButton>
+        )}
       </Flex>
       {data ? (
         <>

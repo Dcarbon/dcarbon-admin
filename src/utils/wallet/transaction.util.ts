@@ -1,3 +1,6 @@
+import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
+import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
+import { Program } from '@coral-xyz/anchor';
 import { Wallet } from '@solana/wallet-adapter-react';
 import {
   ComputeBudgetProgram,
@@ -134,4 +137,16 @@ const sendTx = async ({
     };
   }
 };
-export { sendTx };
+
+const getProgram = (connect?: Connection): Program<ICarbonContract> => {
+  if (!connect) {
+    connect = new Connection(
+      import.meta.env.VITE_RPC_URL as string,
+      'confirmed',
+    );
+  }
+  return new Program<ICarbonContract>(CARBON_IDL as ICarbonContract, {
+    connection: connect,
+  });
+};
+export { sendTx, getProgram };

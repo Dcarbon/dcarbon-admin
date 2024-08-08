@@ -21,7 +21,7 @@ import ConfigScreen, {
 } from '@components/features/contract/config/config.screen.tsx';
 import { QUERY_KEYS } from '@utils/constants';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IRef {
   triggerSetConfig: (config: IConfig) => void;
@@ -45,16 +45,9 @@ const ContractConfig = () => {
     queryFn: getConfigTokens,
   });
   const getConfig = async () => {
-    if (!anchorWallet || !connection) {
-      return;
-    }
     try {
       setLoading(true);
-      const provider = new AnchorProvider(connection, anchorWallet);
-      const program = new Program<ICarbonContract>(
-        CARBON_IDL as ICarbonContract,
-        provider,
-      );
+      const program = getProgram(connection);
       const [configContract] = PublicKey.findProgramAddressSync(
         [Buffer.from('contract_config')],
         program.programId,
@@ -203,27 +196,14 @@ const ContractConfig = () => {
         align={'start'}
         className={'ft-div'}
       >
-        {!connection || !anchorWallet ? (
-          <span
-            style={{
-              fontSize: '24px',
-              fontWeight: '500',
-              color: 'orange',
-              textAlign: 'center',
-            }}
-          >
-            You need to connect your wallet to continue!
-          </span>
-        ) : (
-          <ConfigScreen
-            loading={loading || deviceTypeLoading}
-            ref={configRef}
-            triggerUpdateConfig={updateConfig}
-            deviceTypes={data}
-            configData={config}
-            configLoading={configLoading}
-          />
-        )}
+        <ConfigScreen
+          loading={loading || deviceTypeLoading}
+          ref={configRef}
+          triggerUpdateConfig={updateConfig}
+          deviceTypes={data}
+          configData={config}
+          configLoading={configLoading}
+        />
       </CenterContentLayout>
     </>
   );
