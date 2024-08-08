@@ -141,6 +141,7 @@ interface IAddDevicesInput {
   project_id: string;
   device_ids: string[];
 }
+
 type ProjectDashboardTypes = {
   carbon_credit: {
     minted: {
@@ -172,3 +173,13 @@ type ProjectList = Omit<
   | 'manager_id',
   'destination_wallet'
 >;
+
+export interface IMintOfProject {
+  project_id: string;
+  mints: {
+    address: string;
+    total: number;
+    delegated: number;
+    available: number;
+  }[];
+}

@@ -12,6 +12,7 @@ const API_ROUTES = {
   },
   CONFIG: {
     TOKEN: 'config/token',
+    SPL_TOKEN: 'config/spl-token',
   },
   DEVICE: {
     ROOT: 'devices',
@@ -24,6 +25,7 @@ const API_ROUTES = {
   },
   PROJECT: {
     ADD_DEVICES: 'projects/add-devices',
+    CARBON_FOR_LISTING: 'carbons-for-listing',
   },
   MINT: {
     ROOT: 'minting',

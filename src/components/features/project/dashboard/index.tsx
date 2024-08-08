@@ -1,91 +1,60 @@
-import { useState } from 'react';
-import { getDashBoardProject } from '@/adapters/project';
-import CancelButtonAction from '@/components/common/button/button-cancel';
-import SubmitButtonAction from '@/components/common/button/button-submit';
+import { useEffect, useState } from 'react';
+import { carbonForListing, getDashBoardProject } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
+import { getSplToken } from '@adapters/config.ts';
+import Icon from '@ant-design/icons';
+import SellIcon from '@icons/sell.icon.tsx';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { Button, Empty, Flex, Form, InputNumber, Modal, Row } from 'antd';
-import { createStyles } from 'antd-style';
+import { Empty, Flex, Row } from 'antd';
+import SubmitButton from '@components/common/button/submit-button.tsx';
+import ListingForm from '@components/features/project/dashboard/listing-modal.tsx';
 
 import AnalyticsCard from '../analytics-card';
 import TotalOutputCard from '../total-output-card';
 
-const useStyle = createStyles(() => ({
-  'my-modal-mask': {
-    boxShadow: `inset 0 0 15px #fff`,
-  },
-  'my-modal-content': {
-    border: '1px solid #333',
-  },
-}));
+const SellIc = () => (
+  <Icon size={20} component={() => <SellIcon size={20} />} />
+);
+
 const ProjectDashboard = () => {
-  const [form] = Form.useForm();
+  const { publicKey } = useWallet();
   const [visible, setVisible] = useState(false);
-  const { styles } = useStyle();
   const param = useParams({
     from: '/_auth/project/$slug',
     select: (params) => ({ id: params.slug }),
   });
-  const classNames = {
-    mask: styles['my-modal-mask'],
-    content: styles['my-modal-content'],
-  };
-  const modalStyles = {
-    mask: {
-      backdropFilter: 'blur(10px)',
-    },
-    content: {
-      boxShadow: '0 0 30px #999',
-      borderRadius: 'var(--div-radius)',
-    },
-  };
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.GET_PROJECT_DASHBOARD, param.id],
     queryFn: () => getDashBoardProject(param.id),
   });
+  const { data: splTokenList } = useQuery({
+    queryKey: [QUERY_KEYS.CONFIG.SPL_TOKEN],
+    queryFn: () => getSplToken(),
+  });
+  const { data: carbonForList, refetch } = useQuery({
+    queryKey: [QUERY_KEYS.PROJECT.CARBON_FOR_LISTING, param.id],
+    queryFn: () =>
+      carbonForListing(param.id, publicKey?.toString() || undefined),
+    enabled: !!publicKey,
+  });
+  useEffect(() => {
+    refetch().then();
+  }, [publicKey]);
   return (
     <Flex vertical gap={10}>
-      <Modal
-        title="Listing"
-        open={visible}
-        onCancel={() => setVisible(false)}
-        maskClosable
-        width={400}
-        footer={null}
-        classNames={classNames}
-        styles={modalStyles}
-        centered
-      >
-        <Flex gap={10}>
-          <Form form={form} className="w-full" layout="vertical">
-            <Form.Item name={'volume'} label="Volume">
-              <InputNumber
-                className="w-full"
-                addonAfter={<Button type="link">Max</Button>}
-                min={0}
-              />
-            </Form.Item>
-            <Form.Item name={'price'} label="Price">
-              <InputNumber
-                className="w-full"
-                addonAfter={<Button type="link">Max</Button>}
-                min={0}
-              />
-            </Form.Item>
-            <Flex justify="flex-end" gap={10}>
-              <SubmitButtonAction>Listing</SubmitButtonAction>
-              <CancelButtonAction onClick={() => setVisible(false)}>
-                Cancel
-              </CancelButtonAction>
-            </Flex>
-          </Form>
-        </Flex>
-      </Modal>
+      <ListingForm
+        visible={visible}
+        carbonForList={carbonForList}
+        splTokenList={splTokenList}
+        setVisible={setVisible}
+        refetch={refetch}
+      />
       <Flex justify="end">
-        <Button type="primary" onClick={() => setVisible(true)}>
+        <SubmitButton icon={<SellIc />} onClick={() => setVisible(true)}>
           Listing
-        </Button>
+        </SubmitButton>
       </Flex>
       {data ? (
         <>
@@ -99,6 +68,19 @@ const ProjectDashboard = () => {
               data={data.carbon_credit.sold}
               title="Totalcarbon sold"
               img="/image/dashboard/total-carbon-sold.svg"
+            />
+            <AnalyticsCard
+              data={
+                carbonForList
+                  ? carbonForList.mints?.reduce(
+                      (partialSum, history) =>
+                        partialSum + Number(history.available || 0),
+                      0,
+                    )
+                  : 0
+              }
+              title="Total crypto available"
+              img="/image/dashboard/crypto.webp"
             />
           </Row>
           <Row gutter={[16, 16]} className="project-dashboard">
@@ -114,9 +96,17 @@ const ProjectDashboard = () => {
               img="/image/dashboard/total-assets.webp"
             />
             <AnalyticsCard
-              data={data.aggregation.crypto}
-              title="Total crypto available"
-              img="/image/dashboard/crypto.webp"
+              data={
+                carbonForList
+                  ? carbonForList.mints.reduce(
+                      (partialSum, history) =>
+                        partialSum + Number(history.delegated || 0),
+                      0,
+                    )
+                  : 0
+              }
+              title="Total crypto listing"
+              img="/image/dashboard/market.png"
             />
           </Row>
         </>

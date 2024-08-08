@@ -1,5 +1,9 @@
 import { request } from '@adapters/xhr.ts';
-import { IDeviceContractSettings, TIotDeviceType } from '@/types/device';
+import {
+  IDeviceContractSettings,
+  ISqlToken,
+  TIotDeviceType,
+} from '@/types/device';
 import { IConfigTokenResponse } from '@/types/projects';
 import { API_ROUTES, REQ_METHODS } from '@utils/constants';
 
@@ -39,4 +43,21 @@ const getDeviceContractSettings = async () => {
     throw error;
   }
 };
-export { getConfigTokens, getDeviceTypes, getDeviceContractSettings };
+const getSplToken = async () => {
+  try {
+    const response = await request<GeneralResponse<ISqlToken[]>>(
+      REQ_METHODS.GET,
+      API_ROUTES.CONFIG.SPL_TOKEN,
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+export {
+  getConfigTokens,
+  getDeviceTypes,
+  getDeviceContractSettings,
+  getSplToken,
+};

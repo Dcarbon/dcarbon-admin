@@ -63,6 +63,43 @@ export type ICarbonContract = {
           writable: true;
         },
         {
+          name: 'tokenListingStatus';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'account';
+                path: 'tokenListingInfo';
+              },
+              {
+                kind: 'const';
+                value: [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
+              },
+            ];
+          };
+        },
+        {
           name: 'tokenOwner';
           writable: true;
         },
@@ -233,7 +270,23 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
               },
             ];
           };
@@ -338,8 +391,44 @@ export type ICarbonContract = {
           };
         },
         {
-          name: 'marketplaceDelegate';
+          name: 'tokenListingStatus';
           writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'account';
+                path: 'tokenListingInfo';
+              },
+              {
+                kind: 'const';
+                value: [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  108,
+                  105,
+                  115,
+                  116,
+                  105,
+                  110,
+                  103,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
+              },
+            ];
+          };
+        },
+        {
+          name: 'marketplaceDelegate';
           pda: {
             seeds: [
               {
@@ -355,7 +444,6 @@ export type ICarbonContract = {
         },
         {
           name: 'marketplaceCounter';
-          writable: true;
           pda: {
             seeds: [
               {
@@ -433,7 +521,23 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
               },
             ];
           };
@@ -465,7 +569,21 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
+                value: [
+                  100,
+                  101,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
               },
               {
                 kind: 'arg';
@@ -582,7 +700,21 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
+                value: [
+                  100,
+                  101,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
               },
               {
                 kind: 'arg';
@@ -657,7 +789,21 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
+                value: [
+                  100,
+                  101,
+                  118,
+                  105,
+                  99,
+                  101,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  117,
+                  115,
+                ];
               },
               {
                 kind: 'arg';
@@ -757,7 +903,23 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
               },
             ];
           };
@@ -801,7 +963,23 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
               },
             ];
           };
@@ -849,7 +1027,23 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  97,
+                  99,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103,
+                ];
               },
             ];
           };
@@ -1009,6 +1203,10 @@ export type ICarbonContract = {
     {
       name: 'tokenListingInfo';
       discriminator: [224, 170, 101, 201, 223, 183, 148, 105];
+    },
+    {
+      name: 'tokenListingStatus';
+      discriminator: [101, 132, 141, 56, 14, 67, 30, 25];
     },
   ];
   errors: [
@@ -1426,6 +1624,26 @@ export type ICarbonContract = {
             type: {
               option: 'pubkey';
             };
+          },
+        ];
+      };
+    },
+    {
+      name: 'tokenListingStatus';
+      type: {
+        kind: 'struct';
+        fields: [
+          {
+            name: 'totalAmount';
+            type: 'f64';
+          },
+          {
+            name: 'remaining';
+            type: 'f64';
+          },
+          {
+            name: 'outOfToken';
+            type: 'bool';
           },
         ];
       };

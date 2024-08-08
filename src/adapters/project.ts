@@ -3,6 +3,7 @@ import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import { IDevicePage, IDeviceRequest } from '@/types/device';
 import {
   IAddDevicesInput,
+  IMintOfProject,
   IProject,
   IProjectImageRequest,
   IProjectImageResponse,
@@ -202,6 +203,23 @@ const getDashBoardProject = async (slug: string) => {
     throw error;
   }
 };
+const carbonForListing = async (slug: string, ownerWallet?: string) => {
+  if (!ownerWallet) return;
+  try {
+    const response = await request<GeneralResponse<IMintOfProject>>(
+      REQ_METHODS.GET,
+      API_ROUTES.PROJECT_API +
+        `/${slug}/${API_ROUTES.PROJECT.CARBON_FOR_LISTING}`,
+      {
+        owner_wallet: ownerWallet,
+      },
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -213,4 +231,5 @@ export {
   addDevices,
   uploadMultipleProjectImage,
   getDashBoardProject,
+  carbonForListing,
 };

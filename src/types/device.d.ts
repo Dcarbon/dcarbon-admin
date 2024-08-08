@@ -52,3 +52,17 @@ interface IDeviceContractSettings {
   mint_signers: string[];
   devices_limit: TIotDeviceType[];
 }
+
+interface ISqlToken {
+  id?: string;
+
+  mint: string;
+
+  symbol: string;
+
+  name: string;
+
+  icon: string;
+
+  is_stable?: boolean;
+}
