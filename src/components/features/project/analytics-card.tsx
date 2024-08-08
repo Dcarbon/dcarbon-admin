@@ -10,7 +10,7 @@ interface IGeneralData {
 const AnalyticsCard = ({ data, img, title, currency }: IGeneralData) => {
   return (
     <Col xxl={7} md={12}>
-      <Card>
+      <Card className="analytics-card">
         <Flex vertical justify="space-between">
           <Space align="center" size={20}>
             <img src={img} width={38} height={38} alt="icon" />

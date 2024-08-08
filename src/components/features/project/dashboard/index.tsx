@@ -106,7 +106,7 @@ const ProjectDashboard = () => {
                   : 0
               }
               title="Total crypto listing"
-              img="/image/dashboard/market.png"
+              img="/image/dashboard/crypto-market.webp"
             />
           </Row>
         </>
