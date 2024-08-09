@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SigninImport } from './routes/signin'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthIndexImport } from './routes/_auth/index'
+import { Route as AuthWalletIndexImport } from './routes/_auth/wallet/index'
 import { Route as AuthProjectIndexImport } from './routes/_auth/project/index'
 import { Route as AuthPoIndexImport } from './routes/_auth/po/index'
 import { Route as AuthContractIndexImport } from './routes/_auth/contract/index'
@@ -43,6 +44,11 @@ const AuthRoute = AuthImport.update({
 
 const AuthIndexRoute = AuthIndexImport.update({
   path: '/',
+  getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthWalletIndexRoute = AuthWalletIndexImport.update({
+  path: '/wallet/',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -174,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProjectIndexImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/wallet/': {
+      id: '/_auth/wallet/'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthWalletIndexImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/po/update/$id': {
       id: '/_auth/po/update/$id'
       path: '/$id'
@@ -197,6 +210,7 @@ export const routeTree = rootRoute.addChildren({
     AuthContractIndexRoute,
     AuthPoIndexRoute,
     AuthProjectIndexRoute,
+    AuthWalletIndexRoute,
   }),
   SigninRoute,
 })
@@ -224,7 +238,8 @@ export const routeTree = rootRoute.addChildren({
         "/_auth/project/create",
         "/_auth/contract/",
         "/_auth/po/",
-        "/_auth/project/"
+        "/_auth/project/",
+        "/_auth/wallet/"
       ]
     },
     "/signin": {
@@ -267,6 +282,10 @@ export const routeTree = rootRoute.addChildren({
     },
     "/_auth/project/": {
       "filePath": "_auth/project/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/wallet/": {
+      "filePath": "_auth/wallet/index.tsx",
       "parent": "/_auth"
     },
     "/_auth/po/update/$id": {
