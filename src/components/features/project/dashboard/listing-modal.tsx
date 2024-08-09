@@ -166,6 +166,7 @@ const ListingForm = memo(
           tx_type: 'tx',
         });
         form.resetFields();
+        setTotal('0');
         setVisible(false);
         refetch();
       } catch (e) {
