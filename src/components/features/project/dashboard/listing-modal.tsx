@@ -12,7 +12,7 @@ import {
   useConnection,
   useWallet,
 } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 import {
   Avatar,
   Col,
@@ -111,8 +111,6 @@ const ListingForm = memo(
         });
         return;
       }
-      console.log(result);
-      return;
       let transaction;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
@@ -126,9 +124,7 @@ const ListingForm = memo(
           CARBON_IDL as ICarbonContract,
           provider,
         );
-        const mint = new PublicKey(matchMint.address);
-        const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-
+        const airdropInsArray: TransactionInstruction[] = [];
         const [marketplaceCounter] = PublicKey.findProgramAddressSync(
           [Buffer.from('marketplace'), Buffer.from('counter')],
           program.programId,
@@ -136,28 +132,34 @@ const ListingForm = memo(
 
         const marketplaceCounterData =
           await program.account.marketplaceCounter.fetch(marketplaceCounter);
-        const listingArgs: ListingArgs = {
-          amount: volume,
-          price: price * volume,
-          projectId: Number(carbonForList?.project_id),
-          nonce: marketplaceCounterData.nonce,
-          currency: currency !== 'SOL' ? new PublicKey(currency) : null,
-        };
+        const nonce = marketplaceCounterData.nonce;
+        for (let i = 0; i < result.length; i++) {
+          const mint = new PublicKey(result[i].address);
+          const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
+          const listingArgs: ListingArgs = {
+            amount: result[i].available,
+            price: price * result[i].available,
+            projectId: Number(carbonForList?.project_id),
+            nonce: nonce + i,
+            currency: currency !== 'SOL' ? new PublicKey(currency) : null,
+          };
 
-        const listingIns = await program.methods
-          .listing(listingArgs)
-          .accounts({
-            signer: publicKey,
-            mint: mint,
-            sourceAta: sourceAta,
-            tokenProgram: TOKEN_PROGRAM_ID,
-          })
-          .instruction();
+          const listingIns = await program.methods
+            .listing(listingArgs)
+            .accounts({
+              signer: publicKey,
+              mint: mint,
+              sourceAta: sourceAta,
+              tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .instruction();
+          airdropInsArray.push(listingIns);
+        }
         const { status, tx } = await sendTx({
           connection,
           wallet,
           payerKey: publicKey,
-          txInstructions: listingIns,
+          arrTxInstructions: airdropInsArray,
         });
         transaction = tx;
         setTxModalOpen(false);
