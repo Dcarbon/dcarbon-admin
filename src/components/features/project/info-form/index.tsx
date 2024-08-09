@@ -89,7 +89,6 @@ const ProjectInfoForm = memo(
             })(),
           }}
           onFinish={(values) => {
-            console.info(values);
             Object.keys(values).forEach((key) => {
               if (data[key as keyof IProject] === values[key]) {
                 delete values[key];

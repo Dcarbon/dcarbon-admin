@@ -23,6 +23,7 @@ type DeviceTableProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onOk?: () => void;
   handleAddDevices: () => Promise<void>;
+  oldSelected: string[];
 };
 const { Option } = Select;
 const useStyle = createStyles(() => ({
@@ -41,13 +42,13 @@ const DeviceTable = memo(
     setSelectDevice,
     selectedDevice,
     handleAddDevices,
+    oldSelected,
   }: DeviceTableProps) => {
     const [search, setSearch] = useState<IDeviceRequest>({
       page: 1,
     } as IDeviceRequest);
     const [isLoadingAdd, setLoadingAdd] = useState<boolean>(false);
     useState<string[]>(selectedDevice);
-
     const { styles } = useStyle();
     const cancelModal = useModalAction({
       danger: true,
@@ -93,7 +94,9 @@ const DeviceTable = memo(
         centered
         destroyOnClose
         maskClosable
-        onCancel={() => cancelModal()}
+        onCancel={() => {
+          cancelModal(), setSelectDevice(oldSelected);
+        }}
         onOk={async () => {
           setLoadingAdd(true);
           try {

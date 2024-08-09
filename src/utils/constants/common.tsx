@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
+  DollarOutlined,
   ProfileOutlined,
   ProjectOutlined,
   UserOutlined,
@@ -41,6 +42,7 @@ const ROUTES_URL = {
   PO: '/po',
   PROJECT: '/project',
   CONTRACT: '/contract',
+  WALLET: '/wallet',
 };
 const MENU: MenuType = [
   {
@@ -60,6 +62,12 @@ const MENU: MenuType = [
     label: 'Contract',
     path: ROUTES_URL.CONTRACT,
     icon: <ProfileOutlined />,
+  },
+  {
+    key: ROUTES_URL.WALLET,
+    label: 'Wallet',
+    path: ROUTES_URL.WALLET,
+    icon: <DollarOutlined />,
   },
 ];
 const REQ_METHODS = {
