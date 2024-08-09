@@ -3,6 +3,7 @@ import {
   ProfileOutlined,
   ProjectOutlined,
   UserOutlined,
+  WalletFilled,
 } from '@ant-design/icons';
 
 type MenuType = {
@@ -41,6 +42,7 @@ const ROUTES_URL = {
   PO: '/po',
   PROJECT: '/project',
   CONTRACT: '/contract',
+  WALLET: '/wallet',
 };
 const MENU: MenuType = [
   {
@@ -60,6 +62,12 @@ const MENU: MenuType = [
     label: 'Contract',
     path: ROUTES_URL.CONTRACT,
     icon: <ProfileOutlined />,
+  },
+  {
+    key: ROUTES_URL.WALLET,
+    label: 'Wallet',
+    path: ROUTES_URL.WALLET,
+    icon: <WalletFilled />,
   },
 ];
 const REQ_METHODS = {

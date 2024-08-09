@@ -296,6 +296,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         selectedDevice={selectedDevice}
         setSelectDevice={setSelectDevice}
         handleAddDevices={handleAddDevices}
+        oldSelected={devices?.data?.map((info) => info.iot_device_id) ?? []}
       />
       {openDeviceSetting && (
         <Modal

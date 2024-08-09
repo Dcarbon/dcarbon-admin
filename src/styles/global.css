@@ -67,6 +67,10 @@ p {
   margin: 0;
 }
 
+.ant-typography {
+  margin-top: 15px;
+}
+
 /* Buttons */
 button {
   border-radius: 8px;
@@ -86,6 +90,79 @@ button {
 
 .neutral-color-400 {
   color: #a8a8a8;
+}
+
+.neutral-color-700 {
+  color: #545454;
+}
+
+/* Wallet Container */
+.wallet-container .apexcharts-tooltip {
+  background-color: #ffffff80 !important;
+  border-radius: 90px !important;
+  padding: 5px 10px;
+}
+
+.wallet-container .apexcharts-tooltip-series-group.apexcharts-active,
+.wallet-container .apexcharts-tooltip-series-group:last-child {
+  padding: 0 !important;
+}
+
+.wallet-container {
+  background-color: #7bda08;
+  padding: 8px;
+}
+
+.wallet-container h4 {
+  font-size: 20px;
+}
+
+.wallet-container h2 {
+  font-size: 35px;
+}
+
+.wallet-container .wallet-growth-dcarbon {
+  background-color: #fff;
+  padding: 5px 10px;
+  display: flex;
+  gap: 4px;
+  margin-top: 16px;
+  border-radius: 99px;
+  width: fit-content;
+  color: #1b1b1b;
+}
+
+.wallet-container .ant-typography {
+  margin: 0;
+}
+
+.wallet-container .wallet-balance {
+  margin-top: 16px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.wallet-balance .wallet-image {
+  position: absolute;
+  right: -1px;
+  top: calc(50% - 17px);
+  padding: 7px 0 7px 5px;
+  background-color: #7bda08;
+  border-radius: 20px 0 0 20px;
+}
+
+/* Transaction Container */
+.transaction-container {
+  padding: 8px;
+}
+
+.transaction-container .ant-typography {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.transactions-type {
+  color: #019dab;
 }
 
 /* Sidebar */
@@ -558,10 +635,6 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.ant-typography {
-  margin-top: 15px;
 }
 
 .dashboard-total-project .ant-typography {

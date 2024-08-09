@@ -131,7 +131,7 @@ const ProjectDashboard = () => {
             />
             <TotalOutputCard
               data={data.carbon_credit.sold}
-              title="Totalcarbon sold"
+              title="Total carbon sold"
               img="/image/dashboard/total-carbon-sold.svg"
             />
             <AnalyticsCard
