@@ -395,6 +395,7 @@ export const CARBON_IDL = {
         },
         {
           name: 'marketplace_counter',
+          writable: true,
           pda: {
             seeds: [
               {

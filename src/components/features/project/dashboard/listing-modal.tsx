@@ -97,12 +97,12 @@ const ListingForm = memo(
       },
     };
     const submitListing = async (
-      volume: number,
+      volumeInput: number,
       price: number,
       currency: string,
     ): Promise<void> => {
       const matchMint = carbonForList?.mints?.find(
-        (info) => info.available >= volume,
+        (info) => info.available >= volumeInput,
       );
       if (!matchMint || !carbonForList?.project_id) {
         myNotification({
@@ -110,6 +110,7 @@ const ListingForm = memo(
         });
         return;
       }
+      const volume = volumeInput + (matchMint.delegated || 0);
       let transaction;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
@@ -133,7 +134,6 @@ const ListingForm = memo(
 
         const marketplaceCounterData =
           await program.account.marketplaceCounter.fetch(marketplaceCounter);
-
         const listingArgs: ListingArgs = {
           amount: volume,
           price: price * volume,

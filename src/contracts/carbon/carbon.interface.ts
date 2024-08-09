@@ -444,6 +444,7 @@ export type ICarbonContract = {
         },
         {
           name: 'marketplaceCounter';
+          writable: true;
           pda: {
             seeds: [
               {
