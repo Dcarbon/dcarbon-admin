@@ -34,7 +34,7 @@ import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { u16ToBytes } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { getProgram, sendTx } from '@utils/wallet';
+import { generateListingList, getProgram, sendTx } from '@utils/wallet';
 
 interface IProps {
   visible?: boolean;
@@ -97,20 +97,22 @@ const ListingForm = memo(
       },
     };
     const submitListing = async (
-      volumeInput: number,
+      volume: number,
       price: number,
       currency: string,
     ): Promise<void> => {
-      const matchMint = carbonForList?.mints?.find(
-        (info) => info.available >= volumeInput,
+      const { result, status } = generateListingList(
+        carbonForList?.mints || [],
+        volume,
       );
-      if (!matchMint || !carbonForList?.project_id) {
+      if (status === 'error' || result?.length === 0) {
         myNotification({
           description: ERROR_MSG.LISTING.VOLUME_NOT_AVAILABLE,
         });
         return;
       }
-      const volume = volumeInput + (matchMint.delegated || 0);
+      console.log(result);
+      return;
       let transaction;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
@@ -235,6 +237,7 @@ const ListingForm = memo(
     useEffect(() => {
       if (visible) getListingInfo().then();
     }, [visible]);
+
     return (
       <>
         <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
@@ -276,7 +279,7 @@ const ListingForm = memo(
                       precision={1}
                       min={0}
                       required
-                      max={availableCarbon || 0}
+                      max={availableCarbon}
                       isnumber
                       loading={loading}
                     />

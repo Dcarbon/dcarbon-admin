@@ -15,6 +15,7 @@ interface IGeneralData {
   img: string;
   title: string;
 }
+
 const TotalOutputCard = ({ img, data, title }: IGeneralData) => {
   const percentCalculate = (value: number) => {
     return value * 100;
@@ -30,7 +31,7 @@ const TotalOutputCard = ({ img, data, title }: IGeneralData) => {
             </Space>
             <Space size={10} align="baseline">
               <span className="primary-color-600 dashboard-project-value">
-                {formatByEnUsNum(data.total ?? 0)}
+                {formatByEnUsNum(Number((data.total || 0).toFixed(1)))}
               </span>
               <Typography.Title
                 level={4}
