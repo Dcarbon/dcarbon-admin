@@ -78,6 +78,13 @@ const ProjectDashboard = () => {
   useEffect(() => {
     projectOwnerWallet().then();
   }, [publicKey]);
+
+  const availableCarbon = carbonForList
+    ? carbonForList.mints?.reduce(
+        (partialSum, history) => partialSum + Number(history.available || 0),
+        0,
+      )
+    : 0;
   return (
     <Flex vertical gap={10}>
       <ListingForm
@@ -86,6 +93,8 @@ const ProjectDashboard = () => {
         splTokenList={splTokenList}
         setVisible={setVisible}
         refetch={refetch}
+        availableCarbon={availableCarbon}
+        projectId={param.id}
       />
       <Flex justify="end">
         {ownerWallet && (!publicKey || ownerWallet !== publicKey.toString()) ? (
@@ -126,15 +135,8 @@ const ProjectDashboard = () => {
               img="/image/dashboard/total-carbon-sold.svg"
             />
             <AnalyticsCard
-              data={
-                carbonForList
-                  ? carbonForList.mints?.reduce(
-                      (partialSum, history) =>
-                        partialSum + Number(history.available || 0),
-                      0,
-                    )
-                  : 0
-              }
+              data={availableCarbon}
+              currency={'CARBON'}
               title="Total crypto available"
               img="/image/dashboard/crypto.webp"
             />
@@ -161,6 +163,7 @@ const ProjectDashboard = () => {
                     )
                   : 0
               }
+              currency={'CARBON'}
               title="Total crypto listing"
               img="/image/dashboard/crypto-market.webp"
             />

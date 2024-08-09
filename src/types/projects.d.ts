@@ -174,12 +174,14 @@ type ProjectList = Omit<
   'destination_wallet'
 >;
 
+interface IMintListing {
+  address: string;
+  total: number;
+  delegated: number;
+  available: number;
+}
+
 export interface IMintOfProject {
   project_id: string;
-  mints: {
-    address: string;
-    total: number;
-    delegated: number;
-    available: number;
-  }[];
+  mints: IMintListing[];
 }

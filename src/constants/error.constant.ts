@@ -85,6 +85,7 @@ const ERROR_MSG = {
   },
   LISTING: {
     VOLUME_NOT_AVAILABLE: 'Volume not available',
+    GET_LISTING_INFO_ERROR: 'Cannot get listing information',
   },
 };
 export { ERROR_CONTRACT, ERROR_MSG };

@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { ERROR_CONTRACT, ERROR_MSG } from '@/constants';
 import Icon from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
@@ -25,14 +25,16 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
+import bs58 from 'bs58';
 import { ISqlToken } from '@/types/device';
 import { IMintOfProject } from '@/types/projects';
 import SubmitButton from '@components/common/button/submit-button.tsx';
-import MyInputNumber from '@components/common/input/my-input-number.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
+import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
+import { u16ToBytes } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { sendTx } from '@utils/wallet';
+import { getProgram, sendTx } from '@utils/wallet';
 
 interface IProps {
   visible?: boolean;
@@ -40,6 +42,8 @@ interface IProps {
   refetch: () => void;
   carbonForList?: IMintOfProject;
   splTokenList?: ISqlToken[];
+  availableCarbon?: number;
+  projectId: string;
 }
 
 type ListingArgs = IdlTypes<ICarbonContract>['listingArgs'];
@@ -60,7 +64,15 @@ const useStyle = createStyles(() => ({
 }));
 
 const ListingForm = memo(
-  ({ visible, setVisible, carbonForList, splTokenList, refetch }: IProps) => {
+  ({
+    visible,
+    setVisible,
+    carbonForList,
+    splTokenList,
+    refetch,
+    availableCarbon,
+    projectId,
+  }: IProps) => {
     const [form] = Form.useForm();
     const [myNotification] = useNotification();
     const { publicKey, wallet } = useWallet();
@@ -68,6 +80,7 @@ const ListingForm = memo(
     const anchorWallet = useAnchorWallet();
     const [txModalOpen, setTxModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [total, setTotal] = useState('0');
     const { styles } = useStyle();
 
     const classNames = {
@@ -89,7 +102,9 @@ const ListingForm = memo(
       currency: string,
     ): Promise<void> => {
       const matchMint = carbonForList?.mints?.find(
-        (info) => info.available >= volume,
+        (info) =>
+          info.available >= volume &&
+          info.address === 'CQJ2Rs7p3VmeH7syJrYkwxJp64P4yrG6N6jgnb9izJj1',
       );
       if (!matchMint || !carbonForList?.project_id) {
         myNotification({
@@ -123,7 +138,7 @@ const ListingForm = memo(
 
         const listingArgs: ListingArgs = {
           amount: volume,
-          price: price,
+          price: price * volume,
           projectId: Number(carbonForList?.project_id),
           nonce: marketplaceCounterData.nonce,
           currency: currency !== 'SOL' ? new PublicKey(currency) : null,
@@ -162,6 +177,66 @@ const ListingForm = memo(
         setTxModalOpen(false);
       }
     };
+    const getListingInfo = async () => {
+      try {
+        setLoading(true);
+        const program = getProgram(connection);
+        const accounts = await connection.getProgramAccounts(
+          program.programId,
+          {
+            dataSlice: { offset: 0, length: 0 },
+            filters: [
+              {
+                memcmp: {
+                  offset: 0,
+                  bytes: bs58.encode(
+                    CARBON_IDL?.accounts.find(
+                      (acc: { name: string; discriminator: number[] }) =>
+                        acc.name === 'TokenListingInfo',
+                    )?.discriminator as number[],
+                  ),
+                },
+              },
+              {
+                memcmp: {
+                  offset: 8 + 32 + 32 + 8 + 8,
+                  bytes: bs58.encode(u16ToBytes(Number(projectId))),
+                },
+              },
+            ],
+          },
+        );
+        if (accounts?.length > 0) {
+          const data = await program.account.tokenListingInfo.fetch(
+            accounts[0].pubkey,
+          );
+          if (data) {
+            form.setFieldsValue({
+              price: data.price / data.amount,
+              currency: data.currency ? data.currency.toString() : 'SOL',
+              isHasListing: true,
+            });
+          }
+        }
+      } catch (e) {
+        myNotification({
+          description: ERROR_MSG.LISTING.GET_LISTING_INFO_ERROR,
+        });
+        setVisible(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const renderTotal = () => {
+      const volume = form.getFieldValue('volume') || 0;
+      const price = form.getFieldValue('price') || 0;
+      const currency = form.getFieldValue('currency');
+      const currencyMatch = splTokenList?.find((cu) => cu.mint === currency);
+      setTotal(`${volume * price} ${currencyMatch ? currencyMatch.name : ''}`);
+    };
+    useEffect(() => {
+      if (visible) getListingInfo().then();
+    }, [visible]);
     return (
       <>
         <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
@@ -184,31 +259,29 @@ const ListingForm = memo(
               onFinish={(values) =>
                 submitListing(values.volume, values.price, values.currency)
               }
+              onFieldsChange={() => renderTotal()}
               disabled={loading}
             >
-              <Form.Item
-                name={'volume'}
-                label="Volume"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <MyInputNumber width={'100%'} precision={1} min={0} required />
-              </Form.Item>
               <Row>
                 <Col span={18} style={{ paddingRight: '15px' }}>
                   <Form.Item
-                    name={'price'}
-                    label="Price"
+                    name={'volume'}
+                    label="Volume"
                     rules={[
                       {
                         required: true,
                       },
                     ]}
                   >
-                    <MyInputNumber precision={1} width={'100%'} min={0} />
+                    <SkeletonInput
+                      width={'100%'}
+                      precision={1}
+                      min={0}
+                      required
+                      max={availableCarbon || 0}
+                      isnumber
+                      loading={loading}
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -221,7 +294,10 @@ const ListingForm = memo(
                       },
                     ]}
                   >
-                    <MySelect>
+                    <MySelect
+                      loading={loading}
+                      disabled={form.getFieldValue('isHasListing')}
+                    >
                       {splTokenList &&
                         splTokenList.length > 0 &&
                         splTokenList.map((item) => (
@@ -234,6 +310,53 @@ const ListingForm = memo(
                         ))}
                     </MySelect>
                   </Form.Item>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12} style={{ paddingRight: '15px' }}>
+                  <Flex>
+                    <Form.Item
+                      name={'price'}
+                      label="Unit price"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <SkeletonInput
+                        disabled={form.getFieldValue('isHasListing')}
+                        precision={1}
+                        width={'100%'}
+                        min={0}
+                        isnumber
+                        loading={loading}
+                      />
+                    </Form.Item>
+                  </Flex>
+                </Col>
+                <Col
+                  span={12}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'end',
+                  }}
+                >
+                  <Flex>
+                    <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                      Total Price:
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        color: 'var(--submit-button-bg-hover)',
+                        marginLeft: '15px',
+                      }}
+                    >
+                      {total}
+                    </span>
+                  </Flex>
                 </Col>
               </Row>
               <Flex justify="center" gap={10} style={{ marginTop: '30px' }}>
