@@ -102,9 +102,7 @@ const ListingForm = memo(
       currency: string,
     ): Promise<void> => {
       const matchMint = carbonForList?.mints?.find(
-        (info) =>
-          info.available >= volume &&
-          info.address === 'CQJ2Rs7p3VmeH7syJrYkwxJp64P4yrG6N6jgnb9izJj1',
+        (info) => info.available >= volume,
       );
       if (!matchMint || !carbonForList?.project_id) {
         myNotification({
