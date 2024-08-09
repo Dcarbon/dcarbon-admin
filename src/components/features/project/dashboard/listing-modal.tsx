@@ -12,7 +12,7 @@ import {
   useConnection,
   useWallet,
 } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
+import { PublicKey, TransactionInstruction } from '@solana/web3.js';
 import {
   Avatar,
   Col,
@@ -34,7 +34,7 @@ import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { u16ToBytes } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
-import { getProgram, sendTx } from '@utils/wallet';
+import { generateListingList, getProgram, sendTx } from '@utils/wallet';
 
 interface IProps {
   visible?: boolean;
@@ -97,20 +97,20 @@ const ListingForm = memo(
       },
     };
     const submitListing = async (
-      volumeInput: number,
+      volume: number,
       price: number,
       currency: string,
     ): Promise<void> => {
-      const matchMint = carbonForList?.mints?.find(
-        (info) => info.available >= volumeInput,
+      const { result, status } = generateListingList(
+        carbonForList?.mints || [],
+        volume,
       );
-      if (!matchMint || !carbonForList?.project_id) {
+      if (status === 'error' || result?.length === 0) {
         myNotification({
           description: ERROR_MSG.LISTING.VOLUME_NOT_AVAILABLE,
         });
         return;
       }
-      const volume = volumeInput + (matchMint.delegated || 0);
       let transaction;
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
@@ -124,9 +124,7 @@ const ListingForm = memo(
           CARBON_IDL as ICarbonContract,
           provider,
         );
-        const mint = new PublicKey(matchMint.address);
-        const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-
+        const airdropInsArray: TransactionInstruction[] = [];
         const [marketplaceCounter] = PublicKey.findProgramAddressSync(
           [Buffer.from('marketplace'), Buffer.from('counter')],
           program.programId,
@@ -134,28 +132,34 @@ const ListingForm = memo(
 
         const marketplaceCounterData =
           await program.account.marketplaceCounter.fetch(marketplaceCounter);
-        const listingArgs: ListingArgs = {
-          amount: volume,
-          price: price * volume,
-          projectId: Number(carbonForList?.project_id),
-          nonce: marketplaceCounterData.nonce,
-          currency: currency !== 'SOL' ? new PublicKey(currency) : null,
-        };
+        const nonce = marketplaceCounterData.nonce;
+        for (let i = 0; i < result.length; i++) {
+          const mint = new PublicKey(result[i].address);
+          const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
+          const listingArgs: ListingArgs = {
+            amount: result[i].available,
+            price: price * result[i].available,
+            projectId: Number(carbonForList?.project_id),
+            nonce: nonce + i,
+            currency: currency !== 'SOL' ? new PublicKey(currency) : null,
+          };
 
-        const listingIns = await program.methods
-          .listing(listingArgs)
-          .accounts({
-            signer: publicKey,
-            mint: mint,
-            sourceAta: sourceAta,
-            tokenProgram: TOKEN_PROGRAM_ID,
-          })
-          .instruction();
+          const listingIns = await program.methods
+            .listing(listingArgs)
+            .accounts({
+              signer: publicKey,
+              mint: mint,
+              sourceAta: sourceAta,
+              tokenProgram: TOKEN_PROGRAM_ID,
+            })
+            .instruction();
+          airdropInsArray.push(listingIns);
+        }
         const { status, tx } = await sendTx({
           connection,
           wallet,
           payerKey: publicKey,
-          txInstructions: listingIns,
+          arrTxInstructions: airdropInsArray,
         });
         transaction = tx;
         setTxModalOpen(false);
@@ -236,6 +240,7 @@ const ListingForm = memo(
     useEffect(() => {
       if (visible) getListingInfo().then();
     }, [visible]);
+
     return (
       <>
         <TxModal open={txModalOpen} setOpen={setTxModalOpen} />
@@ -277,7 +282,7 @@ const ListingForm = memo(
                       precision={1}
                       min={0}
                       required
-                      max={availableCarbon || 0}
+                      max={availableCarbon}
                       isnumber
                       loading={loading}
                     />

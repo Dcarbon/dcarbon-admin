@@ -9,6 +9,7 @@ import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Empty, Flex, Row, Tooltip } from 'antd';
+import { Big } from 'big.js';
 import bs58 from 'bs58';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import ListingForm from '@components/features/project/dashboard/listing-modal.tsx';
@@ -81,7 +82,8 @@ const ProjectDashboard = () => {
 
   const availableCarbon = carbonForList
     ? carbonForList.mints?.reduce(
-        (partialSum, history) => partialSum + Number(history.available || 0),
+        (partialSum, info) =>
+          Big(partialSum).plus(Big(info.available)).toNumber(),
         0,
       )
     : 0;
