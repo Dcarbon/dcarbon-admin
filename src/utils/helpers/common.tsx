@@ -75,7 +75,10 @@ const convertToSlug = (value: string) => {
     .replace(/^-+|-+$/g, '');
 };
 const formatByEnUsNum = (value: number) => {
-  return value.toLocaleString('en-US');
+  return value.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  });
 };
 
 function isFloat(n: number) {

@@ -6,7 +6,7 @@ import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import SellIcon from '@icons/sell.icon.tsx';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { Empty, Flex, Row, Tooltip } from 'antd';
 import { Big } from 'big.js';
@@ -32,19 +32,31 @@ const ProjectDashboard = () => {
     from: '/_auth/project/$slug',
     select: (params) => ({ id: params.slug }),
   });
-  const { data } = useQuery({
-    queryKey: [QUERY_KEYS.GET_PROJECT_DASHBOARD, param.id],
-    queryFn: () => getDashBoardProject(param.id),
-  });
-  const { data: splTokenList } = useQuery({
-    queryKey: [QUERY_KEYS.CONFIG.SPL_TOKEN],
-    queryFn: () => getSplToken(),
-  });
-  const { data: carbonForList, refetch } = useQuery({
-    queryKey: [QUERY_KEYS.PROJECT.CARBON_FOR_LISTING, param.id, ownerWallet],
-    queryFn: () => carbonForListing(param.id, ownerWallet || undefined),
-    enabled: !!ownerWallet,
-  });
+
+  const [{ data: splTokenList }, { data: carbonForList, refetch }, { data }] =
+    useQueries({
+      queries: [
+        {
+          queryKey: [QUERY_KEYS.CONFIG.SPL_TOKEN],
+          queryFn: () => getSplToken(),
+          enabled: !!ownerWallet,
+        },
+        {
+          queryKey: [
+            QUERY_KEYS.PROJECT.CARBON_FOR_LISTING,
+            param.id,
+            ownerWallet,
+          ],
+          queryFn: () => carbonForListing(param.id, ownerWallet || undefined),
+          enabled: !!ownerWallet,
+        },
+        {
+          queryKey: [QUERY_KEYS.GET_PROJECT_DASHBOARD, param.id],
+          queryFn: () => getDashBoardProject(param.id),
+          enabled: !!ownerWallet,
+        },
+      ],
+    });
   const projectOwnerWallet = async () => {
     const program = getProgram(connection);
     const accounts = await connection.getProgramAccounts(program.programId, {
@@ -78,6 +90,7 @@ const ProjectDashboard = () => {
   };
   useEffect(() => {
     projectOwnerWallet().then();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
 
   const availableCarbon = carbonForList
@@ -133,7 +146,7 @@ const ProjectDashboard = () => {
             />
             <TotalOutputCard
               data={data.carbon_credit.sold}
-              title="Totalcarbon sold"
+              title="Total carbon sold"
               img="/image/dashboard/total-carbon-sold.svg"
             />
             <AnalyticsCard
