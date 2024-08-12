@@ -6,7 +6,10 @@ import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, IdlTypes, Program } from '@coral-xyz/anchor';
 import { TOKEN_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/utils/token';
 import SellIcon from '@icons/sell.icon.tsx';
-import { getAssociatedTokenAddressSync } from '@solana/spl-token';
+import {
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddressSync,
+} from '@solana/spl-token';
 import {
   useAnchorWallet,
   useConnection,
@@ -27,14 +30,21 @@ import {
 import { createStyles } from 'antd-style';
 import bs58 from 'bs58';
 import { ISqlToken } from '@/types/device';
-import { IMintOfProject } from '@/types/projects';
+import { IMintListing, IMintOfProject } from '@/types/projects';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import TxModal from '@components/common/modal/tx-modal.tsx';
 import { u16ToBytes } from '@utils/helpers';
-import useNotification from '@utils/helpers/my-notification.tsx';
-import { generateListingList, getProgram, sendTx } from '@utils/wallet';
+import useMultipleNotification from '@utils/helpers/multiple-notification.tsx';
+import useMyNotification from '@utils/helpers/my-notification.tsx';
+import {
+  generateListingList,
+  getProgram,
+  getRandomU16,
+  sendMultipleTx,
+  splitArray,
+} from '@utils/wallet';
 
 interface IProps {
   visible?: boolean;
@@ -74,7 +84,8 @@ const ListingForm = memo(
     projectId,
   }: IProps) => {
     const [form] = Form.useForm();
-    const [myNotification] = useNotification();
+    const [openMultipleNotification] = useMultipleNotification();
+    const [myNotification] = useMyNotification();
     const { publicKey, wallet } = useWallet();
     const { connection } = useConnection();
     const anchorWallet = useAnchorWallet();
@@ -101,17 +112,18 @@ const ListingForm = memo(
       price: number,
       currency: string,
     ): Promise<void> => {
-      const { result, status } = generateListingList(
+      const { result: listingList, status } = generateListingList(
         carbonForList?.mints || [],
         volume,
       );
-      if (status === 'error' || result?.length === 0) {
+      if (status === 'error' || listingList?.length === 0) {
         myNotification({
           description: ERROR_MSG.LISTING.VOLUME_NOT_AVAILABLE,
         });
         return;
       }
-      let transaction;
+      let successTransactions = [];
+      let errorTransactions = [];
       try {
         if (!anchorWallet || !connection || !publicKey || !wallet) {
           myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
@@ -124,51 +136,100 @@ const ListingForm = memo(
           CARBON_IDL as ICarbonContract,
           provider,
         );
-        const airdropInsArray: TransactionInstruction[] = [];
-        const [marketplaceCounter] = PublicKey.findProgramAddressSync(
-          [Buffer.from('marketplace'), Buffer.from('counter')],
-          program.programId,
-        );
+        const splitArr = splitArray<IMintListing>(listingList, 4);
+        const airdropInsArrayForMultipleTx: TransactionInstruction[][] = [];
+        for (let i0 = 0; i0 < splitArr.length; i0++) {
+          const airdropInsArray: TransactionInstruction[] = [];
+          const result = splitArr[i0];
+          for (let i = 0; i < result.length; i++) {
+            const mint = new PublicKey(result[i].address);
+            const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
+            const randomId = getRandomU16();
+            const [tokenListingInfo] = PublicKey.findProgramAddressSync(
+              [
+                Buffer.from('marketplace'),
+                mint.toBuffer(),
+                publicKey.toBuffer(),
+                u16ToBytes(randomId),
+              ],
+              program.programId,
+            );
+            const listingArgs: ListingArgs = {
+              amount: result[i].real_available || result[i].available,
+              delegateAmount: result[i].available,
+              price: price * (result[i].real_available || result[i].available),
+              projectId: Number(carbonForList?.project_id),
+              randomId,
+              currency: currency !== 'SOL' ? new PublicKey(currency) : null,
+            };
 
-        const marketplaceCounterData =
-          await program.account.marketplaceCounter.fetch(marketplaceCounter);
-        const nonce = marketplaceCounterData.nonce;
-        for (let i = 0; i < result.length; i++) {
-          const mint = new PublicKey(result[i].address);
-          const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-          const listingArgs: ListingArgs = {
-            amount: result[i].available,
-            price: price * result[i].available,
-            projectId: Number(carbonForList?.project_id),
-            nonce: nonce + i,
-            currency: currency !== 'SOL' ? new PublicKey(currency) : null,
-          };
+            const listingIns = await program.methods
+              .listing(listingArgs)
+              .accounts({
+                signer: publicKey,
+                mint: mint,
+                sourceAta: sourceAta,
+                tokenProgram: TOKEN_PROGRAM_ID,
+              })
+              .remainingAccounts([
+                {
+                  pubkey: tokenListingInfo,
+                  isWritable: true,
+                  isSigner: false,
+                },
+              ])
+              .instruction();
+            airdropInsArray.push(listingIns);
+          }
+          if (i0 === 0) {
+            const currencyAta = getAssociatedTokenAddressSync(
+              new PublicKey(currency),
+              publicKey,
+            );
 
-          const listingIns = await program.methods
-            .listing(listingArgs)
-            .accounts({
-              signer: publicKey,
-              mint: mint,
-              sourceAta: sourceAta,
-              tokenProgram: TOKEN_PROGRAM_ID,
-            })
-            .instruction();
-          airdropInsArray.push(listingIns);
+            const checkAtaAccount =
+              await connection.getAccountInfo(currencyAta);
+            if (!checkAtaAccount) {
+              const createAtaIns = createAssociatedTokenAccountInstruction(
+                publicKey,
+                currencyAta,
+                publicKey,
+                new PublicKey(currency),
+              );
+              airdropInsArray.unshift(createAtaIns);
+            }
+          }
+          airdropInsArrayForMultipleTx.push(airdropInsArray);
         }
-        const { status, tx } = await sendTx({
+        const result = await sendMultipleTx({
           connection,
           wallet,
           payerKey: publicKey,
-          arrTxInstructions: airdropInsArray,
+          transactionsInsList: airdropInsArrayForMultipleTx,
         });
-        transaction = tx;
+        if (result.filter((info) => info.status === 'reject').length > 0) {
+          return;
+        }
+        successTransactions = result.filter(
+          (info) => info.status === 'success',
+        );
+        errorTransactions = result.filter((info) => info.status === 'error');
         setTxModalOpen(false);
-        if (status === 'reject') return;
-        myNotification({
-          description: transaction,
-          type: status,
-          tx_type: 'tx',
-        });
+        if (successTransactions.length > 0) {
+          openMultipleNotification({
+            txs: successTransactions.map((info) => info.tx || ''),
+            type: 'success',
+            tx_type: 'tx',
+          });
+        }
+        if (errorTransactions.length > 0) {
+          openMultipleNotification({
+            txs: errorTransactions.map((info) => info.tx || ''),
+            type: 'error',
+            tx_type: 'tx',
+            successCount: successTransactions.length,
+          });
+        }
         form.resetFields();
         setTotal('0');
         setVisible(false);

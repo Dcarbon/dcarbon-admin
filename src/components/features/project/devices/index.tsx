@@ -314,7 +314,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         >
           <DeviceSetting
             projectId={projectSlug}
-            owner={'FjMxh8u7VxzhFN8KHGYZFNWxcE71rVVvxyzZcUYwMobx'} // FIXME: hardcode
+            owner={'HbHM8X9Eg8t7YsZ9dKRxVr9kXhunWEyUiNdCUBcHMhoB'} // FIXME: hardcode
             device={openDeviceSetting}
             closeSettingModel={setOpenDeviceSetting}
             anchorWallet={anchorWallet}

@@ -40,6 +40,11 @@ const generateListingList = (
         )
           .plus(Big(list[i].delegated || 0))
           .toNumber(),
+        real_available: Big(
+          currentAmount.toNumber() >= list[i].available
+            ? list[i].available
+            : currentAmount.toNumber(),
+        ).toNumber(),
         delegated: 0,
         total: 0,
       });
@@ -51,4 +56,24 @@ const generateListingList = (
     result,
   };
 };
-export { getExplorerUrl, generateListingList };
+
+function getRandomU16() {
+  const maxU16 = 65535;
+  return Math.floor(Math.random() * (maxU16 + 1));
+}
+
+function splitArray<T = any>(arr: any[], len: number): T[][] {
+  return arr.reduce((resultArray, item, index) => {
+    const chunkIndex = Math.floor(index / len);
+
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = [];
+    }
+
+    resultArray[chunkIndex].push(item);
+
+    return resultArray;
+  }, []) as T[][];
+}
+
+export { getExplorerUrl, generateListingList, getRandomU16, splitArray };

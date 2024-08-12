@@ -44,7 +44,7 @@ $3"
   MSG=${MSG//</(}
   MSG=${MSG//>/)}
   MSG=$(urlencode "$MSG")
-  curl --location --request GET "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendmessage?chat_id=$TELEGRAM_GROUP_ID&message_thread_id=$TELEGRAM_TOPIC_ID&parse_mode=HTML&text=<code>$MSG</code>"
+#  curl --location --request GET "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendmessage?chat_id=$TELEGRAM_GROUP_ID&message_thread_id=$TELEGRAM_TOPIC_ID&parse_mode=HTML&text=<code>$MSG</code>"
   if [ "$1" == "ERROR" ]; then
     exit 1
   fi
@@ -63,7 +63,7 @@ BRANCH: $(git name-rev --name-only HEAD)
 COMMIT: $(git log -2)"
 pushTelegramNotification "DOING" " is being deployed" "$TELEGRAM_MESSAGE"
 
-export $(egrep -v '^#' "/my-app/env/$EV/common/.env.deploy" | xargs)
+export $(egrep -v '^#' "/System/Volumes/Data/SourceCode/DCARBON/dcarbon-admin/.env.deploy" | xargs)
 npm install
 if [ "$?" -eq 0 ]; then
   echo "---NPM INSTALL DONE---"

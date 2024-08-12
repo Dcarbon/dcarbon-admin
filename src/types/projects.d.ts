@@ -179,6 +179,7 @@ interface IMintListing {
   total: number;
   delegated: number;
   available: number;
+  real_available?: number;
 }
 
 export interface IMintOfProject {
