@@ -359,15 +359,23 @@ const sendMultipleTx = async ({
   }
 };
 
-const getProgram = (connect?: Connection): Program<ICarbonContract> => {
+const getProgram = (
+  connect?: Connection,
+): {
+  connection: Connection;
+  program: Program<ICarbonContract>;
+} => {
   if (!connect) {
     connect = new Connection(
       import.meta.env.VITE_RPC_URL as string,
       'confirmed',
     );
   }
-  return new Program<ICarbonContract>(CARBON_IDL as ICarbonContract, {
+  return {
     connection: connect,
-  });
+    program: new Program<ICarbonContract>(CARBON_IDL as ICarbonContract, {
+      connection: connect,
+    }),
+  };
 };
 export { sendTx, getProgram, sendMultipleTx };

@@ -23,11 +23,20 @@ const SellIc = () => (
   <Icon size={20} component={() => <SellIcon size={20} />} />
 );
 
+interface IListingState {
+  sold: number;
+  listing: number;
+}
+
 const ProjectDashboard = () => {
   const { publicKey } = useWallet();
   const { connection } = useConnection();
   const [visible, setVisible] = useState(false);
-  const [ownerWallet, setOwnerWallet] = useState<string | null>(null);
+  const [ownerWallet, setOwnerWallet] = useState('');
+  const [listingState, setListingState] = useState<IListingState>({
+    listing: 0,
+    sold: 0,
+  });
   const param = useParams({
     from: '/_auth/project/$slug',
     select: (params) => ({ id: params.slug }),
@@ -57,7 +66,7 @@ const ProjectDashboard = () => {
     ],
   });
   const projectOwnerWallet = async () => {
-    const program = getProgram(connection);
+    const { program } = getProgram(connection);
     const accounts = await connection.getProgramAccounts(program.programId, {
       dataSlice: { offset: 0, length: 0 },
       filters: [
@@ -87,12 +96,61 @@ const ProjectDashboard = () => {
       }
     }
   };
+  const listingInfoOfProject = async (projectId: string) => {
+    const { program } = getProgram(connection);
+    const accounts = await connection.getProgramAccounts(program.programId, {
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: bs58.encode(
+              CARBON_IDL?.accounts.find(
+                (acc: { name: string; discriminator: number[] }) =>
+                  acc.name === 'TokenListingInfo',
+              )?.discriminator as number[],
+            ),
+          },
+        },
+        {
+          memcmp: {
+            offset: 8 + 32 + 32 + 8 + 8,
+            bytes: bs58.encode(u16ToBytes(Number(projectId))),
+          },
+        },
+      ],
+    });
+    let listing = Big(0);
+    let sold = Big(0);
+    accounts?.forEach((data) => {
+      if (data.account.data) {
+        const amount = data.account.data
+          .subarray(8 + 32 + 32, 8 + 32 + 32 + 8)
+          .readDoubleLE();
+        const remaining = data.account.data
+          .subarray(
+            8 + 32 + 32 + 8 + 8 + 2 + 1 + 32,
+            8 + 32 + 32 + 8 + 8 + 2 + 1 + 32 + 8,
+          )
+          .readDoubleLE();
+        listing = Big(listing).plus(Big(remaining));
+        sold = sold.plus(Big(amount).plus(Big(-remaining)));
+      }
+    });
+    setListingState({
+      sold: sold.toNumber(),
+      listing: listing.toNumber(),
+    });
+  };
   useEffect(() => {
     if (publicKey) {
       projectOwnerWallet();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey]);
+
+  useEffect(() => {
+    if (param.id) listingInfoOfProject(param.id).then();
+  }, [param.id]);
 
   const availableCarbon = carbonForList
     ? carbonForList.mints?.reduce(
@@ -145,8 +203,9 @@ const ProjectDashboard = () => {
               title="Total carbon minted"
               img="/image/dashboard/total-minted.svg"
             />
-            <TotalOutputCard
-              data={data.carbon_credit.sold}
+            <AnalyticsCard
+              data={listingState.sold}
+              currency={'CARBON'}
               title="Total carbon sold"
               img="/image/dashboard/total-carbon-sold.svg"
             />

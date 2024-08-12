@@ -42,7 +42,7 @@ const ContractRole = memo(() => {
   const getMaster = async (): Promise<string | undefined> => {
     try {
       setLoading(true);
-      const program = getProgram(connection);
+      const { program } = getProgram(connection);
       const [masterPda] = PublicKey.findProgramAddressSync(
         [Buffer.from('master')],
         program.programId,

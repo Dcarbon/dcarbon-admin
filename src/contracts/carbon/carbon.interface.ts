@@ -88,10 +88,6 @@ export type ICarbonContract = {
                 kind: 'account';
                 path: 'signer';
               },
-              {
-                kind: 'account';
-                path: 'mintSft';
-              },
             ];
           };
         },
@@ -119,9 +115,6 @@ export type ICarbonContract = {
         },
         {
           name: 'tokenMetadataProgram';
-        },
-        {
-          name: 'ataProgram';
         },
       ];
       args: [
@@ -203,34 +196,9 @@ export type ICarbonContract = {
         {
           name: 'tokenListingInfo';
           writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [109, 97, 114, 107, 101, 116, 112, 108, 97, 99, 101];
-              },
-              {
-                kind: 'account';
-                path: 'mint';
-              },
-              {
-                kind: 'account';
-                path: 'signer';
-              },
-              {
-                kind: 'arg';
-                path: 'nonce';
-              },
-            ];
-          };
         },
       ];
-      args: [
-        {
-          name: 'nonce';
-          type: 'u32';
-        },
-      ];
+      args: [];
     },
     {
       name: 'createCollection';
@@ -557,6 +525,26 @@ export type ICarbonContract = {
           writable: true;
         },
         {
+          name: 'tokenListingInfo';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [115, 101, 108, 102];
+              },
+              {
+                kind: 'account';
+                path: 'signer';
+              },
+              {
+                kind: 'account';
+                path: 'mint';
+              },
+            ];
+          };
+        },
+        {
           name: 'marketplaceDelegate';
           pda: {
             seeds: [
@@ -599,8 +587,109 @@ export type ICarbonContract = {
           writable: true;
           signer: true;
         },
+        {
+          name: 'burningRecord';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [
+                  98,
+                  117,
+                  114,
+                  110,
+                  105,
+                  110,
+                  103,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100,
+                ];
+              },
+              {
+                kind: 'account';
+                path: 'signer';
+              },
+            ];
+          };
+        },
+        {
+          name: 'collectionMint';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [67, 111, 108, 108, 101, 99, 116, 105, 111, 110];
+              },
+            ];
+          };
+        },
+        {
+          name: 'collectionMetadataAccount';
+          writable: true;
+        },
+        {
+          name: 'collectionMasterEdition';
+          writable: true;
+        },
+        {
+          name: 'nftMint';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'metadataAccount';
+          writable: true;
+        },
+        {
+          name: 'masterEdition';
+          writable: true;
+        },
+        {
+          name: 'tokenAccount';
+          writable: true;
+        },
+        {
+          name: 'systemProgram';
+          address: '11111111111111111111111111111111';
+        },
+        {
+          name: 'tokenProgram';
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+        },
+        {
+          name: 'associatedTokenProgram';
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
+        },
+        {
+          name: 'tokenMetadataProgram';
+          address: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
+        },
+        {
+          name: 'rent';
+          address: 'SysvarRent111111111111111111111111111111111';
+        },
       ];
-      args: [];
+      args: [
+        {
+          name: 'uri';
+          type: 'string';
+        },
+        {
+          name: 'name';
+          type: 'string';
+        },
+        {
+          name: 'symbol';
+          type: 'string';
+        },
+      ];
     },
     {
       name: 'mintSft';
@@ -1620,10 +1709,6 @@ export type ICarbonContract = {
         kind: 'struct';
         fields: [
           {
-            name: 'delegateAmount';
-            type: 'f64';
-          },
-          {
             name: 'price';
             type: 'f64';
           },
@@ -1636,10 +1721,6 @@ export type ICarbonContract = {
             type: {
               option: 'pubkey';
             };
-          },
-          {
-            name: 'randomId';
-            type: 'u16';
           },
           {
             name: 'amount';
@@ -1781,6 +1862,13 @@ export type ICarbonContract = {
           },
         ];
       };
+    },
+  ];
+  constants: [
+    {
+      name: 'seed';
+      type: 'string';
+      value: '"Collection"';
     },
   ];
 };

@@ -27,7 +27,7 @@ const generateListingList = (
       result,
     };
   }
-  list.sort((a, b) => b.total - a.total);
+  list.sort((a, b) => b.available - a.available);
   for (let i = 0; i < list.length; i++) {
     if (currentAmount.toNumber() <= 0) break;
     if (list[i].available > 0) {

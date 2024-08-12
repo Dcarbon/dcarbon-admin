@@ -46,7 +46,7 @@ const AdminContainer = memo(
     const getAdministrators = async (): Promise<string | undefined> => {
       try {
         setLoading(true);
-        const program = getProgram(connection);
+        const { program } = getProgram(connection);
         const data = await connection.getProgramAccounts(program.programId, {
           dataSlice: { offset: 8, length: 32 },
           filters: [

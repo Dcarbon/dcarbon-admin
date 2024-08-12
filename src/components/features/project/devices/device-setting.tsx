@@ -100,7 +100,7 @@ const DeviceSetting = memo(
       let nonce = 0;
       try {
         setLoading(true);
-        const program = getProgram(connection);
+        const { program } = getProgram(connection);
         const [deviceSettingProgram] = PublicKey.findProgramAddressSync(
           [
             Buffer.from('device'),

@@ -47,7 +47,7 @@ const ContractConfig = () => {
   const getConfig = async () => {
     try {
       setLoading(true);
-      const program = getProgram(connection);
+      const { program } = getProgram(connection);
       const [configContract] = PublicKey.findProgramAddressSync(
         [Buffer.from('contract_config')],
         program.programId,

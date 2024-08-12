@@ -41,7 +41,6 @@ import useMyNotification from '@utils/helpers/my-notification.tsx';
 import {
   generateListingList,
   getProgram,
-  getRandomU16,
   sendMultipleTx,
   splitArray,
 } from '@utils/wallet';
@@ -144,22 +143,11 @@ const ListingForm = memo(
           for (let i = 0; i < result.length; i++) {
             const mint = new PublicKey(result[i].address);
             const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-            const randomId = getRandomU16();
-            const [tokenListingInfo] = PublicKey.findProgramAddressSync(
-              [
-                Buffer.from('marketplace'),
-                mint.toBuffer(),
-                publicKey.toBuffer(),
-                u16ToBytes(randomId),
-              ],
-              program.programId,
-            );
+            const amount = Number((result[i].real_available || 0).toFixed(1));
             const listingArgs: ListingArgs = {
-              amount: result[i].real_available || result[i].available,
-              delegateAmount: result[i].available,
-              price: price * (result[i].real_available || result[i].available),
+              amount,
+              price: price * amount,
               projectId: Number(carbonForList?.project_id),
-              randomId,
               currency: currency !== 'SOL' ? new PublicKey(currency) : null,
             };
 
@@ -171,13 +159,6 @@ const ListingForm = memo(
                 sourceAta: sourceAta,
                 tokenProgram: TOKEN_PROGRAM_ID,
               })
-              .remainingAccounts([
-                {
-                  pubkey: tokenListingInfo,
-                  isWritable: true,
-                  isSigner: false,
-                },
-              ])
               .instruction();
             airdropInsArray.push(listingIns);
           }
@@ -244,7 +225,7 @@ const ListingForm = memo(
     const getListingInfo = async () => {
       try {
         setLoading(true);
-        const program = getProgram(connection);
+        const { program } = getProgram(connection);
         const accounts = await connection.getProgramAccounts(
           program.programId,
           {

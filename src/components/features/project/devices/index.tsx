@@ -138,7 +138,7 @@ const ProjectDevices = memo(({ projectSlug }: IProps) => {
         activeDevices: [],
         nonceInfo: [],
       });
-      const program = getProgram(connection);
+      const { program } = getProgram(connection);
       const activeDevices: string[] = [];
       const registerDevices: string[] = [];
       const nonceInfo: { deviceId: string; nonce: number }[] = [];
