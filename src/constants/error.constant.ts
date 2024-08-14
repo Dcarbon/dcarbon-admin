@@ -82,6 +82,7 @@ const ERROR_MSG = {
     UPDATE_ERROR: 'Update Project has error',
     UPLOAD_IMAGE_LIMIT: 'Image must smaller than 1MB!',
     ADD_DEVICES_ERROR: 'Add devices error',
+    MODIFY_STATUS_ERROR: 'Modify status error',
   },
   LISTING: {
     VOLUME_NOT_AVAILABLE: 'Volume not available',

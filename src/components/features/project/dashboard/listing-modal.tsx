@@ -162,7 +162,7 @@ const ListingForm = memo(
               .instruction();
             airdropInsArray.push(listingIns);
           }
-          if (i0 === 0) {
+          if (i0 === 0 && currency !== 'SOL') {
             const currencyAta = getAssociatedTokenAddressSync(
               new PublicKey(currency),
               publicKey,

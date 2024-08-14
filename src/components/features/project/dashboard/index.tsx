@@ -142,11 +142,8 @@ const ProjectDashboard = () => {
     });
   };
   useEffect(() => {
-    if (publicKey) {
-      projectOwnerWallet();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [publicKey]);
+    projectOwnerWallet().then();
+  }, []);
 
   useEffect(() => {
     if (param.id) listingInfoOfProject(param.id).then();

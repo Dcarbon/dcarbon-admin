@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { HomeOutlined } from '@ant-design/icons';
-import { Link, useLocation, useRouterState } from '@tanstack/react-router';
+import { Link, useLocation } from '@tanstack/react-router';
 import { Breadcrumb } from 'antd';
 
 const capitalizeFirstLetter = (string: string) => {
@@ -11,8 +11,6 @@ const capitalizeFirstLetter = (string: string) => {
 const Breadcrumbs = memo(() => {
   const location = useLocation();
   const pathSnippets = location.pathname.split('/').filter((i) => i);
-  const router = useRouterState();
-  console.info(router);
   const extraBreadcrumbItems = pathSnippets.map((snippet, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
     return {

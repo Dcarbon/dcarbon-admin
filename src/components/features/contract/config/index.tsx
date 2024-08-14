@@ -102,7 +102,7 @@ const ContractConfig = () => {
           const data = await program.account.coefficient.fetch(info.pubkey);
           coefficients.push({
             key: data.key.toString(),
-            value: data.value.toNumber(),
+            value: data.value.toString(),
             isOnChain: true,
           });
         }),
@@ -155,7 +155,7 @@ const ContractConfig = () => {
         instructions = await program.methods
           .setCoefficient(
             config.coefficient?.key,
-            new BN(Number(config.coefficient?.value)),
+            new BN(config.coefficient?.value.toString()),
           )
           .accounts({
             signer: publicKey,

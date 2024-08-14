@@ -5,4 +5,9 @@ enum EProjectType {
   PRJT_S = 'PrjT_S',
   PRJT_DRAFT = 'PrjT_Draft',
 }
-export { EProjectType };
+enum EProjectStatus {
+  PrjS_None = 'PrjS_None',
+  PrjS_Register = 'PrjS_Register',
+  PrjS_Success = 'PrjS_Success',
+}
+export { EProjectType, EProjectStatus };

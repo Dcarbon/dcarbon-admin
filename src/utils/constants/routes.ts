@@ -26,6 +26,7 @@ const API_ROUTES = {
   PROJECT: {
     ADD_DEVICES: 'projects/add-devices',
     CARBON_FOR_LISTING: 'carbons-for-listing',
+    MODIFY_STATUS: 'projects/modify-status',
   },
   MINT: {
     ROOT: 'minting',

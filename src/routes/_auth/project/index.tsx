@@ -37,7 +37,7 @@ export const Route = createFileRoute('/_auth/project/')({
 const ProjectPage = memo(() => {
   const navigate = useNavigate();
   const search = useSearch({ from: '/_auth/project/' });
-  const { data } = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: [QUERY_KEYS.GET_PROJECT, search],
     queryFn: () =>
       getProject({
@@ -86,7 +86,7 @@ const ProjectPage = memo(() => {
           Project
         </SubmitButton>
       </Flex>
-      <ProjectTableList data={data || ({} as IProjectPage)} />
+      <ProjectTableList data={data || ({} as IProjectPage)} refetch={refetch} />
     </div>
   );
 });

@@ -39,6 +39,6 @@ interface IMyCountry extends Country {
 
 interface ICoefficient {
   key: string;
-  value: number;
+  value: any;
   isOnChain?: boolean;
 }

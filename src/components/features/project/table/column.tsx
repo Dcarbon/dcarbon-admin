@@ -1,36 +1,64 @@
-import { EMintScheduleType } from '@/enums';
+import { EMintScheduleType, EProjectStatus } from '@/enums';
+import { LoadingOutlined } from '@ant-design/icons';
 import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { Link } from '@tanstack/react-router';
-import { Space, TableColumnsType, Tag } from 'antd';
+import { Flex, Space, Spin, TableColumnsType, Tag } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import { ProjectList } from '@/types/projects';
 import SpanOneLine from '@components/common/span/oneline-span.tsx';
 
-const renderTag = (data: string) => {
-  let color = 'green';
-  switch (data) {
-    case 'active':
-      color = 'green';
-      break;
-    case 'inactive':
-      color = 'red';
-      break;
-    case 'draft':
-      color = 'gray';
-      break;
-  }
-  return (
-    <Tag
-      color={color}
-      style={{
-        textTransform: 'capitalize',
-        minWidth: '80px',
-        textAlign: 'center',
-        fontSize: '12px',
-      }}
-    >
-      {data.replace('_', ' ')}
-    </Tag>
+const renderStatus = (
+  projectId: string,
+  status: EProjectStatus,
+  modifyStatus: (projectId: string, status: EProjectStatus) => void,
+  modifyStatusLoading: string,
+) => {
+  return projectId !== modifyStatusLoading ? (
+    <Space>
+      <Tag
+        onClick={() => modifyStatus(projectId, EProjectStatus.PrjS_None)}
+        color={status !== EProjectStatus.PrjS_None ? 'default' : 'red'}
+        style={{
+          textTransform: 'capitalize',
+          textAlign: 'center',
+          fontSize: '12px',
+          color: status !== EProjectStatus.PrjS_None ? 'gray' : 'red',
+          cursor: 'pointer',
+        }}
+      >
+        {'Inactive'}
+      </Tag>
+      <Tag
+        onClick={() => modifyStatus(projectId, EProjectStatus.PrjS_Register)}
+        color={status !== EProjectStatus.PrjS_Register ? 'default' : 'blue'}
+        style={{
+          textTransform: 'capitalize',
+          textAlign: 'center',
+          fontSize: '12px',
+          color: status !== EProjectStatus.PrjS_Register ? 'gray' : 'blue',
+          cursor: 'pointer',
+        }}
+      >
+        {'Register'}
+      </Tag>
+      <Tag
+        onClick={() => modifyStatus(projectId, EProjectStatus.PrjS_Success)}
+        color={status !== EProjectStatus.PrjS_Success ? 'default' : 'green'}
+        style={{
+          textTransform: 'capitalize',
+          textAlign: 'center',
+          fontSize: '12px',
+          color: status !== EProjectStatus.PrjS_Success ? 'gray' : 'green',
+          cursor: 'pointer',
+        }}
+      >
+        {'Active'}
+      </Tag>
+    </Space>
+  ) : (
+    <Flex justify={'center'} align={'center'}>
+      <Spin indicator={<LoadingOutlined spin />} size="default" />
+    </Flex>
   );
 };
 const renderMintingSchedule = (data: EMintScheduleType) => {
@@ -61,11 +89,16 @@ const renderMintingSchedule = (data: EMintScheduleType) => {
     </Tag>
   );
 };
-const PoColumn = () => {
+
+interface IProps {
+  modifyStatus: (projectId: string, status: EProjectStatus) => void;
+  modifyStatusLoading: string;
+}
+
+const PoColumn = ({ modifyStatus, modifyStatusLoading }: IProps) => {
   const columns: TableColumnsType<ProjectList> = [
     {
       title: 'Name',
-      width: 400,
       dataIndex: 'project_name',
     },
     {
@@ -93,9 +126,17 @@ const PoColumn = () => {
     },
     {
       title: 'Status',
-      width: 170,
-      dataIndex: 'status',
-      render: (status) => <span>{renderTag(status)}</span>,
+      width: 250,
+      render: (data: ProjectList) => (
+        <span>
+          {renderStatus(
+            data.slug,
+            data.status,
+            modifyStatus,
+            modifyStatusLoading,
+          )}
+        </span>
+      ),
     },
     {
       title: 'Action',

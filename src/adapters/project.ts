@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { EProjectStatus } from '@/enums';
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
 import { IDevicePage, IDeviceRequest } from '@/types/device';
 import {
@@ -220,6 +221,22 @@ const carbonForListing = async (slug: string, ownerWallet?: string) => {
     throw error;
   }
 };
+const modifyProjectStatus = async (input: {
+  project_id: string;
+  status: EProjectStatus;
+}) => {
+  try {
+    const response = await request<GeneralResponse<{ status: string }>>(
+      REQ_METHODS.PUT,
+      API_ROUTES.PROJECT.MODIFY_STATUS,
+      input,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -232,4 +249,5 @@ export {
   uploadMultipleProjectImage,
   getDashBoardProject,
   carbonForListing,
+  modifyProjectStatus,
 };
