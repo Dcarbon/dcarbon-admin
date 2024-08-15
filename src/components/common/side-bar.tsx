@@ -11,7 +11,7 @@ const NavBar = memo(() => {
   const { logout } = useAuth();
   const [selectedKey, setSelectedKey] = useState<string>(
     MENU.find((route) => location.pathname.startsWith(route.path))?.key ||
-      ROUTES_URL.PO,
+      ROUTES_URL.PROJECT,
   );
   const items: MenuProps['items'] = [
     ...MENU.map((menu: any) => ({
@@ -30,18 +30,18 @@ const NavBar = memo(() => {
 
   useEffect(() => {
     const matchedRoute = MENU.find((route) => {
-      return route.path === ROUTES_URL.PO
-        ? location.pathname === ROUTES_URL.PO
+      return route.path === ROUTES_URL.PROJECT
+        ? location.pathname === ROUTES_URL.PROJECT
         : location.pathname.startsWith(route.path);
     });
 
-    setSelectedKey(matchedRoute?.key || ROUTES_URL.PO);
+    setSelectedKey(matchedRoute?.key || ROUTES_URL.PROJECT);
   }, [location]);
   return (
     <Menu
       theme="light"
       selectedKeys={[selectedKey]}
-      defaultSelectedKeys={[ROUTES_URL.PO]}
+      defaultSelectedKeys={[ROUTES_URL.PROJECT]}
       mode="inline"
       items={items}
     />

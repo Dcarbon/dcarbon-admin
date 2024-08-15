@@ -98,6 +98,11 @@ interface IProps {
 const PoColumn = ({ modifyStatus, modifyStatusLoading }: IProps) => {
   const columns: TableColumnsType<ProjectList> = [
     {
+      title: 'ID',
+      width: 100,
+      dataIndex: 'id',
+    },
+    {
       title: 'Name',
       dataIndex: 'project_name',
     },
@@ -119,6 +124,7 @@ const PoColumn = ({ modifyStatus, modifyStatusLoading }: IProps) => {
     {
       title: 'Minting Schedule',
       width: 170,
+      align: 'center',
       dataIndex: 'mint_schedule',
       render: (mintSchedule) => (
         <span>{renderMintingSchedule(mintSchedule)}</span>
@@ -127,6 +133,7 @@ const PoColumn = ({ modifyStatus, modifyStatusLoading }: IProps) => {
     {
       title: 'Status',
       width: 250,
+      align: 'center',
       render: (data: ProjectList) => (
         <span>
           {renderStatus(
@@ -140,7 +147,8 @@ const PoColumn = ({ modifyStatus, modifyStatusLoading }: IProps) => {
     },
     {
       title: 'Action',
-      width: 150,
+      width: 100,
+      align: 'center',
       render: (data: ProjectList) => {
         return (
           <Space size="middle">

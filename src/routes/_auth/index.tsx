@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ROUTES_URL } from '@utils/constants';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/_auth/')({
       });
     }
     return redirect({
-      to: '/po',
+      to: ROUTES_URL.PROJECT,
     });
   },
   component: () => null,

@@ -143,12 +143,13 @@ const ListingForm = memo(
           for (let i = 0; i < result.length; i++) {
             const mint = new PublicKey(result[i].address);
             const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-            const amount = Number((result[i].real_available || 0).toFixed(1));
+            // const amount = Number((result[i].real_available || 0).toFixed(1));
+            const amount = 4;
             const listingArgs: ListingArgs = {
               amount,
               price: price * amount,
               projectId: Number(carbonForList?.project_id),
-              currency: currency !== 'SOL' ? new PublicKey(currency) : null,
+              currency: currency !== 'SOL' ? new PublicKey('currency') : null,
             };
 
             const listingIns = await program.methods

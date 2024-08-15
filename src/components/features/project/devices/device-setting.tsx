@@ -71,6 +71,7 @@ const DeviceSetting = memo(
     const [txModalOpen, setTxModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mintingLoading, setMintingLoading] = useState(false);
+    const [currentActive, setCurrentActive] = useState(false);
     const { data, isLoading } = useQuery({
       queryKey: [QUERY_KEYS.DEVICE.CONTRACT_SETTINGS],
       queryFn: getDeviceContractSettings,
@@ -138,6 +139,7 @@ const DeviceSetting = memo(
             await program.account.deviceStatus.fetch(deviceStatusProgram);
           isActive = activeData?.isActive;
           nonce = activeData?.nonce;
+          if (isActive) setCurrentActive(true);
         } catch (e) {
           isActive = false;
         }
@@ -206,7 +208,7 @@ const DeviceSetting = memo(
           })
           .instruction();
         insArray.push(registerDeviceIns);
-        if (values.active && !values.currentActive) {
+        if (values.active && !values.currentActive && !currentActive) {
           const activeDeviceIns = await program.methods
             .setActive(Number(values.project_id), Number(values.device_id))
             .accounts({

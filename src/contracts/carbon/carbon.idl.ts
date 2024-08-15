@@ -193,36 +193,39 @@ export const CARBON_IDL = {
       discriminator: [156, 251, 92, 54, 233, 2, 16, 82],
       accounts: [
         {
-          name: 'creator',
+          name: 'signer',
           writable: true,
           signer: true,
         },
         {
-          name: 'admin_pda',
+          name: 'master_pda',
           pda: {
             seeds: [
               {
                 kind: 'const',
-                value: [97, 100, 109, 105, 110],
-              },
-              {
-                kind: 'account',
-                path: 'creator',
+                value: [109, 97, 115, 116, 101, 114],
               },
             ],
           },
         },
         {
-          name: 'metadata',
+          name: 'collection_mint',
+          writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [67, 111, 108, 108, 101, 99, 116, 105, 111, 110],
+              },
+            ],
+          },
+        },
+        {
+          name: 'metadata_account',
           writable: true,
         },
         {
-          name: 'mint',
-          writable: true,
-          signer: true,
-        },
-        {
-          name: 'collection_token_account',
+          name: 'token_account',
           writable: true,
         },
         {
@@ -234,34 +237,34 @@ export const CARBON_IDL = {
           address: '11111111111111111111111111111111',
         },
         {
-          name: 'update_authority',
-          writable: true,
-          pda: {
-            seeds: [
-              {
-                kind: 'const',
-                value: [
-                  117, 112, 100, 97, 116, 101, 95, 97, 117, 116, 104, 111, 114,
-                  105, 116, 121,
-                ],
-              },
-            ],
-          },
-        },
-        {
-          name: 'token_metadata_program',
-        },
-        {
           name: 'token_program',
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         },
         {
           name: 'associated_token_program',
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+        },
+        {
+          name: 'token_metadata_program',
+          address: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+        },
+        {
+          name: 'rent',
+          address: 'SysvarRent111111111111111111111111111111111',
         },
       ],
       args: [
         {
-          name: 'data',
-          type: 'bytes',
+          name: 'uri',
+          type: 'string',
+        },
+        {
+          name: 'name',
+          type: 'string',
+        },
+        {
+          name: 'symbol',
+          type: 'string',
         },
       ],
     },
@@ -638,6 +641,10 @@ export const CARBON_IDL = {
           name: 'symbol',
           type: 'string',
         },
+        {
+          name: 'amount',
+          type: 'f64',
+        },
       ],
     },
     {
@@ -851,6 +858,20 @@ export const CARBON_IDL = {
           },
         },
         {
+          name: 'contract_config',
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [
+                  99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102,
+                  105, 103,
+                ],
+              },
+            ],
+          },
+        },
+        {
           name: 'system_program',
           address: '11111111111111111111111111111111',
         },
@@ -900,11 +921,11 @@ export const CARBON_IDL = {
               },
               {
                 kind: 'arg',
-                path: '_project_id',
+                path: 'project_id',
               },
               {
                 kind: 'arg',
-                path: '_device_id',
+                path: 'device_id',
               },
             ],
           },
@@ -922,7 +943,7 @@ export const CARBON_IDL = {
               },
               {
                 kind: 'arg',
-                path: '_device_id',
+                path: 'device_id',
               },
             ],
           },
@@ -1289,8 +1310,7 @@ export const CARBON_IDL = {
     },
     {
       code: 6001,
-      name: 'InvalidProjectIdLength',
-      msg: 'The length of the device Id must be equal to 24',
+      name: 'InvalidProjectId',
     },
     {
       code: 6002,
@@ -1324,7 +1344,6 @@ export const CARBON_IDL = {
     {
       code: 6008,
       name: 'InvalidNonce',
-      msg: '',
     },
     {
       code: 6009,
@@ -1333,6 +1352,34 @@ export const CARBON_IDL = {
     {
       code: 6010,
       name: 'NotEnoughAmount',
+    },
+    {
+      code: 6011,
+      name: 'InvalidMint',
+    },
+    {
+      code: 6012,
+      name: 'InvalidAmount',
+    },
+    {
+      code: 6013,
+      name: 'InvalidValue',
+    },
+    {
+      code: 6014,
+      name: 'InvalidStringLength',
+    },
+    {
+      code: 6015,
+      name: 'InvalidNumber',
+    },
+    {
+      code: 6016,
+      name: 'InvalidDeviceId',
+    },
+    {
+      code: 6017,
+      name: 'InvalidDeviceType',
     },
   ],
   types: [
@@ -1355,6 +1402,10 @@ export const CARBON_IDL = {
         fields: [
           {
             name: 'total_amount',
+            type: 'f64',
+          },
+          {
+            name: 'remaining',
             type: 'f64',
           },
         ],

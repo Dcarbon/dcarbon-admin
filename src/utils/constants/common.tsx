@@ -39,23 +39,23 @@ const QUERY_KEYS = {
   },
 };
 const ROUTES_URL = {
-  PO: '/po',
   PROJECT: '/project',
+  PO: '/po',
   CONTRACT: '/contract',
   WALLET: '/wallet',
 };
 const MENU: MenuType = [
   {
-    key: ROUTES_URL.PO,
-    label: 'PO',
-    path: ROUTES_URL.PO,
-    icon: <UserOutlined />,
-  },
-  {
     key: ROUTES_URL.PROJECT,
     label: 'Project',
     path: ROUTES_URL.PROJECT,
     icon: <ProjectOutlined />,
+  },
+  {
+    key: ROUTES_URL.PO,
+    label: 'PO',
+    path: ROUTES_URL.PO,
+    icon: <UserOutlined />,
   },
   {
     key: ROUTES_URL.CONTRACT,

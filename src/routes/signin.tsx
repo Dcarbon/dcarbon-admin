@@ -4,6 +4,7 @@ import { getInfoDevice } from '@/utils/helpers/common';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Col, Flex, Form, Input, Typography } from 'antd';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+import { ROUTES_URL } from '@utils/constants';
 
 import imageLogo from '/image/login/login-image.png';
 
@@ -20,7 +21,7 @@ const LoginPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       navigate({
-        to: '/po',
+        to: ROUTES_URL.PROJECT,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

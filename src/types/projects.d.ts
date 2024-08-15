@@ -1,4 +1,4 @@
-import { EMintScheduleType, EProjectType } from '@/enums';
+import { EMintScheduleType, EProjectStatus, EProjectType } from '@/enums';
 import { DeviceDataType, TIotDeviceType } from '@/types/device';
 
 type TLocation = {
@@ -34,7 +34,7 @@ interface IProject {
   power: number;
   spec: object;
   specs: any;
-  status: 'draft' | 'active' | 'deactivate';
+  status: EProjectStatus;
   mint_schedule: EMintScheduleType;
 }
 

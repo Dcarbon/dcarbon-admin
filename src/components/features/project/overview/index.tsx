@@ -4,7 +4,7 @@ import TextEditor from '@/components/common/rich-editor/quill-editor';
 import { QUERY_KEYS } from '@/utils/constants';
 import { EditOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button, Col, Descriptions, Flex, Form, Image, Space } from 'antd';
+import { Button, Col, Descriptions, Flex, Form, Image, Space, Tag } from 'antd';
 import ReactCountryFlag from 'react-country-flag';
 import { IProject, IProjectRequest } from '@/types/projects';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
@@ -13,6 +13,7 @@ import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import './overview.css';
 
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
+import { EProjectStatus } from '@/enums';
 import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
@@ -127,7 +128,24 @@ const OverView = memo(({ data }: { data: IProject }) => {
               {data.location.name}
             </Descriptions.Item>
             <Descriptions.Item label="Power">{data.power}</Descriptions.Item>
-            <Descriptions.Item label="Status">{data.status}</Descriptions.Item>
+            <Descriptions.Item label="Status">
+              {(() => {
+                let color = 'red';
+                let text = 'Inactive';
+                switch (data.status) {
+                  case EProjectStatus.PrjS_Register:
+                    color = 'blue';
+                    text = 'Register';
+                    break;
+                  case EProjectStatus.PrjS_Success:
+                    color = 'green';
+                    text = 'Active';
+                    break;
+                  default:
+                }
+                return <Tag color={color}>{text}</Tag>;
+              })()}
+            </Descriptions.Item>
             <Descriptions.Item label="IOT Models">
               <Space>
                 <Flex key={data.type.code} gap={10}>

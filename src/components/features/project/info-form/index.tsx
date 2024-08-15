@@ -94,9 +94,6 @@ const ProjectInfoForm = memo(
                 delete values[key];
               }
             });
-            if (values.spec) {
-              values.spec = JSON.parse(values.spec);
-            }
             if (values.po_id === data.manager?.id) {
               delete values.po_id;
             }
@@ -117,6 +114,7 @@ const ProjectInfoForm = memo(
                 ) {
                   throw new Error();
                 }
+                values.spec = JSON.parse(values.spec);
               } catch (e) {
                 // eslint-disable-next-line prefer-promise-reject-errors
                 myNotification({ description: 'Spec must be json data' });

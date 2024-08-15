@@ -103,11 +103,6 @@ const ProjectDevicesColumn = ({
       key: 'iot_device_id',
       fixed: 'left',
     },
-    // {
-    //   title: 'Name',
-    //   dataIndex: 'device_name',
-    //   key: 'device_name',
-    // },
     {
       title: 'Type',
       dataIndex: 'device_type',
@@ -186,7 +181,7 @@ const ProjectDevicesColumn = ({
         );
         return onChainSetting?.isLoading ? (
           <Skeleton.Button style={{ height: '25px' }} active />
-        ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+        ) : (
           <span
             style={{
               fontWeight: 'bold',
@@ -196,8 +191,6 @@ const ProjectDevicesColumn = ({
           >
             {match ? match.nonce : 0}
           </span>
-        ) : (
-          ''
         );
       },
     },
@@ -216,14 +209,12 @@ const ProjectDevicesColumn = ({
         );
         return onChainSetting?.isLoading ? (
           <Skeleton.Button style={{ height: '25px' }} active />
-        ) : onChainSetting.registerDevices.includes(device.iot_device_id) ? (
+        ) : (
           <span>
             {match && match.time > 0
               ? new Date(match.time * 1000).toLocaleString('vi-VN')
               : ''}
           </span>
-        ) : (
-          ''
         );
       },
     },
