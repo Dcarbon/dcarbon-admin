@@ -1,11 +1,11 @@
-import Claimed from '@/components/features/wallet/claimed';
-import Owned from '@/components/features/wallet/owned';
 import {
   createFileRoute,
   useNavigate,
   useSearch,
 } from '@tanstack/react-router';
 import { Tabs, TabsProps } from 'antd';
+import CarbonContainer from '@components/features/wallet/carbon/carbon.container.tsx';
+import DcarbonContainer from '@components/features/wallet/dcarbon/dcarbon.container.tsx';
 
 export const Route = createFileRoute('/_auth/wallet/')({
   validateSearch: (
@@ -24,20 +24,20 @@ const Wallet = () => {
   const searchParams = useSearch({ from: '/_auth/wallet/' });
   const tabItem: TabsProps['items'] = [
     {
-      key: 'claimed',
-      label: 'Claimed',
-      children: <Claimed />,
+      key: 'carbon',
+      label: 'Carbon',
+      children: <CarbonContainer />,
     },
     {
-      key: 'owned',
-      label: 'Owned',
-      children: <Owned />,
+      key: 'dcarbon',
+      label: 'DCarbon',
+      children: <DcarbonContainer />,
     },
   ];
   return (
     <Tabs
       items={tabItem}
-      activeKey={searchParams.tab}
+      activeKey={searchParams.tab || 'dcarbon'}
       onChange={(tab) =>
         navigate({
           search: {

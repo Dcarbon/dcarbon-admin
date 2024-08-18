@@ -29,6 +29,10 @@ const ERROR_CONTRACT = {
       },
     },
     CONFIG: {
+      DCARBON_TOTAL_INVALID: {
+        message: 'Input invalid',
+        description: 'DCarbon total invalid',
+      },
       FEE_EMPTY: {
         message: 'Input invalid',
         description: 'Mint Fee can not be empty',

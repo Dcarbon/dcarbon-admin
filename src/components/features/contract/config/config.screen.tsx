@@ -48,6 +48,7 @@ interface IProps {
   deviceTypes?: TIotDeviceType[];
   triggerUpdateConfig: (config: TConfigUpdate) => void;
   configData?: IConfigTokenResponse;
+  init: (config: IConfig) => void;
 }
 
 const formItemLayout = {
@@ -77,6 +78,7 @@ const ConfigScreen = memo(
         triggerUpdateConfig,
         deviceTypes,
         configData,
+        init,
       }: IProps,
       ref,
     ) => {
@@ -565,11 +567,6 @@ const ConfigScreen = memo(
                         >
                           <Form.Item
                             name={`type_${device.id}_limit`}
-                            rules={[
-                              {
-                                required: true,
-                              },
-                            ]}
                             style={{ flexGrow: 1 }}
                           >
                             <SkeletonInput
@@ -612,7 +609,18 @@ const ConfigScreen = memo(
             </Row>
             <Space className={'space-config'}>
               {!config?.rate ? (
-                <SubmitButtonAction disabled={false} loading={loading}>
+                <SubmitButtonAction
+                  disabled={false}
+                  loading={loading}
+                  onClick={() =>
+                    init({
+                      rate: form.getFieldValue('rate'),
+                      mint_fee: form.getFieldValue('mint_fee'),
+                      carbon: configData?.carbon,
+                      dcarbon: configData?.dcarbon,
+                    })
+                  }
+                >
                   Init
                 </SubmitButtonAction>
               ) : (

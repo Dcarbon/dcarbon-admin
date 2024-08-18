@@ -37,3 +37,10 @@ type TransactionPagesRequest = {
   sort_field: string;
   sort_type: string;
 };
+
+interface ICarbonClaimInfo {
+  mint: string;
+  isClaimed: boolean;
+  amount: number;
+  projectId: number;
+}

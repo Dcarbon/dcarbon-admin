@@ -9,6 +9,7 @@ const API_ROUTES = {
   MUTIPLER_UPLOAD: 'common/upload-multiple',
   COMMON: {
     UPLOAD_METADATA: 'common/upload-metadata',
+    GET_METADATA_OF_MINT: 'common/mint-metadata',
   },
   CONFIG: {
     TOKEN: 'config/token',

@@ -201,6 +201,92 @@ export type ICarbonContract = {
       args: [];
     },
     {
+      name: 'claimGovernanceToken';
+      discriminator: [134, 46, 152, 25, 49, 79, 52, 32];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'governance';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101];
+              },
+              {
+                kind: 'account';
+                path: 'signer';
+              },
+            ];
+          };
+        },
+        {
+          name: 'tokenMint';
+        },
+        {
+          name: 'authority';
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [97, 117, 116, 104, 111, 114, 105, 116, 121];
+              },
+            ];
+          };
+        },
+        {
+          name: 'tokenAtaSender';
+          writable: true;
+        },
+        {
+          name: 'tokenAtaReceiver';
+          writable: true;
+        },
+        {
+          name: 'tokenProgram';
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+        },
+      ];
+      args: [];
+    },
+    {
+      name: 'claimMintingFee';
+      discriminator: [11, 171, 197, 227, 232, 242, 222, 102];
+      accounts: [
+        {
+          name: 'signer';
+          writable: true;
+          signer: true;
+        },
+        {
+          name: 'claim';
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: 'const';
+                value: [99, 108, 97, 105, 109];
+              },
+              {
+                kind: 'account';
+                path: 'mint';
+              },
+            ];
+          };
+        },
+        {
+          name: 'mint';
+          writable: true;
+        },
+      ];
+      args: [];
+    },
+    {
       name: 'createCollection';
       discriminator: [156, 251, 92, 54, 233, 2, 16, 82];
       accounts: [
@@ -452,6 +538,9 @@ export type ICarbonContract = {
         },
         {
           name: 'mint';
+        },
+        {
+          name: 'governanceMint';
         },
         {
           name: 'systemProgram';
@@ -1519,6 +1608,10 @@ export type ICarbonContract = {
       code: 6017;
       name: 'invalidDeviceType';
     },
+    {
+      code: 6018;
+      name: 'dontHaveEnoughAmountToClaim';
+    },
   ];
   types: [
     {
@@ -1742,6 +1835,10 @@ export type ICarbonContract = {
       type: {
         kind: 'struct';
         fields: [
+          {
+            name: 'mint';
+            type: 'pubkey';
+          },
           {
             name: 'owner';
             type: 'pubkey';

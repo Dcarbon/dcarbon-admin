@@ -76,4 +76,30 @@ function splitArray<T = any>(arr: any[], len: number): T[][] {
   }, []) as T[][];
 }
 
-export { getExplorerUrl, generateListingList, getRandomU16, splitArray };
+function customPaging<T = any>(
+  list: T[],
+  page = '1',
+  limit = '10',
+): {
+  total: number;
+  page: number;
+  limit: number;
+  data: T[];
+} {
+  const pagingData = [...list];
+  const from = (Number(page) - 1 < 0 ? 0 : Number(page) - 1) * Number(limit);
+  return {
+    total: list?.length,
+    page: Number(page),
+    limit: Number(limit),
+    data: pagingData.slice(from, from + Number(limit)),
+  };
+}
+
+export {
+  getExplorerUrl,
+  generateListingList,
+  getRandomU16,
+  splitArray,
+  customPaging,
+};

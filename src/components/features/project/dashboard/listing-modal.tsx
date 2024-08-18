@@ -28,6 +28,7 @@ import {
   Typography,
 } from 'antd';
 import { createStyles } from 'antd-style';
+import { Big } from 'big.js';
 import bs58 from 'bs58';
 import { ISqlToken } from '@/types/device';
 import { IMintListing, IMintOfProject } from '@/types/projects';
@@ -143,13 +144,12 @@ const ListingForm = memo(
           for (let i = 0; i < result.length; i++) {
             const mint = new PublicKey(result[i].address);
             const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-            // const amount = Number((result[i].real_available || 0).toFixed(1));
-            const amount = 4;
+            const amount = Number((result[i].real_available || 0).toFixed(1));
             const listingArgs: ListingArgs = {
               amount,
-              price: price * amount,
+              price: Big(price).mul(Big(amount)).toNumber(),
               projectId: Number(carbonForList?.project_id),
-              currency: currency !== 'SOL' ? new PublicKey('currency') : null,
+              currency: currency !== 'SOL' ? new PublicKey(currency) : null,
             };
 
             const listingIns = await program.methods
@@ -217,7 +217,7 @@ const ListingForm = memo(
         setVisible(false);
         refetch();
       } catch (e) {
-        //
+        console.error(e);
       } finally {
         setLoading(false);
         setTxModalOpen(false);
@@ -278,7 +278,9 @@ const ListingForm = memo(
       const price = form.getFieldValue('price') || 0;
       const currency = form.getFieldValue('currency');
       const currencyMatch = splTokenList?.find((cu) => cu.mint === currency);
-      setTotal(`${volume * price} ${currencyMatch ? currencyMatch.name : ''}`);
+      setTotal(
+        `${Big(volume).mul(Big(price)).toNumber()} ${currencyMatch ? currencyMatch.name : ''}`,
+      );
     };
     useEffect(() => {
       if (visible) getListingInfo().then();

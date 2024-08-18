@@ -3,8 +3,9 @@ import { Country } from 'country-list';
 interface IUploadImageRequest {
   id?: string;
   type?: TUploadType;
-  category: TUploadCategory;
+  category?: TUploadCategory;
   file: any;
+  mode?: 'default' | 'ipfs';
 }
 
 interface IUploadMetadataRequest {

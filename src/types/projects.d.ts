@@ -186,3 +186,16 @@ export interface IMintOfProject {
   project_id: string;
   mints: IMintListing[];
 }
+
+export interface IMyMetadata {
+  mint: string;
+  name: string;
+  symbol: string;
+  uri: string;
+  image?: string;
+  description?: string;
+  attributes?: {
+    trait_type: string;
+    value: string;
+  }[];
+}

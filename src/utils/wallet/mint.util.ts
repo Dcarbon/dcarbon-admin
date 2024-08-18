@@ -67,6 +67,7 @@ const createMetadata = async (
     category: 'metadata',
     type: 'icon',
     file: input.icon[0],
+    mode: 'ipfs',
   });
   const image = data.data.result[0].result[0].path;
   const metadata = await mutationUploadMetadata.mutateAsync({

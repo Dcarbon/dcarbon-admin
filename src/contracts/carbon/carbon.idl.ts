@@ -189,6 +189,92 @@ export const CARBON_IDL = {
       args: [],
     },
     {
+      name: 'claim_governance_token',
+      discriminator: [134, 46, 152, 25, 49, 79, 52, 32],
+      accounts: [
+        {
+          name: 'signer',
+          writable: true,
+          signer: true,
+        },
+        {
+          name: 'governance',
+          writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [103, 111, 118, 101, 114, 110, 97, 110, 99, 101],
+              },
+              {
+                kind: 'account',
+                path: 'signer',
+              },
+            ],
+          },
+        },
+        {
+          name: 'token_mint',
+        },
+        {
+          name: 'authority',
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [97, 117, 116, 104, 111, 114, 105, 116, 121],
+              },
+            ],
+          },
+        },
+        {
+          name: 'token_ata_sender',
+          writable: true,
+        },
+        {
+          name: 'token_ata_receiver',
+          writable: true,
+        },
+        {
+          name: 'token_program',
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        },
+      ],
+      args: [],
+    },
+    {
+      name: 'claim_minting_fee',
+      discriminator: [11, 171, 197, 227, 232, 242, 222, 102],
+      accounts: [
+        {
+          name: 'signer',
+          writable: true,
+          signer: true,
+        },
+        {
+          name: 'claim',
+          writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [99, 108, 97, 105, 109],
+              },
+              {
+                kind: 'account',
+                path: 'mint',
+              },
+            ],
+          },
+        },
+        {
+          name: 'mint',
+          writable: true,
+        },
+      ],
+      args: [],
+    },
+    {
       name: 'create_collection',
       discriminator: [156, 251, 92, 54, 233, 2, 16, 82],
       accounts: [
@@ -427,6 +513,9 @@ export const CARBON_IDL = {
         },
         {
           name: 'mint',
+        },
+        {
+          name: 'governance_mint',
         },
         {
           name: 'system_program',
@@ -1381,6 +1470,10 @@ export const CARBON_IDL = {
       code: 6017,
       name: 'InvalidDeviceType',
     },
+    {
+      code: 6018,
+      name: 'DontHaveEnoughAmountToClaim',
+    },
   ],
   types: [
     {
@@ -1604,6 +1697,10 @@ export const CARBON_IDL = {
       type: {
         kind: 'struct',
         fields: [
+          {
+            name: 'mint',
+            type: 'pubkey',
+          },
           {
             name: 'owner',
             type: 'pubkey',

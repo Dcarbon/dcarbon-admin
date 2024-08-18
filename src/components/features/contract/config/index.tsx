@@ -3,7 +3,7 @@ import { ERROR_CONTRACT } from '@/constants';
 import { getConfigTokens, getDeviceTypes } from '@adapters/config.ts';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
-import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
+import { AnchorProvider, BN, IdlTypes, Program } from '@coral-xyz/anchor';
 import {
   useAnchorWallet,
   useConnection,
@@ -26,6 +26,8 @@ import { getProgram, sendTx } from '@utils/wallet';
 interface IRef {
   triggerSetConfig: (config: IConfig) => void;
 }
+
+type ConfigArgs = IdlTypes<ICarbonContract>['configArgs'];
 
 const ContractConfig = () => {
   const [loading, setLoading] = useState(false);
@@ -184,6 +186,70 @@ const ContractConfig = () => {
       console.error(e);
     }
   };
+  const init = async (config: IConfig) => {
+    let transaction;
+    try {
+      setTxModalOpen(true);
+      if (!anchorWallet || !connection || !publicKey || !wallet) {
+        myNotification(ERROR_CONTRACT.COMMON.CONNECT_ERROR);
+        return;
+      }
+      const { program, connection: conn } = getProgram(connection);
+      const [authority] = PublicKey.findProgramAddressSync(
+        [Buffer.from('authority')],
+        program.programId,
+      );
+      const dcarbonContract = await conn.getParsedTokenAccountsByOwner(
+        authority,
+        {
+          mint: new PublicKey(config.dcarbon?.mint || ''),
+        },
+      );
+      let dcarbonTotal = 0;
+      if (dcarbonContract && dcarbonContract.value?.length > 0) {
+        dcarbonTotal =
+          dcarbonContract.value[0].account.data.parsed.info.tokenAmount
+            .uiAmount;
+      }
+      if (dcarbonTotal === 0) {
+        myNotification(ERROR_CONTRACT.CONTRACT.CONFIG.DCARBON_TOTAL_INVALID);
+        return;
+      }
+      const configArgs: ConfigArgs = {
+        mintingFee: config.mint_fee || 0,
+        rate: config.rate || 0,
+        governanceAmount: dcarbonTotal,
+      };
+
+      const txIns = await program.methods
+        .initConfig(configArgs)
+        .accounts({
+          signer: publicKey,
+          mint: new PublicKey(config.carbon?.mint || ''),
+          governanceMint: new PublicKey(config.dcarbon?.mint || ''),
+        })
+        .instruction();
+      const { status, tx } = await sendTx({
+        connection,
+        wallet,
+        payerKey: publicKey,
+        txInstructions: txIns,
+      });
+      transaction = tx;
+      setTxModalOpen(false);
+      if (status === 'reject') return;
+      myNotification({
+        description: transaction,
+        type: status,
+        tx_type: 'tx',
+      });
+      setRefetch((prevState) => prevState + 1);
+    } catch (e) {
+      setTxModalOpen(false);
+      myNotification(ERROR_CONTRACT.COMMON.TX_ERROR);
+      console.error(e);
+    }
+  };
   useEffect(() => {
     getConfig().then();
   }, [connection, anchorWallet, refetch]);
@@ -203,6 +269,7 @@ const ContractConfig = () => {
           deviceTypes={data}
           configData={config}
           configLoading={configLoading}
+          init={init}
         />
       </CenterContentLayout>
     </>
