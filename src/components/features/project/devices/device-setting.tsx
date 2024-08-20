@@ -1,9 +1,10 @@
 import { memo, useEffect, useState } from 'react';
 import { ERROR_CONTRACT, ERROR_MSG, SUCCESS_MSG } from '@/constants';
-import { EIotDeviceType } from '@/enums';
+import { useContractRole } from '@/contexts/contract-role-context.tsx';
+import { EContractRole, EIotDeviceType } from '@/enums';
 import { getDeviceContractSettings } from '@adapters/config.ts';
 import { mintSNFT } from '@adapters/mint.ts';
-import { FormOutlined } from '@ant-design/icons';
+import { FormOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import { ICarbonContract } from '@contracts/carbon/carbon.interface.ts';
 import { AnchorProvider, BN, IdlTypes, Program } from '@coral-xyz/anchor';
@@ -11,7 +12,7 @@ import { AnchorWallet, Wallet } from '@solana/wallet-adapter-react';
 import { Connection, PublicKey, TransactionInstruction } from '@solana/web3.js';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Flex, Form, Switch } from 'antd';
+import { Flex, Form, Switch, Tooltip } from 'antd';
 import CancelButton from '@components/common/button/cancel-button.tsx';
 import SubmitButton from '@components/common/button/submit-button.tsx';
 import MyDatePicker from '@components/common/date/my-datepicker.tsx';
@@ -72,6 +73,7 @@ const DeviceSetting = memo(
     const [loading, setLoading] = useState(false);
     const [mintingLoading, setMintingLoading] = useState(false);
     const [currentActive, setCurrentActive] = useState(false);
+    const { contractRole } = useContractRole();
     const { data, isLoading } = useQuery({
       queryKey: [QUERY_KEYS.DEVICE.CONTRACT_SETTINGS],
       queryFn: getDeviceContractSettings,
@@ -412,15 +414,27 @@ const DeviceSetting = memo(
             </div>
           )}
           <Flex justify={'center'} style={{ marginTop: '30px' }}>
-            <SubmitButton
-              htmlType="submit"
-              icon={<FormOutlined />}
-              disabled={
-                loading || form.getFieldValue('isOnChainSetting') || isLoading
-              }
-            >
-              Register
-            </SubmitButton>
+            {contractRole !== EContractRole.ADMIN ? (
+              <Tooltip title={'Require role: Admin'}>
+                <SubmitButton
+                  disabled
+                  loading={loading}
+                  icon={<InfoCircleOutlined />}
+                >
+                  Register
+                </SubmitButton>
+              </Tooltip>
+            ) : (
+              <SubmitButton
+                htmlType="submit"
+                icon={<FormOutlined />}
+                disabled={
+                  loading || form.getFieldValue('isOnChainSetting') || isLoading
+                }
+              >
+                Register
+              </SubmitButton>
+            )}
             {form.getFieldValue('isOnChainSetting') && (
               <CancelButton
                 style={{ marginLeft: '5px', color: 'red !important' }}

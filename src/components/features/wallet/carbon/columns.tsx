@@ -24,7 +24,7 @@ const columns: TableColumnsType<ITransactionTable> = [
   },
   {
     title: 'Symbol',
-    width: '20%',
+    width: '10%',
     dataIndex: 'symbol',
     key: 'symbol',
   },

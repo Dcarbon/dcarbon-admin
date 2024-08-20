@@ -4,4 +4,10 @@ enum EUserStatus {
   BANNED = 'banned',
   DELETED = 'deleted',
 }
-export { EUserStatus };
+
+enum EContractRole {
+  MASTER = 'Master',
+  ADMIN = 'Admin',
+}
+
+export { EUserStatus, EContractRole };

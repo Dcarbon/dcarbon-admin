@@ -1,8 +1,21 @@
 import { memo, useCallback, useLayoutEffect, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { Col, Flex, Form, FormProps, message, Row, Switch, Upload } from 'antd';
+import { useContractRole } from '@/contexts/contract-role-context.tsx';
+import { EContractRole } from '@/enums';
+import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  Col,
+  Flex,
+  Form,
+  FormProps,
+  message,
+  Row,
+  Switch,
+  Tooltip,
+  Upload,
+} from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
+import SubmitButton from '@components/common/button/submit-button.tsx';
 import CopyToClipBroad from '@components/common/copy';
 import SkeletonInput from '@components/common/input/skeleton-input.tsx';
 import SkeletonTextArea from '@components/common/input/skeleton-textarea.tsx';
@@ -42,6 +55,7 @@ const DCarbonScreen = memo(
       type: 'back',
       danger: true,
     });
+    const { contractRole } = useContractRole();
     const handleIconChange = useCallback(
       ({ fileList }: { fileList: any }) => {
         setIcon(fileList);
@@ -270,9 +284,17 @@ const DCarbonScreen = memo(
               </Row>
             </Form.Item>
             <Flex gap={10} justify="start" style={{ marginTop: '15px' }}>
-              <SubmitButtonAction loading={initConfigTokenLoading}>
-                Create
-              </SubmitButtonAction>
+              {contractRole !== EContractRole.MASTER ? (
+                <Tooltip title={'Require role: Master'}>
+                  <SubmitButton disabled icon={<InfoCircleOutlined />}>
+                    Create
+                  </SubmitButton>
+                </Tooltip>
+              ) : (
+                <SubmitButtonAction loading={initConfigTokenLoading}>
+                  Create
+                </SubmitButtonAction>
+              )}
               <CancelButtonAction onClick={goBack}>Cancel</CancelButtonAction>
             </Flex>
           </Form>

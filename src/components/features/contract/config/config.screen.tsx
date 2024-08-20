@@ -13,7 +13,17 @@ import {
   SaveOutlined,
   SwapOutlined,
 } from '@ant-design/icons';
-import { Avatar, Button, Col, Flex, Form, Row, Space, Typography } from 'antd';
+import {
+  Avatar,
+  Button,
+  Col,
+  Flex,
+  Form,
+  Row,
+  Space,
+  Tooltip,
+  Typography,
+} from 'antd';
 import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import SubmitButton from '@components/common/button/submit-button.tsx';
@@ -27,6 +37,8 @@ import { getExplorerUrl } from '@utils/wallet';
 
 import './config.css';
 
+import { useContractRole } from '@/contexts/contract-role-context.tsx';
+import { EContractRole } from '@/enums';
 import { TIotDeviceType } from '@/types/device';
 import { IConfigTokenResponse } from '@/types/projects';
 
@@ -84,6 +96,7 @@ const ConfigScreen = memo(
     ) => {
       console.info('ConfigScreen');
       const [myNotification] = useNotification();
+      const { contractRole } = useContractRole();
       const [config, setConfig] = useState<IConfig>();
       const [isEdit, setEditFlg] = useState<boolean>(false);
       const goBack = useModalAction({
@@ -609,22 +622,44 @@ const ConfigScreen = memo(
             </Row>
             <Space className={'space-config'}>
               {!config?.rate ? (
-                <SubmitButtonAction
-                  disabled={false}
-                  loading={loading}
-                  onClick={() =>
-                    init({
-                      rate: form.getFieldValue('rate'),
-                      mint_fee: form.getFieldValue('mint_fee'),
-                      carbon: configData?.carbon,
-                      dcarbon: configData?.dcarbon,
-                      collect_fee_wallet:
-                        form.getFieldValue('collect_fee_wallet'),
-                    })
-                  }
-                >
-                  Init
-                </SubmitButtonAction>
+                contractRole !== EContractRole.MASTER ? (
+                  <Tooltip title={'Require role: Master'}>
+                    <SubmitButton
+                      disabled
+                      loading={loading}
+                      icon={<InfoCircleOutlined />}
+                    >
+                      Init
+                    </SubmitButton>
+                  </Tooltip>
+                ) : (
+                  <SubmitButtonAction
+                    disabled={false}
+                    loading={loading}
+                    onClick={() =>
+                      init({
+                        rate: form.getFieldValue('rate'),
+                        mint_fee: form.getFieldValue('mint_fee'),
+                        carbon: configData?.carbon,
+                        dcarbon: configData?.dcarbon,
+                        collect_fee_wallet:
+                          form.getFieldValue('collect_fee_wallet'),
+                      })
+                    }
+                  >
+                    Init
+                  </SubmitButtonAction>
+                )
+              ) : contractRole !== EContractRole.MASTER ? (
+                <Tooltip title={'Require role: Master'}>
+                  <SubmitButton
+                    disabled
+                    loading={loading}
+                    icon={<InfoCircleOutlined />}
+                  >
+                    {isEdit ? 'Reset' : 'Edit'}
+                  </SubmitButton>
+                </Tooltip>
               ) : (
                 <SubmitButton
                   disabled={false}

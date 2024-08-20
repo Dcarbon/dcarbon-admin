@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import '@styles/global.css';
 
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
+import { ContractRoleProvider } from '@/contexts/contract-role-context.tsx';
 import SolanaWalletProvider from '@/contexts/solana-wallets-provider';
 import { routeTree } from '@/routeTree.gen';
 import {
@@ -55,7 +56,9 @@ export const RouterClient = () => {
 const AppProvider = () => {
   return (
     <AuthProvider>
-      <RouterClient />
+      <ContractRoleProvider>
+        <RouterClient />
+      </ContractRoleProvider>
     </AuthProvider>
   );
 };
