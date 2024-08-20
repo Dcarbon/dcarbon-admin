@@ -17,10 +17,16 @@ const columns: TableColumnsType<ITransactionTable> = [
     key: 'date',
   },
   {
-    title: 'Project',
+    title: 'Name',
     width: '20%',
-    dataIndex: 'projectId',
-    key: 'projectId',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Symbol',
+    width: '20%',
+    dataIndex: 'symbol',
+    key: 'symbol',
   },
   {
     title: 'Amount',
@@ -36,16 +42,27 @@ const columns: TableColumnsType<ITransactionTable> = [
     ),
   },
   {
+    title: 'Mint time',
+    dataIndex: 'mint_time',
+    render: (time: string) =>
+      time && (
+        <span style={{ display: 'flex' }}>
+          {new Date(time).toLocaleString()}
+        </span>
+      ),
+    key: 'date',
+  },
+  {
     title: 'Action',
     width: '10%',
     align: 'center',
-    dataIndex: 'mint',
-    render: (mint: string) => {
+    dataIndex: 'token_account',
+    render: (tokenAccount: string) => {
       return (
         <Space size="middle">
           <Link
             target={'_blank'}
-            to={`${import.meta.env.VITE_SOLANA_EXPLORER}/address/${mint}?cluster=${import.meta.env.VITE_STAGE === 'prod' ? 'mainnet' : 'devnet'}`}
+            to={`${import.meta.env.VITE_SOLANA_EXPLORER}/address/${tokenAccount}?cluster=${import.meta.env.VITE_STAGE === 'prod' ? 'mainnet' : 'devnet'}`}
           >
             View
           </Link>

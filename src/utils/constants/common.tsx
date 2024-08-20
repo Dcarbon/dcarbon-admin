@@ -37,6 +37,9 @@ const QUERY_KEYS = {
   CONFIG: {
     SPL_TOKEN: 'SPL_TOKEN',
   },
+  MANAGER: {
+    CARBON_LIST: 'CARBON_LIST',
+  },
   PROJECT: {
     CARBON_FOR_LISTING: 'CARBON_FOR_LISTING',
   },

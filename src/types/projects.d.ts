@@ -129,6 +129,8 @@ class SplToken {
   freeze_authority?: string;
 
   mint_authority?: string;
+
+  mint_time?: string;
 }
 
 interface IConfigTokenResponse {

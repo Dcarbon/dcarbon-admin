@@ -37,7 +37,7 @@ const Wallet = () => {
   return (
     <Tabs
       items={tabItem}
-      activeKey={searchParams.tab || 'dcarbon'}
+      activeKey={searchParams.tab || 'carbon'}
       onChange={(tab) =>
         navigate({
           search: {

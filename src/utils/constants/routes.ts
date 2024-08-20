@@ -20,6 +20,9 @@ const API_ROUTES = {
     TYPES: 'devices/types',
     CONTRACT_SETTINGS: 'devices/contract-settings',
   },
+  MANAGER: {
+    CARBON_LIST: 'managers/carbon-list',
+  },
   PO: {
     BAN: 'po/ban',
     SOFT_DELETE: 'po/soft-delete',

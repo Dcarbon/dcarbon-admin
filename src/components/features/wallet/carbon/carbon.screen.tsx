@@ -1,8 +1,6 @@
 import { memo } from 'react';
-import { DownloadOutlined } from '@ant-design/icons';
 import { useNavigate } from '@tanstack/react-router';
-import { Flex } from 'antd';
-import SubmitButton from '@components/common/button/submit-button.tsx';
+import { SplToken } from '@/types/projects';
 import MyTable from '@components/common/table/my-table.tsx';
 import { ROUTES_URL } from '@utils/constants';
 
@@ -10,7 +8,7 @@ import { columns } from './columns';
 
 interface IProps {
   loading?: boolean;
-  claimInfo: ICarbonClaimInfo[];
+  claimInfo: SplToken[];
   searchParams: object;
   paging?: {
     page: number;
@@ -24,15 +22,7 @@ const CarbonScreen = memo(
     const navigate = useNavigate();
     return (
       <>
-        <Flex justify={'end'}>
-          <SubmitButton icon={<DownloadOutlined />}>Claim</SubmitButton>
-        </Flex>
         <MyTable
-          rowSelection={{
-            type: 'checkbox',
-            preserveSelectedRowKeys: true,
-            columnWidth: 50,
-          }}
           loading={loading}
           columns={columns}
           dataSource={claimInfo || []}
