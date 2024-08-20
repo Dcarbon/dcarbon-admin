@@ -618,6 +618,8 @@ const ConfigScreen = memo(
                       mint_fee: form.getFieldValue('mint_fee'),
                       carbon: configData?.carbon,
                       dcarbon: configData?.dcarbon,
+                      collect_fee_wallet:
+                        form.getFieldValue('collect_fee_wallet'),
                     })
                   }
                 >

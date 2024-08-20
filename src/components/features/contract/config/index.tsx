@@ -62,8 +62,8 @@ const ContractConfig = () => {
         setLoading(false);
         configRef.current?.triggerSetConfig({
           rate: data.rate,
-          mint_fee: data.mintingFee, // FIXME: mock data
-          collect_fee_wallet: 'Fxu7o9k8BKKAJyD94UfESH9sMrEFtoXtRRbQiiUFD1pv',
+          mint_fee: data.mintingFee,
+          collect_fee_wallet: data.vault.toString(),
           device_limit: data.mintingLimits.map((info) => {
             return {
               device_type: info.deviceType,
@@ -219,6 +219,7 @@ const ContractConfig = () => {
         mintingFee: config.mint_fee || 0,
         rate: config.rate || 0,
         governanceAmount: dcarbonTotal,
+        vault: new PublicKey(config.collect_fee_wallet || ''),
       };
 
       const txIns = await program.methods

@@ -67,22 +67,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  98,
-                  117,
-                  114,
-                  110,
-                  105,
-                  110,
-                  103,
-                  95,
-                  114,
-                  101,
-                  99,
-                  111,
-                  114,
-                  100,
-                ];
+                value: [98, 117, 114, 110, 105, 110, 103, 95, 114, 101, 99, 111, 114, 100];
               },
               {
                 kind: 'account';
@@ -250,38 +235,6 @@ export type ICarbonContract = {
         {
           name: 'tokenProgram';
           address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
-        },
-      ];
-      args: [];
-    },
-    {
-      name: 'claimMintingFee';
-      discriminator: [11, 171, 197, 227, 232, 242, 222, 102];
-      accounts: [
-        {
-          name: 'signer';
-          writable: true;
-          signer: true;
-        },
-        {
-          name: 'claim';
-          writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: 'const';
-                value: [99, 108, 97, 105, 109];
-              },
-              {
-                kind: 'account';
-                path: 'mint';
-              },
-            ];
-          };
-        },
-        {
-          name: 'mint';
-          writable: true;
         },
       ];
       args: [];
@@ -503,23 +456,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -672,22 +609,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  98,
-                  117,
-                  114,
-                  110,
-                  105,
-                  110,
-                  103,
-                  95,
-                  114,
-                  101,
-                  99,
-                  111,
-                  114,
-                  100,
-                ];
+                value: [98, 117, 114, 110, 105, 110, 103, 95, 114, 101, 99, 111, 114, 100];
               },
               {
                 kind: 'account';
@@ -803,6 +725,7 @@ export type ICarbonContract = {
         },
         {
           name: 'governance';
+          writable: true;
           pda: {
             seeds: [
               {
@@ -818,23 +741,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -860,27 +767,20 @@ export type ICarbonContract = {
           writable: true;
         },
         {
+          name: 'vault';
+        },
+        {
+          name: 'vaultAta';
+          writable: true;
+        },
+        {
           name: 'deviceStatus';
           writable: true;
           pda: {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
                 kind: 'arg';
@@ -911,6 +811,7 @@ export type ICarbonContract = {
         },
         {
           name: 'tokenProgram';
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
         },
         {
           name: 'systemProgram';
@@ -918,13 +819,14 @@ export type ICarbonContract = {
         },
         {
           name: 'sysvarProgram';
-          address: 'Sysvar1nstructions1111111111111111111111111';
         },
         {
-          name: 'tokenMetadataProgram';
+          name: 'tokenMetadassociatedTokenProgram';
+          address: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s';
         },
         {
-          name: 'ataProgram';
+          name: 'associatedTokenProgram';
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL';
         },
       ];
       args: [
@@ -997,21 +899,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
                 kind: 'arg';
@@ -1026,23 +914,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -1113,21 +985,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  100,
-                  101,
-                  118,
-                  105,
-                  99,
-                  101,
-                  95,
-                  115,
-                  116,
-                  97,
-                  116,
-                  117,
-                  115,
-                ];
+                value: [100, 101, 118, 105, 99, 101, 95, 115, 116, 97, 116, 117, 115];
               },
               {
                 kind: 'arg';
@@ -1227,23 +1085,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -1287,23 +1129,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -1351,23 +1177,7 @@ export type ICarbonContract = {
             seeds: [
               {
                 kind: 'const';
-                value: [
-                  99,
-                  111,
-                  110,
-                  116,
-                  114,
-                  97,
-                  99,
-                  116,
-                  95,
-                  99,
-                  111,
-                  110,
-                  102,
-                  105,
-                  103,
-                ];
+                value: [99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102, 105, 103];
               },
             ];
           };
@@ -1699,6 +1509,10 @@ export type ICarbonContract = {
             name: 'governanceAmount';
             type: 'f64';
           },
+          {
+            name: 'vault';
+            type: 'pubkey';
+          },
         ];
       };
     },
@@ -1732,6 +1546,10 @@ export type ICarbonContract = {
           {
             name: 'governanceAmount';
             type: 'f64';
+          },
+          {
+            name: 'vault';
+            type: 'pubkey';
           },
         ];
       };
