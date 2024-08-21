@@ -147,7 +147,7 @@ const ListingForm = memo(
             const amount = Number((result[i].real_available || 0).toFixed(1));
             const listingArgs: ListingArgs = {
               amount,
-              price: Big(price).mul(Big(amount)).toNumber(),
+              price: Number(Big(price).mul(Big(amount)).toNumber().toFixed(2)),
               projectId: Number(carbonForList?.project_id),
               currency: currency !== 'SOL' ? new PublicKey(currency) : null,
             };
@@ -279,7 +279,7 @@ const ListingForm = memo(
       const currency = form.getFieldValue('currency');
       const currencyMatch = splTokenList?.find((cu) => cu.mint === currency);
       setTotal(
-        `${Big(volume).mul(Big(price)).toNumber()} ${currencyMatch ? currencyMatch.name : ''}`,
+        `${Big(volume).mul(Big(price)).toNumber().toFixed(2)} ${currencyMatch ? currencyMatch.name : ''}`,
       );
     };
     useEffect(() => {
