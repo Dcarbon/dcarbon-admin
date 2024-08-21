@@ -32,7 +32,7 @@ const CenterContentLayout = ({
       align={align || 'center'}
     >
       <Flex
-        align={'center'}
+        align={align || 'center'}
         vertical={true}
         style={{ marginBottom: marginBottom ? marginBottom : '115px' }}
         className={'center-content-layout-child w-full'}

@@ -32,7 +32,7 @@ const DCarbonScreen = memo(
     contractDCarbonAvailable,
   }: IProps) => {
     return (
-      <CenterContentLayout align={'center'} marginBottom={'250px'}>
+      <CenterContentLayout align={'start'} marginBottom={'250px'}>
         <Flex vertical>
           {loading || !dcarbonMetadata?.mint ? (
             <Skeleton avatar paragraph={{ rows: 1 }} />

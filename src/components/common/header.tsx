@@ -2,8 +2,9 @@ import { memo } from 'react';
 import ConnectButton from '@/components/common/button/connect-button';
 import { useAuth } from '@/contexts/auth-context.tsx';
 import { UserOutlined } from '@ant-design/icons';
-import { Avatar, Flex, Layout, Typography } from 'antd';
+import { Avatar, Flex, Layout, Space, Typography } from 'antd';
 
+import Ribbon from '../features/ribbon';
 import logo from '/image/dcarbon-logo-black.svg';
 
 const Header = memo(() => {
@@ -15,7 +16,10 @@ const Header = memo(() => {
         <Flex justify="center" align="center" gap={10}>
           <img src={logo} alt="logo" width={26} height={26} />
           <Typography.Title className="header-title" level={5}>
-            DCARBON
+            <Space size={5}>
+              DCARBON
+              <Ribbon />
+            </Space>
           </Typography.Title>
         </Flex>
         <Flex gap={10} align="center">
