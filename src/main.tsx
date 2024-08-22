@@ -100,6 +100,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               itemSelectedBg: '#F6F6F6',
               colorText: '#888888',
             },
+            Checkbox: {
+              colorBorder: '#c1c1c1',
+            },
           },
         }}
       >
