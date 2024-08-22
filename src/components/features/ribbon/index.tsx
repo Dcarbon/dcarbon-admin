@@ -11,8 +11,8 @@ const Ribbon = memo(() => {
         setEnv('LOCAL');
         break;
       default:
-        if (import.meta.env.STAGE !== 'prod') {
-          setEnv(import.meta.env.STAGE.toUpperCase());
+        if (import.meta.env.VITE_STAGE !== 'prod') {
+          setEnv(import.meta.env.VITE_STAGE.toUpperCase());
         }
         break;
     }
