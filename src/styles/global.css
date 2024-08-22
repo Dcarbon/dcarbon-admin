@@ -71,6 +71,10 @@ p {
   margin-top: 15px;
 }
 
+.ant-checkbox-inner {
+  border: 1px solid #c1c1c1 !important;
+}
+
 /* Buttons */
 button {
   border-radius: 8px;
