@@ -1,5 +1,5 @@
 import { EMintScheduleType, EProjectStatus, EProjectType } from '@/enums';
-import { DeviceDataType, TIotDeviceType } from '@/types/device';
+import { CommonType, DeviceDataType, TIotDeviceType } from '@/types/device';
 
 type TLocation = {
   latitude: number;
@@ -200,4 +200,49 @@ export interface IMyMetadata {
     trait_type: string;
     value: string;
   }[];
+}
+
+export interface IProjectListingInfoRequest {
+  slug: string;
+  owner_wallet: string;
+  page?: number;
+  limit?: number;
+}
+
+interface IProjectListingInfo {
+  key: string;
+
+  seller: string;
+
+  project_id: string;
+
+  mint: string;
+
+  available: number;
+
+  name?: string;
+
+  symbol?: string;
+}
+
+export interface IProjectListingInfoResponse {
+  paging: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  common: {
+    available_carbon: number;
+    payment_info: {
+      currency: {
+        name: string;
+        symbol: string;
+        mint: string;
+        icon: string;
+      };
+      exchange_rate: number;
+    };
+    all_listing: IProjectListingInfo[];
+  };
+  data: IProjectListingInfo[];
 }

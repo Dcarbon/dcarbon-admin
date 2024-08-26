@@ -2,16 +2,21 @@ import { useEffect, useState } from 'react';
 import { carbonForListing, getDashBoardProject } from '@/adapters/project';
 import { QUERY_KEYS } from '@/utils/constants';
 import { getSplToken } from '@adapters/config.ts';
-import Icon, { ExclamationCircleOutlined } from '@ant-design/icons';
+import Icon, {
+  ExclamationCircleOutlined,
+  MinusCircleOutlined,
+} from '@ant-design/icons';
 import { CARBON_IDL } from '@contracts/carbon/carbon.idl.ts';
 import SellIcon from '@icons/sell.icon.tsx';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import { Empty, Flex, Row, Tooltip } from 'antd';
+import { Empty, Flex, Row, Space, Tooltip } from 'antd';
 import { Big } from 'big.js';
 import bs58 from 'bs58';
+import MyButton from '@components/common/button/my-button.tsx';
 import SubmitButton from '@components/common/button/submit-button.tsx';
+import DeListContainer from '@components/features/project/dashboard/de-list/de-list.container.tsx';
 import ListingForm from '@components/features/project/dashboard/listing-modal.tsx';
 import { truncateText, u16ToBytes } from '@utils/helpers';
 import { getProgram } from '@utils/wallet';
@@ -32,6 +37,7 @@ const ProjectDashboard = () => {
   const { publicKey } = useWallet();
   const { connection } = useConnection();
   const [visible, setVisible] = useState(false);
+  const [deListVisible, setDeListVisible] = useState(false);
   const [ownerWallet, setOwnerWallet] = useState('');
   const [listingState, setListingState] = useState<IListingState>({
     listing: 0,
@@ -167,29 +173,65 @@ const ProjectDashboard = () => {
         availableCarbon={availableCarbon}
         projectId={param.id}
       />
+      <DeListContainer
+        visible={deListVisible}
+        setVisible={setDeListVisible}
+        refetch={refetch}
+        projectId={param.id}
+      />
+
       <Flex justify="end">
         {ownerWallet && (!publicKey || ownerWallet !== publicKey.toString()) ? (
-          <Tooltip
-            title={<span>Connect wallet {truncateText(ownerWallet)}</span>}
-          >
+          <Space>
+            <Tooltip
+              title={<span>Connect wallet {truncateText(ownerWallet)}</span>}
+            >
+              <SubmitButton
+                icon={<ExclamationCircleOutlined />}
+                disabled={!publicKey || ownerWallet !== publicKey.toString()}
+              >
+                Listing
+              </SubmitButton>{' '}
+            </Tooltip>
+            <Tooltip
+              title={<span>Connect wallet {truncateText(ownerWallet)}</span>}
+            >
+              <SubmitButton
+                icon={<ExclamationCircleOutlined />}
+                disabled={!publicKey || ownerWallet !== publicKey.toString()}
+              >
+                De-List
+              </SubmitButton>{' '}
+            </Tooltip>
+          </Space>
+        ) : (
+          <Space>
             <SubmitButton
-              icon={<ExclamationCircleOutlined />}
-              disabled={!publicKey || ownerWallet !== publicKey.toString()}
+              icon={<SellIc />}
+              disabled={
+                !publicKey ||
+                ownerWallet !== publicKey.toString() ||
+                !ownerWallet
+              }
               onClick={() => setVisible(true)}
             >
               Listing
-            </SubmitButton>{' '}
-          </Tooltip>
-        ) : (
-          <SubmitButton
-            icon={<SellIc />}
-            disabled={
-              !publicKey || ownerWallet !== publicKey.toString() || !ownerWallet
-            }
-            onClick={() => setVisible(true)}
-          >
-            Listing
-          </SubmitButton>
+            </SubmitButton>
+            <MyButton
+              style={{ fontWeight: '500' }}
+              danger={true}
+              type={'primary'}
+              icon={<MinusCircleOutlined />}
+              disabled={
+                !publicKey ||
+                ownerWallet !== publicKey.toString() ||
+                !ownerWallet
+              }
+              onClick={() => setDeListVisible(true)}
+            >
+              De-List
+            </MyButton>
+          </Space>
         )}
       </Flex>
       {data ? (

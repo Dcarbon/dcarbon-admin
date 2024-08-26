@@ -42,6 +42,7 @@ const QUERY_KEYS = {
   },
   PROJECT: {
     CARBON_FOR_LISTING: 'CARBON_FOR_LISTING',
+    LISTING_INFO: 'LISTING_INFO',
   },
 };
 const ROUTES_URL = {

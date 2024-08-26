@@ -184,6 +184,30 @@ export const CARBON_IDL = {
         {
           name: 'token_listing_info',
           writable: true,
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [115, 101, 108, 102],
+              },
+              {
+                kind: 'account',
+                path: 'signer',
+              },
+              {
+                kind: 'account',
+                path: 'mint',
+              },
+            ],
+          },
+        },
+        {
+          name: 'token_program',
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
+        },
+        {
+          name: 'source_ata',
+          writable: true,
         },
       ],
       args: [],
@@ -1234,6 +1258,20 @@ export const CARBON_IDL = {
           signer: true,
         },
         {
+          name: 'contract_config',
+          pda: {
+            seeds: [
+              {
+                kind: 'const',
+                value: [
+                  99, 111, 110, 116, 114, 97, 99, 116, 95, 99, 111, 110, 102,
+                  105, 103,
+                ],
+              },
+            ],
+          },
+        },
+        {
           name: 'burn_ata',
           writable: true,
         },
@@ -1271,6 +1309,7 @@ export const CARBON_IDL = {
         },
         {
           name: 'token_program',
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
         },
         {
           name: 'system_program',
@@ -1281,19 +1320,17 @@ export const CARBON_IDL = {
         },
         {
           name: 'token_metadata_program',
+          address: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
         },
         {
           name: 'ata_program',
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
         },
       ],
       args: [
         {
-          name: 'burn_data_vec',
-          type: 'bytes',
-        },
-        {
-          name: 'mint_data_vec',
-          type: 'bytes',
+          name: 'burn_amount',
+          type: 'f64',
         },
       ],
     },

@@ -8,6 +8,8 @@ import {
   IProject,
   IProjectImageRequest,
   IProjectImageResponse,
+  IProjectListingInfoRequest,
+  IProjectListingInfoResponse,
   IProjectModel,
   IProjectPage,
   IProjectPageRequest,
@@ -237,6 +239,29 @@ const modifyProjectStatus = async (input: {
     throw error;
   }
 };
+
+const getListingInfo = async ({
+  page,
+  limit,
+  slug,
+  owner_wallet,
+}: IProjectListingInfoRequest) => {
+  try {
+    const response = await request<IProjectListingInfoResponse>(
+      REQ_METHODS.GET,
+      API_ROUTES.PROJECT.LISTING_INFO.replace('{projectId}', slug),
+      {
+        page,
+        limit,
+        owner_wallet,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -250,4 +275,5 @@ export {
   getDashBoardProject,
   carbonForListing,
   modifyProjectStatus,
+  getListingInfo,
 };
