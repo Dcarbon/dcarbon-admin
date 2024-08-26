@@ -224,8 +224,13 @@ const CreateProject = memo(() => {
             </Form.Item>
             <Flex>
               <Form.Item
-                label="Power"
+                label="Unit"
                 name="power"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
                 style={{ display: 'inline-block', width: '100px' }}
               >
                 <MyInputNumber min={0} />
