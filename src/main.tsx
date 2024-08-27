@@ -95,6 +95,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               colorTextPlaceholder: '#888888',
               labelColor: '#21272A',
             },
+            Table: {
+              rowSelectedHoverBg: '#d5ff96',
+            },
             Menu: {
               colorPrimary: '#1B1B1B',
               itemSelectedBg: '#F6F6F6',
