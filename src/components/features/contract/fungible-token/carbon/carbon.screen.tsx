@@ -28,8 +28,8 @@ import { truncateText } from '@utils/helpers/common.tsx';
 import { getExplorerUrl } from '@utils/wallet';
 
 const FormDefault: Partial<TFungibleTokenInfo> = {
-  name: 'Carbon',
-  symbol: 'CARBON',
+  name: 'DCO2',
+  symbol: 'DCO2',
   decimals: 9,
   revoke_freeze: true,
   revoke_mint: false,
@@ -99,7 +99,7 @@ const CarbonScreen = memo(
     return (
       <Flex className={'ft-main-div'}>
         <Flex justify={'space-between'}>
-          <span className={'ft-title'}>Carbon</span>
+          <span className={'ft-title'}>DCO2</span>
           {data?.mint && (
             <span className={'contract-token-mint-address'}>
               <a href={getExplorerUrl(data?.mint, 'address')} target="_blank">

@@ -66,14 +66,17 @@ const renderMintingSchedule = (data: EMintScheduleType) => {
   const match = MINT_SCHEDULE_TYPE.find((info) => info.type === data);
   const text = match ? match.name : 'Unset';
   switch (data) {
+    case EMintScheduleType.DAILY:
+      color = 'green';
+      break;
     case EMintScheduleType.WEEKLY:
       color = 'orange';
       break;
     case EMintScheduleType.MONTHLY:
       color = 'purple';
       break;
-    case EMintScheduleType.DAILY:
-      color = 'green';
+    case EMintScheduleType.YEARLY:
+      color = 'magenta';
       break;
   }
   return (

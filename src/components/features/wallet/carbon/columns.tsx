@@ -37,7 +37,7 @@ const columns: TableColumnsType<ITransactionTable> = [
       <Space wrap>
         <img src={logo} alt="logo" width={24} height={24} />
         <Typography.Text>{Number(amount.toFixed(1))}</Typography.Text>
-        <span style={{ fontSize: '12px', color: '#595959' }}>CARBON</span>
+        <span style={{ fontSize: '12px', color: '#595959' }}>DCO2</span>
       </Space>
     ),
   },

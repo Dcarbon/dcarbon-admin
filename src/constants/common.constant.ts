@@ -22,5 +22,10 @@ const MINT_SCHEDULE_TYPE: IMintScheduleType[] = [
     name: 'Monthly',
     time: 'YYYY-MM-01 00:00:01',
   },
+  {
+    type: EMintScheduleType.YEARLY,
+    name: 'Yearly',
+    time: 'YYYY-01-01 00:00:01',
+  },
 ];
 export { AVAILABLE_COUNTRIES, DEFAULT_PAGING, MINT_SCHEDULE_TYPE };
