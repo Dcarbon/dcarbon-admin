@@ -25,7 +25,7 @@ const Wallet = () => {
   const tabItem: TabsProps['items'] = [
     {
       key: 'carbon',
-      label: 'Carbon',
+      label: 'DCO2',
       children: <CarbonContainer />,
     },
     {
