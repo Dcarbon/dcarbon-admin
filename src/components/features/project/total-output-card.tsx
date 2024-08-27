@@ -37,7 +37,7 @@ const TotalOutputCard = ({ img, data, title }: IGeneralData) => {
                 level={4}
                 className="dashboard-project-currency"
               >
-                CARBON
+                DCO2
               </Typography.Title>
             </Space>
           </Flex>

@@ -197,18 +197,18 @@ const ProjectDashboard = () => {
           <Row gutter={[16, 16]} className="project-dashboard">
             <TotalOutputCard
               data={data.carbon_credit.minted}
-              title="Total carbon minted"
+              title="Total DCO2 minted"
               img="/image/dashboard/total-minted.svg"
             />
             <AnalyticsCard
               data={listingState.sold}
-              currency={'CARBON'}
-              title="Total carbon sold"
+              currency={'DCO2'}
+              title="Total DCO2 sold"
               img="/image/dashboard/total-carbon-sold.svg"
             />
             <AnalyticsCard
               data={availableCarbon}
-              currency={'CARBON'}
+              currency={'DCO2'}
               title="Total crypto available"
               img="/image/dashboard/crypto.webp"
             />
@@ -235,7 +235,7 @@ const ProjectDashboard = () => {
                     )
                   : 0
               }
-              currency={'CARBON'}
+              currency={'DCO2'}
               title="Total crypto listing"
               img="/image/dashboard/crypto-market.webp"
             />
