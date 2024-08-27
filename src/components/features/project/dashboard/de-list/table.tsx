@@ -14,6 +14,8 @@ import columns from './column';
 type TableProps = {
   setSelect: React.Dispatch<React.SetStateAction<string[]>>;
   selected: string[];
+  selectedAll: boolean;
+  setSelectAll: (all: boolean) => void;
   open: boolean;
   setOpen: (visible: boolean) => void;
   onOk?: () => void;
@@ -41,6 +43,8 @@ const DeListTable = memo(
     selected,
     setPaging,
     deList,
+    selectedAll,
+    setSelectAll,
   }: TableProps) => {
     const { styles } = useStyle();
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -109,6 +113,9 @@ const DeListTable = memo(
             columnWidth: 50,
             onChange: (_selectedRowKeys) => {
               setSelect([...(_selectedRowKeys as string[])]);
+            },
+            onSelectAll: () => {
+              setSelectAll(!selectedAll);
             },
             getCheckboxProps: (record: IProjectListingInfo) => ({
               disabled: loading || submitLoading,

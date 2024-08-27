@@ -162,6 +162,12 @@ const ProjectDashboard = () => {
         0,
       )
     : 0;
+  const listingTotal = carbonForList
+    ? carbonForList.mints.reduce(
+        (partialSum, history) => partialSum + Number(history.delegated || 0),
+        0,
+      )
+    : 0;
   return (
     <Flex vertical gap={10}>
       <ListingForm
@@ -225,7 +231,8 @@ const ProjectDashboard = () => {
               disabled={
                 !publicKey ||
                 ownerWallet !== publicKey.toString() ||
-                !ownerWallet
+                !ownerWallet ||
+                listingTotal <= 0
               }
               onClick={() => setDeListVisible(true)}
             >
@@ -268,15 +275,7 @@ const ProjectDashboard = () => {
               img="/image/dashboard/total-assets.webp"
             />
             <AnalyticsCard
-              data={
-                carbonForList
-                  ? carbonForList.mints.reduce(
-                      (partialSum, history) =>
-                        partialSum + Number(history.delegated || 0),
-                      0,
-                    )
-                  : 0
-              }
+              data={listingTotal}
               currency={'DCO2'}
               title="Total crypto listing"
               img="/image/dashboard/crypto-market.webp"

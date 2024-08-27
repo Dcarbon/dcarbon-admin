@@ -40,6 +40,7 @@ const DeListContainer = memo(
     const anchorWallet = useAnchorWallet();
     const [txModalOpen, setTxModalOpen] = useState(false);
     const [selected, setSelect] = useState<string[]>([]);
+    const [selectedAll, setSelectAll] = useState<boolean>(false);
     const [paging, setPaging] = useState<IPagingState>({
       page: 1,
       limit: 10,
@@ -72,12 +73,18 @@ const DeListContainer = memo(
       let errorTransactions = [];
       try {
         setTxModalOpen(true);
+        let listDeList = selected;
+        if (selectedAll) {
+          listDeList = (data?.common.all_listing || []).map(
+            (info) => info.mint,
+          );
+        }
         const provider = new AnchorProvider(connection, anchorWallet);
         const program = new Program<ICarbonContract>(
           CARBON_IDL as ICarbonContract,
           provider,
         );
-        const splitArr = splitArray<string>(selected, 5);
+        const splitArr = splitArray<string>(listDeList, 5);
         const cancelListingInsArrayForMultipleTx: TransactionInstruction[][] =
           [];
         for (let i0 = 0; i0 < splitArr.length; i0++) {
@@ -135,6 +142,9 @@ const DeListContainer = memo(
         setTxModalOpen(false);
       }
     };
+    const triggerSetSelectAll = (all: boolean) => {
+      setSelectAll(all);
+    };
     useEffect(() => {
       if (visible) refetch();
     }, [visible]);
@@ -150,6 +160,8 @@ const DeListContainer = memo(
           setSelect={setSelect}
           setPaging={setPaging}
           deList={deList}
+          selectedAll={selectedAll}
+          setSelectAll={triggerSetSelectAll}
         />
       </>
     );
