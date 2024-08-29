@@ -8,7 +8,7 @@ import TextEditor from '@/components/common/rich-editor/quill-editor';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
 import MapOverView from '@/components/features/project/map-overview';
 import { ERROR_MSG, SUCCESS_MSG } from '@/constants';
-import { EUserStatus } from '@/enums';
+import { EProjectType, EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import useBackAction from '@/utils/helpers/back-action';
 import { PlusOutlined } from '@ant-design/icons';
@@ -322,7 +322,7 @@ const CreateProject = memo(() => {
             <Form.Item>
               <InfiniteScrollSelect status={EUserStatus.ACTIVE} />
               <Form.Item
-                label="Model"
+                label="Type"
                 name="type"
                 rules={[
                   {
@@ -342,7 +342,9 @@ const CreateProject = memo(() => {
                       <Select.Option
                         key={item.code}
                         value={item.code}
-                        disabled={!item.active}
+                        disabled={
+                          !item.active || item.code === EProjectType.PRJT_DRAFT
+                        }
                       >
                         {item.name}
                       </Select.Option>

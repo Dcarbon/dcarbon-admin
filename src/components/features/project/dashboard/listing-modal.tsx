@@ -144,7 +144,11 @@ const ListingForm = memo(
           for (let i = 0; i < result.length; i++) {
             const mint = new PublicKey(result[i].address);
             const sourceAta = getAssociatedTokenAddressSync(mint, publicKey);
-            const amount = Number((result[i].real_available || 0).toFixed(1));
+            const amount = Number(
+              (result[i].real_available || 0).toFixed(
+                Number(import.meta.env.VITE_CARBON_DECIMALS || 2),
+              ),
+            );
             const listingArgs: ListingArgs = {
               amount,
               price: Number(Big(price).mul(Big(amount)).toNumber().toFixed(2)),
@@ -324,7 +328,7 @@ const ListingForm = memo(
                   >
                     <SkeletonInput
                       width={'100%'}
-                      precision={1}
+                      precision={2}
                       min={0}
                       required
                       max={availableCarbon}

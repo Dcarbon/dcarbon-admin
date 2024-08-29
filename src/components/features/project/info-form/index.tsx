@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { getModelProject } from '@/adapters/project';
 import MyInputNumber from '@/components/common/input/my-input-number';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
-import { EUserStatus } from '@/enums';
+import { EProjectType, EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { useQuery } from '@tanstack/react-query';
@@ -242,14 +242,24 @@ const ProjectInfoForm = memo(
                       <Select.Option
                         key={item.code}
                         value={item.code}
-                        disabled={!item.active}
+                        disabled={
+                          !item.active || item.code === EProjectType.PRJT_DRAFT
+                        }
                       >
                         {item.name}
                       </Select.Option>
                     ))}
                 </Select>
               </Form.Item>
-              <Form.Item label="Power" name="power">
+              <Form.Item
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+                label="Unit"
+                name="power"
+              >
                 <InputNumber min={0} />
               </Form.Item>
               <Form.Item label="Spec" name="spec">

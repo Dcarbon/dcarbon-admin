@@ -127,7 +127,7 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Location">
               {data.location.name}
             </Descriptions.Item>
-            <Descriptions.Item label="Power">{data.power}</Descriptions.Item>
+            <Descriptions.Item label="Unit">{data.power}</Descriptions.Item>
             <Descriptions.Item label="Status">
               {(() => {
                 let color = 'red';

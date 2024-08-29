@@ -31,7 +31,13 @@ const TotalOutputCard = ({ img, data, title }: IGeneralData) => {
             </Space>
             <Space size={10} align="baseline">
               <span className="primary-color-600 dashboard-project-value">
-                {formatByEnUsNum(Number((data.total || 0).toFixed(1)))}
+                {formatByEnUsNum(
+                  Number(
+                    (data.total || 0).toFixed(
+                      Number(import.meta.env.VITE_CARBON_DECIMALS || 2),
+                    ),
+                  ),
+                )}
               </span>
               <Typography.Title
                 level={4}

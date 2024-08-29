@@ -36,7 +36,11 @@ const columns: TableColumnsType<ITransactionTable> = [
     render: (amount: number) => (
       <Space wrap>
         <img src={logo} alt="logo" width={24} height={24} />
-        <Typography.Text>{Number(amount.toFixed(1))}</Typography.Text>
+        <Typography.Text>
+          {Number(
+            amount.toFixed(Number(import.meta.env.VITE_CARBON_DECIMALS || 2)),
+          )}
+        </Typography.Text>
         <span style={{ fontSize: '12px', color: '#595959' }}>DCO2</span>
       </Space>
     ),
