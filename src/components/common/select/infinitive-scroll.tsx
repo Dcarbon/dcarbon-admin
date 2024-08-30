@@ -3,6 +3,7 @@ import { getPo } from '@/adapters/po';
 import { EUserStatus } from '@/enums';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { Form, Select, Spin } from 'antd';
+import _ from 'lodash';
 import MySelect from '@components/common/input/my-select.tsx';
 
 const { Option } = Select;
@@ -23,14 +24,21 @@ const InfiniteScrollSelect = memo((props: IProps) => {
       queryFn: ({ pageParam = 1 }) =>
         getPo({ page: pageParam, status: props?.status }),
       initialPageParam: 1,
-
       getNextPageParam: (lastPage) => {
-        if (lastPage.paging.page < lastPage.paging.total) {
+        if (
+          lastPage.paging.page <
+          lastPage.paging.total / lastPage.paging.limit
+        ) {
           return lastPage.paging.page + 1;
+        } else {
+          return;
         }
       },
     });
-
+  const uniqueItems = _.uniqBy(
+    data?.pages?.flatMap((page) => page.data),
+    'id',
+  );
   const loadMoreData = useCallback(() => {
     if (hasNextPage) {
       fetchNextPage();
@@ -41,12 +49,11 @@ const InfiniteScrollSelect = memo((props: IProps) => {
     (event: any) => {
       const { target } = event;
       if (target.scrollTop + target.offsetHeight === target.scrollHeight) {
-        loadMoreData();
+        return loadMoreData();
       }
     },
     [loadMoreData],
   );
-
   return (
     <Form.Item
       rules={[{ required: true, message: 'Please select an item' }]}
@@ -61,20 +68,11 @@ const InfiniteScrollSelect = memo((props: IProps) => {
         notFoundContent={isLoading ? <Spin size="small" /> : null}
         filterOption={false}
       >
-        {props.defaultValue ? (
-          <Option value={props.defaultValue.id}>
-            {props.defaultValue.profile_name}
+        {uniqueItems.map((item) => (
+          <Option key={item.id} value={item.id}>
+            {item.profile_name}
           </Option>
-        ) : null}
-        {data?.pages.map((page) =>
-          page.data
-            .filter((e) => e.id !== props.defaultValue?.id)
-            .map((item) => (
-              <Option key={item.id} value={item.id}>
-                {item.profile_name}
-              </Option>
-            )),
-        )}
+        ))}
         {isFetchingNextPage && (
           <Option disabled key="loading">
             <Spin size="small" />
