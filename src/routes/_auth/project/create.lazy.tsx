@@ -23,7 +23,10 @@ import MyInputNumber from '@components/common/input/my-input-number.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
 import MyInputTextArea from '@components/common/input/my-textarea.tsx';
-import { getAvailableCountries } from '@utils/helpers/common.tsx';
+import {
+  getAvailableCountries,
+  isSolanaWallet,
+} from '@utils/helpers/common.tsx';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 export const Route = createLazyFileRoute('/_auth/project/create')({
@@ -129,6 +132,9 @@ const CreateProject = memo(() => {
     queryKey: [QUERY_KEYS.GET_PROJECT_MODEL],
     queryFn: getModelProject,
   });
+  const setPoWallet = (wallet?: string) => {
+    if (wallet) form.setFieldValue('po_wallet', wallet);
+  };
   return (
     <div className="project-create-layout">
       <Form
@@ -320,7 +326,6 @@ const CreateProject = memo(() => {
           </Col>
           <Col span={11}>
             <Form.Item>
-              <InfiniteScrollSelect status={EUserStatus.ACTIVE} />
               <Form.Item
                 label="Type"
                 name="type"
@@ -332,7 +337,6 @@ const CreateProject = memo(() => {
                 style={{
                   display: 'inline-block',
                   width: 'calc(50% - 8px)',
-                  margin: '0 8px',
                 }}
               >
                 <MySelect placeholder="Select model">
@@ -350,6 +354,36 @@ const CreateProject = memo(() => {
                       </Select.Option>
                     ))}
                 </MySelect>
+              </Form.Item>
+            </Form.Item>
+            <Form.Item>
+              <InfiniteScrollSelect
+                status={EUserStatus.ACTIVE}
+                setValue={setPoWallet}
+                style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+              />
+              <Form.Item
+                label="PO Wallet"
+                name="po_wallet"
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      if (value) {
+                        if (!isSolanaWallet(value)) {
+                          return Promise.reject(new Error('Invalid wallet'));
+                        }
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                style={{
+                  display: 'inline-block',
+                  width: 'calc(50% - 8px)',
+                  margin: '0 8px',
+                }}
+              >
+                <MyInput />
               </Form.Item>
             </Form.Item>
             <Flex gap={10}>

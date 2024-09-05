@@ -11,6 +11,7 @@ import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MyInputTextArea from '@components/common/input/my-textarea.tsx';
 import CenterContentLayout from '@components/common/layout/center-content/center-content.layout.tsx';
+import { isSolanaWallet } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 export const Route = createFileRoute('/_auth/po/create')({
@@ -92,7 +93,22 @@ const PoCreate = memo(() => {
             <MyInput placeholder="Enter PO email" />
           </Form.Item>
         </Form.Item>
-        <Form.Item label="Wallet" name="wallet">
+        <Form.Item
+          label="Wallet"
+          name="wallet"
+          rules={[
+            {
+              validator: (_, value) => {
+                if (value) {
+                  if (!isSolanaWallet(value)) {
+                    return Promise.reject(new Error('Invalid wallet'));
+                  }
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <MyInput placeholder="Enter PO wallet" />
         </Form.Item>
         <Form.Item

@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-query';
 import { createFileRoute, useParams } from '@tanstack/react-router';
 import { Flex, Form, Typography } from 'antd';
+import { isSolanaWallet } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 const poQueryOptions = (id: string) =>
@@ -110,7 +111,22 @@ const UpdatePo = () => {
               <MyInput placeholder="Enter PO email" />
             </Form.Item>
           </Form.Item>
-          <Form.Item label="Wallet" name="wallet">
+          <Form.Item
+            label="Wallet"
+            name="wallet"
+            rules={[
+              {
+                validator: (_, value) => {
+                  if (value) {
+                    if (!isSolanaWallet(value)) {
+                      return Promise.reject(new Error('Invalid wallet'));
+                    }
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
             <MyInput placeholder="Enter PO wallet" />
           </Form.Item>
           <Form.Item

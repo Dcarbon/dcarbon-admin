@@ -6,7 +6,7 @@ import { EProjectType, EUserStatus } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { useQuery } from '@tanstack/react-query';
-import { Col, Flex, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { Col, Flex, Form, Input, Modal, Select } from 'antd';
 import { createStyles } from 'antd-style';
 import { getData } from 'country-list';
 import ReactCountryFlag from 'react-country-flag';
@@ -15,6 +15,7 @@ import CancelButtonAction from '@components/common/button/button-cancel.tsx';
 import SubmitButtonAction from '@components/common/button/button-submit.tsx';
 import MyInput from '@components/common/input/my-input.tsx';
 import MySelect from '@components/common/input/my-select.tsx';
+import { isSolanaWallet } from '@utils/helpers';
 import useNotification from '@utils/helpers/my-notification.tsx';
 
 type InfoFormProps = {
@@ -56,6 +57,9 @@ const ProjectInfoForm = memo(
         boxShadow: '0 0 30px #999',
         borderRadius: 'var(--div-radius)',
       },
+    };
+    const setPoWallet = (wallet?: string) => {
+      if (wallet) form.setFieldValue('po_wallet', wallet);
     };
     return (
       <Modal
@@ -151,10 +155,6 @@ const ProjectInfoForm = memo(
               >
                 <Input placeholder="Project name" max={500} />
               </Form.Item>
-
-              <Form.Item name="destination_wallet" label="Destination wallet">
-                <Input placeholder="Wallet" />
-              </Form.Item>
               <Flex flex="auto" gap={10}>
                 <Form.Item label="Location name" name={['location', 'name']}>
                   <Input placeholder="Project location" />
@@ -225,42 +225,74 @@ const ProjectInfoForm = memo(
               <InfiniteScrollSelect
                 status={EUserStatus.ACTIVE}
                 defaultValue={data.manager}
+                setValue={setPoWallet}
+                style={{ display: 'inline-block', width: '100%' }}
               />
               <Form.Item
-                label="Type"
-                name="type"
+                label="PO Wallet"
+                name="po_wallet"
                 rules={[
                   {
-                    required: true,
-                  },
-                ]}
-              >
-                <Select>
-                  {types &&
-                    types.length > 0 &&
-                    types.map((item: any) => (
-                      <Select.Option
-                        key={item.code}
-                        value={item.code}
-                        disabled={
-                          !item.active || item.code === EProjectType.PRJT_DRAFT
+                    validator: (_, value) => {
+                      if (value) {
+                        if (!isSolanaWallet(value)) {
+                          return Promise.reject(new Error('Invalid wallet'));
                         }
-                      >
-                        {item.name}
-                      </Select.Option>
-                    ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                rules={[
-                  {
-                    required: true,
+                      }
+                      return Promise.resolve();
+                    },
                   },
                 ]}
-                label="Unit"
-                name="power"
               >
-                <InputNumber min={0} />
+                <MyInput />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item
+                  label="Type"
+                  name="type"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                    marginRight: '8px',
+                  }}
+                >
+                  <Select>
+                    {types &&
+                      types.length > 0 &&
+                      types.map((item: any) => (
+                        <Select.Option
+                          key={item.code}
+                          value={item.code}
+                          disabled={
+                            !item.active ||
+                            item.code === EProjectType.PRJT_DRAFT
+                          }
+                        >
+                          {item.name}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                  label="Unit"
+                  name="power"
+                  style={{
+                    display: 'inline-block',
+                    width: 'calc(50% - 8px)',
+                  }}
+                >
+                  <MyInputNumber width="100%" min={0} />
+                </Form.Item>
               </Form.Item>
               <Form.Item label="Spec" name="spec">
                 <Input.TextArea />

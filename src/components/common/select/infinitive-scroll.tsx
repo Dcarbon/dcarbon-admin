@@ -15,6 +15,8 @@ interface IProps {
     profile_name: string;
     user_name: string;
   };
+  setValue?: (value: any) => void;
+  style: React.CSSProperties;
 }
 
 const InfiniteScrollSelect = memo((props: IProps) => {
@@ -59,14 +61,19 @@ const InfiniteScrollSelect = memo((props: IProps) => {
       rules={[{ required: true, message: 'Please select an item' }]}
       name="po_id"
       label="PO"
-      style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+      style={props.style}
     >
       <MySelect
         placeholder="Select an item"
-        style={{ width: 300 }}
         onPopupScroll={handleScroll}
         notFoundContent={isLoading ? <Spin size="small" /> : null}
         filterOption={false}
+        onSelect={(e) => {
+          if (props.setValue) {
+            const match = uniqueItems.find((info) => info.id === e);
+            if (match) props.setValue(match.wallet);
+          }
+        }}
       >
         {uniqueItems.map((item) => (
           <Option key={item.id} value={item.id}>
