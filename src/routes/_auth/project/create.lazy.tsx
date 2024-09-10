@@ -133,7 +133,7 @@ const CreateProject = memo(() => {
     queryFn: getModelProject,
   });
   const setPoWallet = (wallet?: string) => {
-    if (wallet) form.setFieldValue('po_wallet', wallet);
+    form.setFieldValue('po_wallet', wallet);
   };
   return (
     <div className="project-create-layout">
@@ -367,10 +367,13 @@ const CreateProject = memo(() => {
                 name="po_wallet"
                 rules={[
                   {
+                    required: true,
+                  },
+                  {
                     validator: (_, value) => {
                       if (value) {
                         if (!isSolanaWallet(value)) {
-                          return Promise.reject(new Error('Invalid wallet'));
+                          return Promise.reject(new Error('Invalid PO Wallet'));
                         }
                       }
                       return Promise.resolve();

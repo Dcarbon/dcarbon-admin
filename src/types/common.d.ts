@@ -43,3 +43,23 @@ interface ICoefficient {
   value: any;
   isOnChain?: boolean;
 }
+
+export interface ICommonResponse<T> {
+  statusCode: number;
+  request_id: string;
+  data: T;
+}
+
+export interface IPreSignPostResponse {
+  url: string;
+  fields: {
+    'Content-Type': string;
+    bucket: string;
+    'X-Amz-Algorithm': string;
+    'X-Amz-Credential': string;
+    'X-Amz-Date': string;
+    key: string;
+    Policy: string;
+    'X-Amz-Signature': string;
+  };
+}

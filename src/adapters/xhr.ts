@@ -40,6 +40,7 @@ const request = async <T>(
   data?: any,
   options?: AxiosRequestConfig,
   isOverWriteUrl?: boolean,
+  isPublic?: boolean,
 ): Promise<AxiosResponse<T>> => {
   const controller = new AbortController();
 
@@ -49,7 +50,9 @@ const request = async <T>(
       defaultHeaders.Authorization = `Bearer ${accessToken}`;
     }
   }
-
+  if (isPublic) {
+    delete defaultHeaders.Authorization;
+  }
   const commonOptions: AxiosRequestConfig = {
     ...options,
     signal: controller.signal,

@@ -1,11 +1,15 @@
 /* eslint-disable camelcase */
 import { EProjectStatus } from '@/enums';
 import { API_ROUTES, REQ_METHODS } from '@/utils/constants';
+import { UploadFile } from 'antd/es/upload/interface';
+import { ICommonResponse, IPreSignPostResponse } from '@/types/common';
 import { IDevicePage, IDeviceRequest } from '@/types/device';
 import {
   IAddDevicesInput,
   IMintOfProject,
   IProject,
+  IProjectDocumentAddRequest,
+  IProjectDocumentResponse,
   IProjectImageRequest,
   IProjectImageResponse,
   IProjectListingInfoRequest,
@@ -262,6 +266,117 @@ const getListingInfo = async ({
     throw error;
   }
 };
+
+const getDocumentUploadUrl = async ({
+  slug,
+  documentName,
+}: {
+  slug: string;
+  documentName: string;
+}) => {
+  try {
+    const response = await request<ICommonResponse<IPreSignPostResponse>>(
+      REQ_METHODS.GET,
+      API_ROUTES.PROJECT.DOCUMENT_UPLOAD_URL.replace('{projectId}', slug),
+      {
+        document_name: documentName,
+      },
+    );
+    return response.data?.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+
+const uploadProjectDocument = async ({
+  url,
+  fields,
+  document,
+}: {
+  url: string;
+  fields: any;
+  document?: UploadFile<any>;
+}) => {
+  try {
+    if (!document || !document.originFileObj) throw new Error('document empty');
+    const formData = new FormData();
+    const keys = Object.keys(fields);
+    keys.forEach((key) => {
+      formData.append(key, fields[key]);
+    });
+    formData.append('file', document.originFileObj);
+    const response = await request<GeneralResponse<any>>(
+      REQ_METHODS.POST,
+      url,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+      true,
+      true,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+const addProjectDocument = async ({
+  slug,
+  input,
+}: {
+  slug: string;
+  input: IProjectDocumentAddRequest;
+}) => {
+  try {
+    const response = await request<GeneralResponse<{ status: string }>>(
+      REQ_METHODS.PUT,
+      API_ROUTES.PROJECT.ADD_DOCUMENT.replace('{projectId}', slug),
+      input,
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+
+const getProjectDocuments = async (slug: string) => {
+  try {
+    const response = await request<ICommonResponse<IProjectDocumentResponse[]>>(
+      REQ_METHODS.GET,
+      API_ROUTES.PROJECT.DOCUMENTS.replace('{projectId}', slug),
+      {},
+    );
+    return response.data?.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
+
+const removeProjectDocument = async ({
+  slug,
+  id,
+}: {
+  slug: string;
+  id: string;
+}) => {
+  try {
+    const response = await request<GeneralResponse<{ status: string }>>(
+      REQ_METHODS.PUT,
+      API_ROUTES.PROJECT.REMOVE_DOCUMENT.replace('{projectId}', slug),
+      { document_id: id },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+};
 export {
   getProject,
   getProjectBySlug,
@@ -276,4 +391,9 @@ export {
   carbonForListing,
   modifyProjectStatus,
   getListingInfo,
+  getDocumentUploadUrl,
+  uploadProjectDocument,
+  addProjectDocument,
+  getProjectDocuments,
+  removeProjectDocument,
 };

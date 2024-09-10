@@ -16,6 +16,8 @@ const SUCCESS_MSG = {
     UPDATE_SUCCESS: 'Update Project successfully',
     ADD_DEVICES_SUCCESS: 'Add devices successfully',
     MODIFY_STATUS_SUCCESS: 'Modify status success',
+    ADD_DOCUMENT_SUCCESS: 'Add document success',
+    REMOVE_DOCUMENT_SUCCESS: 'Remove document success',
   },
 };
 export { SUCCESS_MSG };

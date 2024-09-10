@@ -32,6 +32,10 @@ const API_ROUTES = {
     CARBON_FOR_LISTING: 'carbons-for-listing',
     MODIFY_STATUS: 'projects/modify-status',
     LISTING_INFO: 'projects/{projectId}/listing-info',
+    DOCUMENT_UPLOAD_URL: 'projects/{projectId}/document-upload-url',
+    ADD_DOCUMENT: 'projects/{projectId}/add-document',
+    REMOVE_DOCUMENT: 'projects/{projectId}/remove-document',
+    DOCUMENTS: 'projects/{projectId}/documents',
   },
   MINT: {
     ROOT: 'minting',

@@ -110,8 +110,11 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Project name">
               {data.project_name}
             </Descriptions.Item>
-            <Descriptions.Item label="Project manager">
+            <Descriptions.Item label="PO">
               {data.manager?.profile_name}
+            </Descriptions.Item>
+            <Descriptions.Item label="PO Wallet">
+              {data.po_wallet}
             </Descriptions.Item>
             <Descriptions.Item label="Country">
               {data.country?.code ? (
@@ -200,16 +203,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
             <Descriptions.Item label="Images">
               {!isEditImages ? (
                 <>
-                  {/* <Image.PreviewGroup>
-                    {data.images.map((image: string, index: number) => (
-                      <Image
-                        className="project-image-view"
-                        key={index}
-                        src={image}
-                        alt="image"
-                      />
-                    ))}
-                  </Image.PreviewGroup> */}
                   <ImageGallery data={data.images} />
                   <Button onClick={() => setIsEditImages(true)}>
                     <EditOutlined />
@@ -277,33 +270,6 @@ const OverView = memo(({ data }: { data: IProject }) => {
               </Flex>
             </>
           )}
-          {/* <div>*/}
-          {/*  <Flex align="center" gap={20}>*/}
-          {/*    {' '}*/}
-          {/*    <h4>Devices</h4>{' '}*/}
-          {/*    <Button onClick={() => setOpenModal(true)}>*/}
-          {/*      <EditOutlined />*/}
-          {/*    </Button>*/}
-          {/*  </Flex>*/}
-          {/* </div>*/}
-          {/* <Flex vertical gap={10}>*/}
-          {/*  {data.devices?.map((device) => (*/}
-          {/*    <Descriptions key={`dv_${device.id}`} bordered layout="vertical">*/}
-          {/*      <Descriptions.Item label="Device Id">*/}
-          {/*        {device.iot_device_id}*/}
-          {/*      </Descriptions.Item>*/}
-          {/*      <Descriptions.Item label="Device Type">*/}
-          {/*        {device.device_type.name}*/}
-          {/*      </Descriptions.Item>*/}
-          {/*      <Descriptions.Item label="Device Name">*/}
-          {/*        {device.device_name}*/}
-          {/*      </Descriptions.Item>*/}
-          {/*      <Descriptions.Item label="Device Status">*/}
-          {/*        {device.status.name}*/}
-          {/*      </Descriptions.Item>*/}
-          {/*    </Descriptions>*/}
-          {/*  ))}*/}
-          {/* </Flex>*/}
         </Col>
       </Flex>
     </>

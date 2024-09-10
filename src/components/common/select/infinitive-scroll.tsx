@@ -6,8 +6,6 @@ import { Form, Select, Spin } from 'antd';
 import _ from 'lodash';
 import MySelect from '@components/common/input/my-select.tsx';
 
-const { Option } = Select;
-
 interface IProps {
   status?: EUserStatus;
   defaultValue?: {
@@ -71,19 +69,23 @@ const InfiniteScrollSelect = memo((props: IProps) => {
         onSelect={(e) => {
           if (props.setValue) {
             const match = uniqueItems.find((info) => info.id === e);
-            if (match) props.setValue(match.wallet);
+            props.setValue(match?.wallet);
           }
         }}
       >
         {uniqueItems.map((item) => (
-          <Option key={item.id} value={item.id}>
+          <Select.Option
+            key={item.id}
+            value={item.id}
+            disabled={item.status !== EUserStatus.ACTIVE}
+          >
             {item.profile_name}
-          </Option>
+          </Select.Option>
         ))}
         {isFetchingNextPage && (
-          <Option disabled key="loading">
+          <Select.Option disabled key="loading">
             <Spin size="small" />
-          </Option>
+          </Select.Option>
         )}
       </MySelect>
     </Form.Item>

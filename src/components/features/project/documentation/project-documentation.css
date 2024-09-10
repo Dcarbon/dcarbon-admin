@@ -1,0 +1,18 @@
+.project-document-upload {
+  .ant-upload-select,
+  .ant-upload-list-item-container {
+    width: 100% !important;
+  }
+
+  .ant-upload-list-item-name {
+    color: gray !important;
+  }
+
+  .anticon-file {
+    svg {
+      path:nth-of-type(2) {
+        fill: gray !important;
+      }
+    }
+  }
+}

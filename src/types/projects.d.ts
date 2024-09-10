@@ -31,6 +31,7 @@ interface IProject {
   thumbnail: string;
   devices: DeviceDataType[];
   manager: Pick<IPo, 'profile_name' | 'user_name' | 'id'>;
+  po_wallet: string;
   power: number;
   spec: object;
   specs: any;
@@ -58,6 +59,7 @@ interface IProjectRequest {
     iot_device_type: string;
   }[];
   po_id: string;
+  po_wallet: string;
   power: number;
   spec: object;
   status: 'draft' | 'active' | 'deactivate';
@@ -245,4 +247,15 @@ export interface IProjectListingInfoResponse {
     all_listing: IProjectListingInfo[];
   };
   data: IProjectListingInfo[];
+}
+
+export interface IProjectDocumentAddRequest {
+  document_name: string;
+  document_type: string;
+  document_path: string;
+}
+
+export interface IProjectDocumentResponse extends IProjectDocumentAddRequest {
+  document_id: string;
+  created_at: string;
 }

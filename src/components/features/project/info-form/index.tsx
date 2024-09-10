@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { getModelProject } from '@/adapters/project';
 import MyInputNumber from '@/components/common/input/my-input-number';
 import InfiniteScrollSelect from '@/components/common/select/infinitive-scroll';
-import { EProjectType, EUserStatus } from '@/enums';
+import { EProjectType } from '@/enums';
 import { QUERY_KEYS } from '@/utils/constants';
 import { MINT_SCHEDULE_TYPE } from '@constants/common.constant.ts';
 import { useQuery } from '@tanstack/react-query';
@@ -59,7 +59,7 @@ const ProjectInfoForm = memo(
       },
     };
     const setPoWallet = (wallet?: string) => {
-      if (wallet) form.setFieldValue('po_wallet', wallet);
+      form.setFieldValue('po_wallet', wallet);
     };
     return (
       <Modal
@@ -94,7 +94,10 @@ const ProjectInfoForm = memo(
           }}
           onFinish={(values) => {
             Object.keys(values).forEach((key) => {
-              if (data[key as keyof IProject] === values[key]) {
+              if (
+                data[key as keyof IProject] === values[key] &&
+                key !== 'po_wallet'
+              ) {
                 delete values[key];
               }
             });
@@ -223,7 +226,6 @@ const ProjectInfoForm = memo(
             </Col>
             <Col span={11}>
               <InfiniteScrollSelect
-                status={EUserStatus.ACTIVE}
                 defaultValue={data.manager}
                 setValue={setPoWallet}
                 style={{ display: 'inline-block', width: '100%' }}
@@ -233,10 +235,13 @@ const ProjectInfoForm = memo(
                 name="po_wallet"
                 rules={[
                   {
+                    required: true,
+                  },
+                  {
                     validator: (_, value) => {
                       if (value) {
                         if (!isSolanaWallet(value)) {
-                          return Promise.reject(new Error('Invalid wallet'));
+                          return Promise.reject(new Error('Invalid PO Wallet'));
                         }
                       }
                       return Promise.resolve();

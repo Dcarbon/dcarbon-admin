@@ -68,7 +68,7 @@ const PoTableList = ({ data }: { data: IPoPage }) => {
   const search = useSearch({ from: '/_auth/po/' });
   const handlePo = async (action: 'ban' | 'delete' | 'unban', id: string) => {
     setLoadingHandleAction({ action, id });
-    cancelAction({
+    await cancelAction({
       okFn: async () => {
         try {
           if (action === 'delete') await handleDeletePo.mutateAsync(id);

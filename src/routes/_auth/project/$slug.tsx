@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router';
 import { Tabs } from 'antd';
 import Devices from '@components/features/project/devices';
+import ProjectDocumentation from '@components/features/project/documentation';
 
 const postQueryOptions = (slug: string) =>
   queryOptions({
@@ -56,6 +57,12 @@ const ProjectDetail = memo(() => {
           },
           {
             key: '3',
+            label: 'Documentation',
+            children: <ProjectDocumentation projectSlug={slug} />,
+            destroyInactiveTabPane: true,
+          },
+          {
+            key: '4',
             label: 'Dashboard',
             children: <ProjectDashboard />,
             destroyInactiveTabPane: true,
